@@ -4,19 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sahu Kirana & Restaurant</title>
+    <link rel="icon" type="image/png" href="logo.png"> 
     <link rel="stylesheet" href="Home.css">
 </head>
 <body>
 
     <header class="navbar">
-        <div style="display: flex; flex-direction: column; gap: 2px;">
+        <div class="nav-left">
             <div class="logo">Sahu Kirana & Restaurant</div>
-            <div id="shopStatusBanner" style="font-size: 12px; font-weight: bold;">Checking status...</div>
+            <div id="shopStatusBanner" class="status-banner">Checking status...</div>
         </div>
-        <nav>
-            <span id="welcomeMessage">Welcome, User</span>
+        <div class="nav-right">
+            <span id="welcomeMessage" class="hide-on-mobile">Welcome, User</span>
             <button onclick="logout()" class="logout-btn">Logout</button>
-        </nav>
+        </div>
     </header>
 
     <main class="main-container">
@@ -25,10 +26,19 @@
             <h3>Admin Panel (Manage Shop)</h3>
             
             <div style="background: #fff; padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #ccc;">
-                <h4 style="margin-top: 0; color: #333;">1. Create New Category</h4>
-                <div style="display: flex; gap: 10px;">
+                <h4 style="margin-top: 0; color: #333;">1. Manage Categories</h4>
+                <label style="font-size: 13px; font-weight: bold; color: #555;">Create New Category:</label>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px; margin-top: 5px;">
                     <input type="text" id="newCategoryName" placeholder="e.g., Soap, Spices, Sweets">
-                    <button type="button" onclick="createNewCategory()" class="add-btn" style="background-color: #007bff;">Create Category</button>
+                    <button type="button" onclick="createNewCategory()" class="add-btn" style="background-color: #007bff;">Create</button>
+                </div>
+
+                <div style="border-top: 1px dashed #ccc; margin: 15px 0;"></div>
+                
+                <label style="font-size: 13px; font-weight: bold; color: #dc3545;">Delete Existing Category:</label>
+                <div style="display: flex; gap: 10px; margin-top: 5px;">
+                    <select id="deleteCategorySelect" style="flex: 1; padding: 10px; border: 1px solid #ced4da; border-radius: 4px; background: #fff; color: #333;"></select>
+                    <button type="button" onclick="deleteCategory()" class="add-btn" style="background-color: #dc3545;">Delete</button>
                 </div>
             </div>
 
@@ -48,11 +58,18 @@
                         </select>
                     </div>
                     
-                    <div style="width: 100%; display: flex; flex-direction: column; gap: 5px; margin: 5px 0;">
-                        <label style="font-weight: bold; color: #333; font-size: 14px; text-align: left;">Product Photo (Dono Optional Hain):</label>
-                        <input type="text" id="prodImage" placeholder="Option A: Yahan Image URL paste karein (Optional)">
-                        <div style="text-align: center; font-weight: bold; color: #666; font-size: 12px; margin: 2px 0;">— YA —</div>
-                        <input type="file" id="prodImageFile" accept="image/*" style="border: none; padding: 0;">
+                    <div style="width: 100%; display: flex; flex-direction: column; gap: 5px; margin: 5px 0; padding: 15px; background: #f8f9fa; border: 1px dashed #ccc; border-radius: 6px;">
+                        <label style="font-weight: bold; color: #333; font-size: 14px; text-align: left; margin-bottom: 5px;">Product Photo (Optional):</label>
+                        <input type="text" id="prodImage" placeholder="Option A: Yahan Image URL paste karein">
+                        <div style="text-align: center; font-weight: bold; color: #888; font-size: 12px; margin: 8px 0;">— OR —</div>
+                        
+                        <div style="text-align: center;">
+                            <label for="prodImageFile" class="camera-btn">
+                                📷 Open Camera / Gallery
+                            </label>
+                            <input type="file" id="prodImageFile" accept="image/*" capture="environment" style="display: none;">
+                            <span id="fileChosenText" style="font-size: 12px; color: #666; display: block; margin-top: 5px;">No photo selected</span>
+                        </div>
                     </div>
                     
                     <div class="image-preview-container">
@@ -61,25 +78,24 @@
                     
                     <label style="display:block; margin-top: 10px; margin-bottom: 5px; font-weight:bold; color: #333; text-align: left;">Select Category:</label>
                     <select id="prodCategory">
-                        </select>
+                    </select>
                     
-                    <button type="submit" class="add-btn">Publish Product</button>
+                    <button type="submit" class="add-btn" style="margin-top: 15px; width: 100%;">Publish Product</button>
                 </form>
             </div>
         </div>
 
         <div class="search-filter-box">
             <div style="margin-bottom: 15px;">
-                <input type="text" id="searchBar" placeholder="🔍 Search items here..." oninput="filterProducts()">
+                <input type="text" id="searchBar" placeholder="🔍 Search by item name or category..." oninput="filterProducts()">
             </div>
             <div id="categoryTabsContainer" style="display: flex; gap: 10px; flex-wrap: wrap;">
-                </div>
+            </div>
         </div>
 
-        <h2 class="title">Our Products & Items</h2>
-        
+        <h2 class="title" style="background: white; padding: 12px; border-radius: 8px; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 10px;">Our Products & Items</h2>
         <div class="products-grid" id="productsGrid">
-            </div>
+        </div>
     </main>
 
     <div id="productModal" class="modal-overlay">
@@ -93,7 +109,9 @@
                 Jurey Colony, Chhindwara,<br>
                 Madhya Pradesh 480441<br><br>
                 <strong>📞 Contact Number:</strong><br>
-                +91 XXXXXXXXXX <a href="https://maps.app.goo.gl/MMSYvsiXWTqtz2bp6" target="_blank" class="maps-btn">
+                +91 8319332387
+                
+                <a href="https://maps.app.goo.gl/MMSYvsiXWTqtz2bp6" target="_blank" class="maps-btn">
                     🗺️ Open in Google Maps
                 </a>
             </div>
@@ -133,18 +151,25 @@
             <label>Current Photo Preview:</label><br>
             <img id="editImagePreview" src="" alt="Current Photo" style="display: block; margin-bottom: 10px;"><br>
             
-            <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; border: 1px solid #ddd; margin-bottom: 10px;">
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #ddd; margin-bottom: 10px;">
                 <label style="font-weight: bold; margin: 0 0 5px 0;">Change Photo (Optional):</label>
                 <input type="text" id="editProdImage" placeholder="Naya Image URL paste karein">
-                <div style="text-align: center; font-weight: bold; color: #666; font-size: 11px; margin: 2px 0;">— YA —</div>
-                <input type="file" id="editProdImageFile" accept="image/*" style="border:none; padding:0;">
+                <div style="text-align: center; font-weight: bold; color: #666; font-size: 11px; margin: 8px 0;">— OR —</div>
+                
+                <div style="text-align: center;">
+                    <label for="editProdImageFile" class="camera-btn">
+                        📷 Open Camera / Gallery
+                    </label>
+                    <input type="file" id="editProdImageFile" accept="image/*" capture="environment" style="display:none;">
+                    <span id="editFileChosenText" style="font-size: 12px; color: #666; display: block; margin-top: 5px;">No photo selected</span>
+                </div>
             </div>
             
             <label>Category:</label>
             <select id="editProdCategory">
-                </select>
+            </select>
             
-            <button type="button" onclick="submitProductEdit()" class="add-btn" style="background-color: #ffc107; color: #333;">Save Changes</button>
+            <button type="button" onclick="submitProductEdit()" class="add-btn" style="background-color: #ffc107; color: #333; margin-top: 15px; width: 100%;">Save Changes</button>
         </div>
     </div>
 
