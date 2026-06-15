@@ -1,5 +1,5 @@
 /* =========================================
-   GLOBAL RESET (Screen se bahar na bhagne ka ilaaj)
+   GLOBAL RESET
 ========================================= */
 * {
     box-sizing: border-box;
@@ -14,7 +14,7 @@ body {
     flex-direction: column;
     min-height: 100vh;
     color: #333; 
-    overflow-x: hidden; /* 👈 Ye line page ko left-right hilne se rokegi */
+    overflow-x: hidden;
     width: 100%;
 }
 
@@ -69,9 +69,10 @@ input, select { padding: 12px; border: 1px solid #ced4da; border-radius: 4px; fo
 }
 .camera-btn:hover { background-color: #138496; }
 
-/* Search Box */
+/* Search Box & Horizontal Sliding Category Tabs */
 .search-filter-box { background: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #dee2e6; width: 100%; }
-.filter-tab { padding: 8px 18px; border: 1px solid #ced4da; background: white; color: #495057; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px; margin-right: 5px; margin-bottom: 5px; display: inline-block;}
+#categoryTabsContainer { display: flex; gap: 10px; flex-wrap: wrap; }
+.filter-tab { padding: 8px 18px; border: 1px solid #ced4da; background: white; color: #495057; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px; display: inline-block; white-space: nowrap;}
 .active-tab { background: #343a40 !important; color: white !important; border-color: #343a40 !important; }
 
 /* Product Grid */
@@ -106,10 +107,10 @@ input, select { padding: 12px; border: 1px solid #ced4da; border-radius: 4px; fo
 .footer { background-color: #343a40; color: #adb5bd; text-align: center; padding: 20px; font-size: 14px; margin-top: auto; width: 100%; }
 
 /* =========================================
-   MOBILE RESPONSIVENESS (100% FIX)
+   MOBILE RESPONSIVENESS (Fix for Category Buttons)
 ========================================= */
 @media (max-width: 600px) {
-    .navbar { padding: 10px 15px; }
+    .navbar { padding: 10px 15px; flex-direction: row; }
     .logo { font-size: 15px; }
     .status-banner { font-size: 11px; }
     .hide-on-mobile { display: none; } 
@@ -119,18 +120,31 @@ input, select { padding: 12px; border: 1px solid #ced4da; border-radius: 4px; fo
     .admin-box { padding: 15px; margin-bottom: 20px; }
     .search-filter-box { padding: 15px; margin-bottom: 20px; }
 
-    /* YAHAN HUA ASLI FIX: Mobile par sab kuch ek ke neeche ek (stack) hoga */
-    div[style*="display: flex"] {
-        flex-direction: column !important;
-        width: 100% !important;
+    /* Admin Form Fixes */
+    #addProductForm > div { flex-direction: column !important; }
+    #prodUnit, #editProdUnit { width: 100% !important; }
+
+    /* 👉 YAHAN HAI TABS KA FIX: Ab ye ek single line me rahenge aur slide honge */
+    #categoryTabsContainer {
+        flex-wrap: nowrap !important; /* Ek line me layega */
+        overflow-x: auto; /* Slide karne ka option dega */
+        padding-bottom: 8px; /* Thodi jagah dega neeche */
+        gap: 8px;
     }
     
-    /* Buttons aur inputs mobile par poori width lenge */
-    .add-btn, input, select { width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; }
+    /* Scrollbar chupane ke liye taaki saaf dikhe */
+    #categoryTabsContainer::-webkit-scrollbar { display: none; }
 
+    .filter-tab {
+        width: auto !important; /* Poori screen gherne se rokega */
+        flex-shrink: 0; /* Dabne se bachaega */
+        font-size: 13px;
+        padding: 8px 15px;
+    }
+
+    /* Product Grid Fixes */
     .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .product-card { padding: 10px; }
     .product-card h4 { font-size: 13px; margin-top: 8px; }
     .product-card .price { font-size: 14px; }
-    .admin-action-btns { flex-direction: row !important; } /* Inko aamne-samne hi rakhna hai */
 }
