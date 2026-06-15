@@ -11,13 +11,17 @@ const NO_IMAGE_URL = 'https://images.placeholders.dev/?width=150&height=150&text
 
 let selectedAddImageBase64 = null;
 let selectedEditImageBase64 = null;
-
 // ==========================================
 // 2. LIVE LOGIN & REGISTER SYSTEM (GLOBAL)
 // ==========================================
 const loginForm = document.getElementById('loginForm');
 
 if (loginForm) {
+    // 🛑 NAYA FIX: Agar user pehle se login hai, toh turant Home par bhej do
+    if (localStorage.getItem('currentUser')) {
+        window.location.replace("./home.html");
+    }
+
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
     const errorMsg = document.getElementById('errorMessage');
@@ -55,7 +59,7 @@ if (loginForm) {
             localStorage.setItem('currentUser', 'tanmaysahu');
             localStorage.setItem('userRole', 'admin');
             alert('Welcome Back, Boss!');
-            window.location.href = "./home.html";
+            window.location.replace("./home.html"); // 🛑 NAYA FIX: History replace
             return;
         }
 
@@ -74,7 +78,7 @@ if (loginForm) {
                     localStorage.setItem('currentUser', originalUsername);
                     localStorage.setItem('userRole', 'customer');
                     alert('New Account Created & Saved on Cloud Network!');
-                    window.location.href = "./home.html";
+                    window.location.replace("./home.html"); // 🛑 NAYA FIX: History replace
                 });
             } 
             else {
@@ -82,7 +86,7 @@ if (loginForm) {
                     localStorage.setItem('currentUser', registeredUser.username);
                     localStorage.setItem('userRole', registeredUser.role);
                     alert('Login Successful!');
-                    window.location.href = "./home.html";
+                    window.location.replace("./home.html"); // 🛑 NAYA FIX: History replace
                 } else {
                     showRedError("⚠️ Incorrect Password! Access Denied.");
                     passwordInput.classList.add('error-border');
