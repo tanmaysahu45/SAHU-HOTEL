@@ -4,7 +4,7 @@
 const DB_URL = "https://sahu-hotel-app-default-rtdb.firebaseio.com";
 
 let currentCategory = 'All';
-let DEFAULT_CATEGORIES = ['Hotel', 'Kirana', 'Dairy', 'Snacks'];
+let DEFAULT_CATEGORIES = ['Hotel', 'Kirana', 'Dairy', 'Snacks']; 
 let cloudCategoryMap = {}; 
 
 const NO_IMAGE_URL = 'https://images.placeholders.dev/?width=150&height=150&text=No%20Image';
@@ -17,18 +17,15 @@ function checkPageSession() {
     const isLoggedIn = localStorage.getItem('currentUser');
     const path = window.location.pathname;
 
-    // Condition A: Agar user login nahi hai aur home.html kholne ki koshish kare toh login par phenko
     if (path.includes('home.html') && !isLoggedIn) {
         window.location.replace("index.html");
     } 
-    // Condition B: Agar user already login hai aur login page par aaye toh direct home par phenko
     else if ((path.includes('index.html') || path.endsWith('/')) && isLoggedIn) {
         window.location.replace("home.html");
     }
 }
 checkPageSession(); // Instant run
 
-// Logout hone par history replace karke login par bhejega
 function logout() {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('userRole');
@@ -74,7 +71,6 @@ if (loginForm) {
             return;
         }
 
-        // Admin Custom Access
         if (uValue === "tanmaysahu" && pValue === "boss") {
             localStorage.setItem('currentUser', 'tanmaysahu');
             localStorage.setItem('userRole', 'admin');
@@ -270,7 +266,6 @@ function createNewCategory() {
     });
 }
 
-// Delete category handler
 function deleteCategory() {
     const select = document.getElementById('deleteCategorySelect');
     if (!select) return;
@@ -299,37 +294,47 @@ function selectCategory(categoryName) {
 }
 
 // ==========================================
-// 5. IMAGE SELECTION, AUTOMATIC COMPRESSION & LIVE PREVIEW LOGIC
+// 5. IMAGE COMPRESSION ENGINE (WORKS FOR FILE & URL ACCESSIBILITY)
 // ==========================================
-function compressAndGetBase64(file, maxWidth = 800, quality = 0.7) {
+function compressAndGetBase64(fileOrUrl, maxWidth = 800, quality = 0.7) {
     return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-            const img = new Image();
-            img.src = event.target.result;
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                let width = img.width;
-                let height = img.height;
+        const img = new Image();
+        img.crossOrigin = "anonymous"; // Prevents CORS taint bugs on clean images
 
-                if (width > maxWidth) {
-                    height = Math.round((height * maxWidth) / width);
-                    width = maxWidth;
-                }
+        if (fileOrUrl instanceof File) {
+            const reader = new FileReader();
+            reader.readAsDataURL(fileOrUrl);
+            reader.onload = (event) => { img.src = event.target.result; };
+            reader.onerror = (err) => reject(err);
+        } else {
+            img.src = fileOrUrl;
+        }
 
-                canvas.width = width;
-                canvas.height = height;
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
 
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
+            if (width > maxWidth) {
+                height = Math.round((height * maxWidth) / width);
+                width = maxWidth;
+            }
 
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            try {
                 const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
                 resolve(compressedBase64);
-            };
-            img.onerror = (err) => reject(err);
+            } catch (e) {
+                // Fallback for secured strict URLs that deny canvas data conversion
+                resolve(img.src);
+            }
         };
-        reader.onerror = (err) => reject(err);
+        img.onerror = (err) => reject(err);
     });
 }
 
@@ -343,6 +348,7 @@ function convertDriveLink(url) {
     return url;
 }
 
+// 🔥 FIXES WEB LINK COMPRESSION DYNAMICALLY ON USER RAW INPUTS
 function setupImageUploadListeners() {
     const addFileInput = document.getElementById('prodImageFile');
     const addUrlInput = document.getElementById('prodImage');
@@ -355,15 +361,24 @@ function setupImageUploadListeners() {
     const editFileText = document.getElementById('editFileChosenText');
 
     if (addUrlInput) {
-        addUrlInput.addEventListener('input', function() {
+        addUrlInput.addEventListener('input', async function() {
             let val = addUrlInput.value.trim();
             if (val !== '') {
                 val = convertDriveLink(val);
-                addPreviewImg.src = val;
-                addPreviewImg.style.display = 'block';
-                if(addFileInput) addFileInput.value = ''; 
-                if(addFileText) addFileText.innerText = "No photo selected";
-                selectedAddImageBase64 = null;
+                if (addFileText) addFileText.innerText = "Processing URL Image...";
+                try {
+                    // Compresses URL live on keystroke update
+                    selectedAddImageBase64 = await compressAndGetBase64(val, 800, 0.7);
+                    addPreviewImg.src = selectedAddImageBase64;
+                    addPreviewImg.style.display = 'block';
+                    if(addFileInput) addFileInput.value = ''; 
+                    if(addFileText) addFileText.innerText = "URL Loaded & Optimized!";
+                } catch(e) {
+                    addPreviewImg.src = val;
+                    addPreviewImg.style.display = 'block';
+                    selectedAddImageBase64 = val; // Direct fallback injection
+                    if(addFileText) addFileText.innerText = "Direct External URL loaded.";
+                }
             } else if (!selectedAddImageBase64) {
                 addPreviewImg.style.display = 'none';
             }
@@ -392,14 +407,21 @@ function setupImageUploadListeners() {
     }
     
     if (editUrlInput) {
-        editUrlInput.addEventListener('input', function() {
+        editUrlInput.addEventListener('input', async function() {
             let val = editUrlInput.value.trim();
             if (val !== '') {
                 val = convertDriveLink(val);
-                editPreviewImg.src = val;
-                if(editFileInput) editFileInput.value = ''; 
-                if(editFileText) editFileText.innerText = "No photo selected";
-                selectedEditImageBase64 = null;
+                if (editFileText) editFileText.innerText = "Processing Edit URL...";
+                try {
+                    selectedEditImageBase64 = await compressAndGetBase64(val, 800, 0.7);
+                    editPreviewImg.src = selectedEditImageBase64;
+                    if(editFileInput) editFileInput.value = ''; 
+                    if(editFileText) editFileText.innerText = "Edit URL Compressed!";
+                } catch(e) {
+                    editPreviewImg.src = val;
+                    selectedEditImageBase64 = val;
+                    if(editFileText) editFileText.innerText = "Direct Edit URL Loaded.";
+                }
             }
         });
     }
@@ -571,7 +593,6 @@ function openProductModal(name, price) {
     document.getElementById('productModal').style.display = 'flex';
 }
 
-// Close normal modal
 function closeModal() {
     document.getElementById('productModal').style.display = 'none';
 }
@@ -680,9 +701,7 @@ window.openEditModal = openEditModal;
 window.closeEditModal = closeEditModal;
 window.submitProductEdit = submitProductEdit;
 
-// =======================================================
-// 🔥 ADDED: INITIAL FULL-SCREEN PAGE LOADER AUTO-DISMISS
-// =======================================================
+// Initial Full Screen Loader Dismiss
 window.addEventListener('load', function() {
     const pageLoader = document.getElementById('pageLoader');
     if (pageLoader) {
