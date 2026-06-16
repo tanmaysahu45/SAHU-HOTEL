@@ -298,14 +298,41 @@ function selectCategory(categoryName) {
 }
 
 // ==========================================
-// 5. IMAGE SELECTION & LIVE PREVIEW LOGIC
+// 5. IMAGE SELECTION, AUTOMATIC COMPRESSION & LIVE PREVIEW LOGIC
 // ==========================================
-function fileToBase64(file) {
+
+// 🚀 Naya feature: Badi photo ko automatic compress karne ka function
+function compressAndGetBase64(file, maxWidth = 800, quality = 0.7) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                // Agar image size bohot badi hai toh dimensions thode chhote karo
+                if (width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width);
+                    width = maxWidth;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // quality = 0.7 ka matlab 70% compression, jisse size 1MB se bohot kam (kb me) ho jayega
+                const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+                resolve(compressedBase64);
+            };
+            img.onerror = (err) => reject(err);
+        };
+        reader.onerror = (err) => reject(err);
     });
 }
 
@@ -350,19 +377,16 @@ function setupImageUploadListeners() {
         addFileInput.addEventListener('change', async function(e) {
             const file = e.target.files[0];
             if (file) {
-                if (file.size > 1 * 1024 * 1024) { 
-                    alert("⚠️ Photo size 1MB se chhoti honi chahiye!");
-                    addFileInput.value = '';
-                    if(addFileText) addFileText.innerText = "No photo selected";
-                    return;
-                }
-                if(addFileText) addFileText.innerText = "Selected: " + file.name;
+                if(addFileText) addFileText.innerText = "Processing & Compressing...";
                 try {
-                    selectedAddImageBase64 = await fileToBase64(file);
+                    // Ab alert nahi aayega, direct photo chhoti ho jayegi!
+                    selectedAddImageBase64 = await compressAndGetBase64(file, 800, 0.7);
                     addPreviewImg.src = selectedAddImageBase64;
                     addPreviewImg.style.display = 'block';
                     if(addUrlInput) addUrlInput.value = ''; 
+                    if(addFileText) addFileText.innerText = "Selected & Compressed: " + file.name;
                 } catch (error) {
+                    if(addFileText) addFileText.innerText = "Error processing image";
                     selectedAddImageBase64 = null;
                 }
             } else {
@@ -388,18 +412,15 @@ function setupImageUploadListeners() {
         editFileInput.addEventListener('change', async function(e) {
             const file = e.target.files[0];
             if (file) {
-                if (file.size > 1 * 1024 * 1024) {
-                    alert("⚠️ Photo size 1MB se chhoti honi chahiye!");
-                    editFileInput.value = '';
-                    if(editFileText) editFileText.innerText = "No photo selected";
-                    return;
-                }
-                if(editFileText) editFileText.innerText = "Selected: " + file.name;
+                if(editFileText) editFileText.innerText = "Processing & Compressing...";
                 try {
-                    selectedEditImageBase64 = await fileToBase64(file);
+                    // Edit modal me bhi automatic compression
+                    selectedEditImageBase64 = await compressAndGetBase64(file, 800, 0.7);
                     editPreviewImg.src = selectedEditImageBase64; 
                     if(editUrlInput) editUrlInput.value = ''; 
+                    if(editFileText) editFileText.innerText = "Selected & Compressed: " + file.name;
                 } catch (error) {
+                    if(editFileText) editFileText.innerText = "Error processing image";
                     selectedEditImageBase64 = null;
                 }
             } else {
@@ -408,6 +429,7 @@ function setupImageUploadListeners() {
         });
     }
 }
+
 
 // ==========================================
 // 6. LIVE GLOBAL PRODUCT ADD SYSTEM
