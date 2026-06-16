@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Sahu Kirana & Restaurant</title>
     
+    <!-- PWA Manifest Link -->
     <link rel="manifest" href="/SAHU-HOTEL/manifest.json">
-    <meta name="theme-color" content="#007bff">
+    <meta name="theme-color" content="#000000">
     
     <link rel="icon" type="image/png" href="4c788179-bf9a-4776-8165-35933ee9efd5 (1) (1).png">  
     <style>
-        body { font-family: Arial, sans-serif; background: #f8f9fa; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .login-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 350px; text-align: center; }
+        body { font-family: Arial, sans-serif; background: #000000; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); width: 100%; max-width: 350px; text-align: center; }
         h2 { color: #333; margin-bottom: 20px; }
         input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
@@ -22,9 +23,9 @@
 </head>
 <body>
 
+    <!-- 🔥 PURE BLACK FULL-SCREEN INITIAL CHAKRI LOADER -->
     <div id="pageLoader" class="page-loader-overlay">
         <div class="page-loader-spinner"></div>
-        <div class="page-loader-text">Connecting Sahu Network...</div>
     </div>
 
     <div class="login-box">
@@ -40,6 +41,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
 
+    <!-- Service Worker Connection -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {

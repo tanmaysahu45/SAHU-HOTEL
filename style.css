@@ -1,5 +1,5 @@
 /* Google Fonts Import */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght=300;400;500;600;700&display=swap');
 
 * {
     margin: 0;
@@ -309,9 +309,7 @@ footer {
     font-size: 1.4rem;
 }
 
-/* ==========================================
-   LIVE APP LOADING SPINNER (SAHU HOTEL THEME)
-   ========================================== */
+/* Product Grid Spinner (Inside home.html dashboard) */
 .spinner-container {
     grid-column: 1 / -1;
     text-align: center;
@@ -320,7 +318,7 @@ footer {
 
 .loading-spinner {
     border: 4px solid rgba(0, 0, 0, 0.1);
-    border-top: 4px solid #28a745; /* Sahu Hotel Green Color */
+    border-top: 4px solid #28a745;
     border-radius: 50%;
     width: 45px;
     height: 45px;
@@ -352,79 +350,19 @@ footer {
     .contact form .input-box input { width: 100%; }
 }
 
-/* =======================================================
-   👉 SAHU KIRANA & RESTAURANT - ADMIN PANEL EXCLUSIVE CSS 
-   ======================================================= */
-.image-preview-container { 
-    margin: 10px 0; 
-    text-align: center; 
-}
-#imagePreview { 
-    max-width: 150px; 
-    max-height: 150px; 
-    border-radius: 4px; 
-    display: none; 
-    border: 1px solid #ccc; 
-}
-#editImagePreview { 
-    max-width: 100px; 
-    max-height: 100px; 
-    border-radius: 4px; 
-    margin-bottom: 10px; 
-}
-.admin-action-btns { 
-    display: flex; 
-    gap: 5px; 
-    margin-top: 5px; 
-}
-.edit-btn { 
-    background: #ffc107 !important; 
-    color: #333 !important; 
-    border: none; 
-    padding: 5px; 
-    cursor: pointer; 
-    width: 50%; 
-    border-radius: 4px; 
-    font-weight: bold; 
-    font-size: 14px;
-}
-.edit-modal-box { 
-    background: white; 
-    padding: 20px; 
-    border-radius: 8px; 
-    width: 90%; 
-    max-width: 400px; 
-    position: relative; 
-    color: #333 !important; 
-    text-align: left;
-}
-.edit-modal-box h3 {
-    color: #333;
-    margin-bottom: 15px;
-    font-size: 18px;
-    font-weight: bold;
-}
-.edit-modal-box label {
-    color: #555;
-    font-size: 14px;
-    font-weight: 500;
-    display: block;
-    margin-top: 5px;
-}
-.edit-modal-box input, .edit-modal-box select { 
-    width: 100% !important; 
-    padding: 8px !important; 
-    margin-bottom: 10px !important; 
-    border: 1px solid #ccc !important; 
-    border-radius: 4px !important; 
-    box-sizing: border-box !important; 
-    font-size: 14px !important;
-    color: #333 !important;
-    background: #fff !important;
-}
+/* Admin Panel Sub-Elements Styles */
+.image-preview-container { margin: 10px 0; text-align: center; }
+#imagePreview { max-width: 150px; max-height: 150px; border-radius: 4px; display: none; border: 1px solid #ccc; }
+#editImagePreview { max-width: 100px; max-height: 100px; border-radius: 4px; margin-bottom: 10px; }
+.admin-action-btns { display: flex; gap: 5px; margin-top: 5px; }
+.edit-btn { background: #ffc107 !important; color: #333 !important; border: none; padding: 5px; cursor: pointer; width: 50%; border-radius: 4px; font-weight: bold; font-size: 14px;}
+.edit-modal-box { background: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 400px; position: relative; color: #333 !important; text-align: left;}
+.edit-modal-box h3 { color: #333; margin-bottom: 15px; font-size: 18px; font-weight: bold;}
+.edit-modal-box label { color: #555; font-size: 14px; font-weight: 500; display: block; margin-top: 5px;}
+.edit-modal-box input, .edit-modal-box select { width: 100% !important; padding: 8px !important; margin-bottom: 10px !important; border: 1px solid #ccc !important; border-radius: 4px !important; box-sizing: border-box !important; font-size: 14px !important; color: #333 !important; background: #fff !important;}
 
 /* =======================================================
-   🔥 ADDED: INITIAL FULL-SCREEN PAGE LOADER SCREEN OVERLAY
+   🔥 PERFECT PURE BLACK INITIAL LOADER OVERLAY (NO TEXT)
    ======================================================= */
 .page-loader-overlay {
     position: fixed;
@@ -432,29 +370,20 @@ footer {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #1f242d; /* Matches the global dark theme */
-    z-index: 999999 !important; /* Covers form completely during handshake */
+    background-color: #000000 !important; /* Ekdum Full Black Screen */
+    z-index: 999999 !important; /* Covers everything completely */
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
 .page-loader-spinner {
-    border: 5px solid #323946;
-    border-top: 5px solid #0ef; /* Theme Cyan Spinner Line */
+    border: 5px solid #1a1a1a;
+    border-top: 5px solid #0ef; /* Neon Cyan Spinning Chakri */
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin-page-loader 1s linear infinite;
-    margin-bottom: 15px;
-}
-
-.page-loader-text {
-    color: #fff;
-    font-size: 16px;
-    font-weight: bold;
-    letter-spacing: 0.8px;
+    width: 55px;
+    height: 55px;
+    animation: spin-page-loader 0.8s linear infinite; /* Smooth fast animation */
 }
 
 @keyframes spin-page-loader {

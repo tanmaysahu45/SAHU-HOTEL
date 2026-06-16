@@ -12,7 +12,6 @@ const NO_IMAGE_URL = 'https://images.placeholders.dev/?width=150&height=150&text
 let selectedAddImageBase64 = null;
 let selectedEditImageBase64 = null;
 
-// 🛑 BULLETPROOF SESSION CONTROL: Yeh check page load hote hi instantly chalega
 function checkPageSession() {
     const isLoggedIn = localStorage.getItem('currentUser');
     const path = window.location.pathname;
@@ -262,7 +261,7 @@ function createNewCategory() {
     .then(() => {
         catInput.value = '';
         loadCategories(); 
-        alert(`Category "${newCat}" added successfully!`);
+        alert(`Category "${newCat}" added successfully! Form data is perfectly safe.`);
     });
 }
 
@@ -294,12 +293,12 @@ function selectCategory(categoryName) {
 }
 
 // ==========================================
-// 5. IMAGE COMPRESSION ENGINE (WORKS FOR FILE & URL ACCESSIBILITY)
+// 5. IMAGE COMPRESSION ENGINE (FILE & URL ACCESSIBILITY)
 // ==========================================
 function compressAndGetBase64(fileOrUrl, maxWidth = 800, quality = 0.7) {
     return new Promise((resolve, reject) => {
         const img = new Image();
-        img.crossOrigin = "anonymous"; // Prevents CORS taint bugs on clean images
+        img.crossOrigin = "anonymous"; 
 
         if (fileOrUrl instanceof File) {
             const reader = new FileReader();
@@ -330,7 +329,6 @@ function compressAndGetBase64(fileOrUrl, maxWidth = 800, quality = 0.7) {
                 const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
                 resolve(compressedBase64);
             } catch (e) {
-                // Fallback for secured strict URLs that deny canvas data conversion
                 resolve(img.src);
             }
         };
@@ -348,7 +346,6 @@ function convertDriveLink(url) {
     return url;
 }
 
-// 🔥 FIXES WEB LINK COMPRESSION DYNAMICALLY ON USER RAW INPUTS
 function setupImageUploadListeners() {
     const addFileInput = document.getElementById('prodImageFile');
     const addUrlInput = document.getElementById('prodImage');
@@ -367,7 +364,6 @@ function setupImageUploadListeners() {
                 val = convertDriveLink(val);
                 if (addFileText) addFileText.innerText = "Processing URL Image...";
                 try {
-                    // Compresses URL live on keystroke update
                     selectedAddImageBase64 = await compressAndGetBase64(val, 800, 0.7);
                     addPreviewImg.src = selectedAddImageBase64;
                     addPreviewImg.style.display = 'block';
@@ -376,7 +372,7 @@ function setupImageUploadListeners() {
                 } catch(e) {
                     addPreviewImg.src = val;
                     addPreviewImg.style.display = 'block';
-                    selectedAddImageBase64 = val; // Direct fallback injection
+                    selectedAddImageBase64 = val;
                     if(addFileText) addFileText.innerText = "Direct External URL loaded.";
                 }
             } else if (!selectedAddImageBase64) {
@@ -456,9 +452,18 @@ if (addProductForm) {
         event.preventDefault();
         const name = document.getElementById('prodName').value.trim();
         const rawPrice = document.getElementById('prodPrice').value;
+        
+        // 🔥 NEW: Reading Weight Number Value
+        const weightValue = document.getElementById('prodWeight').value.trim();
         const unit = document.getElementById('prodUnit').value; 
         const category = document.getElementById('prodCategory').value; 
         let urlImage = document.getElementById('prodImage').value.trim();
+        
+        // Dynamic combined Unit generation (e.g., "400 Gram" OR just "Gram")
+        const dynamicUnitString = weightValue ? `${weightValue} ${unit}` : unit;
+
+        const wholesalePriceInput = document.getElementById('prodWholesalePrice').value;
+        const finalWholesaleString = wholesalePriceInput ? '₹' + wholesalePriceInput + ' / ' + dynamicUnitString : '';
 
         urlImage = convertDriveLink(urlImage);
 
@@ -469,11 +474,12 @@ if (addProductForm) {
             finalImage = urlImage;
         }
 
-        const finalPriceString = '₹' + rawPrice + ' / ' + unit;
+        const finalPriceString = '₹' + rawPrice + ' / ' + dynamicUnitString;
 
         const productObject = {
             name: name,
             price: finalPriceString,
+            wholesalePrice: finalWholesaleString, 
             image: finalImage,
             category: category
         };
@@ -507,7 +513,7 @@ if (addProductForm) {
 }
 
 // ==========================================
-// 7. RENDER LIVE ITEMS FROM CLOUD (CLEAN & PROFESSIONAL)
+// 7. RENDER LIVE ITEMS FROM CLOUD (LATEST ON TOP & SECRET WHOLESALE RATE)
 // ==========================================
 function filterProducts() {
     const productsGrid = document.getElementById('productsGrid');
@@ -535,7 +541,7 @@ function filterProducts() {
 
         let productsList = Object.keys(data).map(key => {
             return { id: key, ...data[key] };
-        });
+        }).reverse();
 
         const filteredList = productsList.filter(product => {
             const matchesCategory = (currentCategory === 'All' || product.category === currentCategory);
@@ -555,14 +561,20 @@ function filterProducts() {
             
             const safeName = product.name.replace(/'/g, "\\'").replace(/"/g, '"');
             const safePrice = product.price.replace(/'/g, "\\'");
+            
+            const safeWholesale = product.wholesalePrice ? product.wholesalePrice.replace(/'/g, "\\'") : '';
 
             let actionHtml = '';
+            let wholesaleHtml = '';
             const userRole = localStorage.getItem('userRole') || 'customer';
             
             if (userRole === 'admin') {
+                if (product.wholesalePrice) {
+                    wholesaleHtml = `<div style="font-size: 13px; color: #ff9800; font-weight: bold; margin-bottom: 5px; background: #fff3e0; padding: 2px; border-radius: 4px;">📦 Wholesale: ${product.wholesalePrice}</div>`;
+                }
                 actionHtml = `
                     <div class="admin-action-btns">
-                        <button class="edit-btn" onclick="openEditModal('${product.id}', '${safeName}', '${safePrice}', '${product.category}', '${product.image}')">Edit</button>
+                        <button class="edit-btn" onclick="openEditModal('${product.id}', '${safeName}', '${safePrice}', '${safeWholesale}', '${product.category}', '${product.image}')">Edit</button>
                         <button class="delete-btn" style="background: #dc3545; color: white; border: none; padding: 5px; cursor: pointer; width: 50%; border-radius:4px; font-weight:bold; font-size:14px;" onclick="deleteProduct('${product.id}')">Delete</button>
                     </div>
                 `;
@@ -573,6 +585,7 @@ function filterProducts() {
                     <img src="${product.image}" alt="${product.name}" onerror="this.onerror=null; this.src='${NO_IMAGE_URL}';">
                     <h4>${product.name}</h4>
                     <div class="price">${product.price}</div>
+                    ${wholesaleHtml}
                 </div>
                 ${actionHtml}
             `;
@@ -597,16 +610,36 @@ function closeModal() {
     document.getElementById('productModal').style.display = 'none';
 }
 
-function openEditModal(id, name, priceWithSymbol, category, image) {
+function openEditModal(id, name, priceWithSymbol, wholesaleWithSymbol, category, image) {
     document.getElementById('editProdId').value = id;
     document.getElementById('editProdName').value = name;
     
     const parts = priceWithSymbol.split(' / ');
     const rawPrice = parts[0].replace('₹', '').trim();
-    const unit = parts.length > 1 ? parts[1].trim() : 'Piece';
+    
+    let weightNum = '';
+    let unitStr = 'Piece';
+
+    if (parts.length > 1) {
+        const unitParts = parts[1].trim().split(' ');
+        if (unitParts.length > 1) {
+            weightNum = unitParts[0].trim(); // Extract 400
+            unitStr = unitParts[1].trim();   // Extract Gram
+        } else {
+            unitStr = unitParts[0].trim();
+        }
+    }
     
     document.getElementById('editProdPrice').value = rawPrice;
-    document.getElementById('editProdUnit').value = unit;
+    document.getElementById('editProdWeight').value = weightNum; // Fills weight number back correctly
+    document.getElementById('editProdUnit').value = unitStr;
+    
+    if (wholesaleWithSymbol && wholesaleWithSymbol !== 'undefined') {
+        const wParts = wholesaleWithSymbol.split(' / ');
+        document.getElementById('editProdWholesalePrice').value = wParts[0].replace('₹', '').trim();
+    } else {
+        document.getElementById('editProdWholesalePrice').value = '';
+    }
     
     document.getElementById('editProdCategory').value = category;
     document.getElementById('editImagePreview').src = image;
@@ -628,10 +661,16 @@ function submitProductEdit() {
     const id = document.getElementById('editProdId').value;
     const name = document.getElementById('editProdName').value.trim();
     const rawPrice = document.getElementById('editProdPrice').value;
+    const weightValue = document.getElementById('editProdWeight').value.trim();
     const unit = document.getElementById('editProdUnit').value;
     const category = document.getElementById('editProdCategory').value;
     let editUrlImage = document.getElementById('editProdImage').value.trim();
     const currentImageUrl = document.getElementById('editImagePreview').src; 
+
+    const dynamicUnitString = weightValue ? `${weightValue} ${unit}` : unit;
+
+    const wholesaleInput = document.getElementById('editProdWholesalePrice').value;
+    const finalWholesaleString = wholesaleInput ? '₹' + wholesaleInput + ' / ' + dynamicUnitString : '';
 
     if (!name || !rawPrice) {
         alert("Please fill name and price.");
@@ -647,11 +686,12 @@ function submitProductEdit() {
         finalImage = editUrlImage;
     }
 
-    const finalPriceString = '₹' + rawPrice + ' / ' + unit;
+    const finalPriceString = '₹' + rawPrice + ' / ' + dynamicUnitString;
 
     const updatedProduct = {
         name: name,
         price: finalPriceString,
+        wholesalePrice: finalWholesaleString,
         image: finalImage,
         category: category
     };
