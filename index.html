@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Sahu Kirana & Restaurant</title>
+    
+    <!-- PWA Manifest Link -->
+    <link rel="manifest" href="/SAHU-HOTEL/manifest.json">
+    <meta name="theme-color" content="#007bff">
+    
     <link rel="icon" type="image/png" href="4c788179-bf9a-4776-8165-35933ee9efd5.jpg"> 
     <style>
         body { font-family: Arial, sans-serif; background: #f8f9fa; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
@@ -29,5 +34,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
+
+    <!-- Service Worker Connection -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/SAHU-HOTEL/sw.js')
+            .then(reg => console.log('PWA Service Worker Registered!'))
+            .catch(err => console.log('PWA Registration Failed:', err));
+        });
+      }
+    </script>
 </body>
 </html>

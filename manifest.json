@@ -1,0 +1,16 @@
+{
+  "short_name": "SahuKirana",
+  "name": "Sahu Kirana & Restaurant",
+  "icons": [
+    {
+      "src": "4c788179-bf9a-4776-8165-35933ee9efd5.jpg",
+      "type": "image/jpeg",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/SAHU-HOTEL/",
+  "background_color": "#f8f9fa",
+  "display": "standalone",
+  "theme_color": "#007bff",
+  "orientation": "portrait"
+}

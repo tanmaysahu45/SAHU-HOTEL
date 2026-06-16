@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sahu Kirana & Restaurant</title>
+    
+    <!-- PWA Configuration Links -->
+    <link rel="manifest" href="/SAHU-HOTEL/manifest.json">
+    <meta name="theme-color" content="#007bff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <link rel="icon" type="image/png" href="4c788179-bf9a-4776-8165-35933ee9efd5.jpg"> 
     <link rel="stylesheet" href="Home.css">
 </head>
@@ -93,7 +100,6 @@
             </div>
         </div>
 
-       
         <div class="products-grid" id="productsGrid">
         </div>
     </main>
@@ -180,5 +186,16 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="script.js"></script>
+
+    <!-- PWA Service Worker Activation -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/SAHU-HOTEL/sw.js')
+            .then(reg => console.log('PWA Service Worker connected for Home!'))
+            .catch(err => console.log('PWA Service Worker error:', err));
+        });
+      }
+    </script>
 </body>
 </html>
