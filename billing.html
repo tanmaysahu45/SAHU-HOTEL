@@ -67,7 +67,9 @@
         th { padding: 8px; color: #0ef; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 11px; position: sticky; top: 0; background: #1f242d; z-index: 10; }
         td { padding: 8px; font-size: 11px; color: #ddd; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .qty-controls { display: flex; align-items: center; gap: 4px; }
-        .qty-btn { background: #323946; color: #fff; border: none; width: 20px; height: 20px; border-radius: 3px; cursor: pointer; font-weight: bold; font-size: 12px;}
+        .qty-btn { background: #323946; color: #fff; border: none; width: 22px; height: 22px; border-radius: 3px; cursor: pointer; font-weight: bold; font-size: 12px; display: flex; justify-content: center; align-items: center;}
+        .qty-btn:hover { background: #0ef; color: #1f242d; }
+        .calc-btn { background: #ffc107 !important; color: #1f242d !important; font-size: 10px !important; margin-left: 5px;}
         .del-item { color: #ff4d4d; cursor: pointer; font-weight: bold; font-size: 14px; text-align: center; }
 
         .total-box { background: #1f242d; padding: 10px 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #0ef; margin-bottom: 10px; }
@@ -77,16 +79,14 @@
 
         .action-btns { display: flex; gap: 6px; flex-wrap: wrap;}
         .action-btns button { flex: 1; min-width: 100px; padding: 10px; border: none; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 4px;}
-        
         .btn-print { background: #ffc107; color: #1f242d; }
         .btn-whatsapp { background: #25D366; color: #fff; }
         .btn-clear { background: rgba(255, 77, 77, 0.1); color: #ff4d4d; border: 1px solid rgba(255, 77, 77, 0.3); }
 
-        /* 🔥 HISTORY MODAL STYLING (COMPACT) */
+        /* 🔥 MODALS STYLING (History & Calculator) */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 99999; justify-content: center; align-items: center; padding: 10px; backdrop-filter: blur(5px); }
         .modal-box { background: #2c3341; padding: 15px; border-radius: 12px; width: 100%; max-width: 600px; position: relative; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); border: 1px solid rgba(0,238,255,0.2); }
         .close-modal { position: absolute; top: 10px; right: 15px; font-size: 24px; font-weight: bold; color: #aaa; cursor: pointer; }
-        
         .history-card { background: #1f242d; border: 1px solid rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .history-info h4 { color: #0ef; margin-bottom: 2px; font-size: 13px; }
         .history-info p { font-size: 11px; color: #aaa; margin-bottom: 0;}
@@ -96,15 +96,9 @@
             .billing-container { flex-direction: column; padding: 5px; gap: 8px;}
             .scanner-section, .cart-section { min-width: 100%; padding: 10px;}
             .customer-info-box { flex-direction: column; gap: 6px; padding: 6px;}
-            .input-group label { font-size: 10px; }
             table th, table td { padding: 6px; font-size: 10px;}
             .total-box { padding: 8px 10px;}
-            .total-box h3 { font-size: 13px; }
-            .total-box .amount { font-size: 16px; }
-            .action-btns button { padding: 8px; font-size: 10px;}
             .history-card { flex-direction: column; align-items: flex-start; gap: 8px; }
-            .history-actions { width: 100%; }
-            .history-actions button { width: 100%; }
         }
     </style>
 </head>
@@ -183,6 +177,36 @@
         </div>
     </div>
 
+    <div id="calcModal" class="modal-overlay" style="z-index: 999999;">
+        <div class="modal-box" style="max-width: 320px;">
+            <span class="close-modal" onclick="closeCalculator()">×</span>
+            <h3 style="color:#ffc107; font-size: 15px; margin-bottom:5px;">⚖️ Smart Auto-Calculator</h3>
+            <p id="calcItemName" style="color:#0ef; font-size:13px; font-weight:bold; margin-bottom: 2px;"></p>
+            <p id="calcBaseRate" style="color:#aaa; font-size:11px; margin-bottom:15px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px;"></p>
+            
+            <div style="background:#1f242d; padding:15px; border-radius:8px; border:1px dashed #0ef;">
+                <label style="font-size:11px; color:#0ef; font-weight:bold;">Enter Weight / Quantity:</label>
+                <div style="display:flex; gap:8px; margin-bottom: 10px; margin-top: 5px;">
+                    <input type="number" id="calcQtyInput" oninput="calcFromQty()" style="flex:1; padding:8px; border-radius:4px; border:1px solid rgba(0,238,255,0.3); background:#2c3341; color:#fff; font-weight:bold;" placeholder="e.g. 200">
+                    <select id="calcUnitSelect" onchange="calcFromQty()" style="padding:8px; border-radius:4px; border:1px solid rgba(0,238,255,0.3); background:#2c3341; color:#fff; font-weight:bold;">
+                        <option value="Gram">Gram</option>
+                        <option value="Kg">Kg</option>
+                        <option value="ml">ml</option>
+                        <option value="Litre">Litre</option>
+                        <option value="Piece">Piece</option>
+                    </select>
+                </div>
+
+                <div style="text-align:center; color:#ff4d4d; font-size:10px; font-weight:bold; margin:10px 0;">— OR DIRECT MONEY ENTRY —</div>
+
+                <label style="font-size:11px; color:#ffc107; font-weight:bold;">Enter Customer Price (₹):</label>
+                <input type="number" id="calcPriceInput" oninput="calcFromPrice()" style="width:100%; padding:8px; border-radius:4px; border:1px solid rgba(255,193,7,0.3); background:#2c3341; color:#fff; font-weight:bold; margin-top: 5px;" placeholder="e.g. 50">
+            </div>
+
+            <button onclick="saveCalculation()" style="width:100%; background:#0ef; color:#1f242d; border:none; padding:10px; border-radius:6px; font-weight:bold; margin-top:15px; cursor:pointer;">✅ Update Bill Cart</button>
+        </div>
+    </div>
+
     <div id="historyModal" class="modal-overlay">
         <div class="modal-box">
             <span class="close-modal" onclick="closeHistoryModal()">×</span>
@@ -197,7 +221,7 @@
         let productsDatabase = [];
         let html5QrcodeScanner = null;
         let isScannerRunning = false;
-        let saveTimeout = null; // For auto-save debounce
+        let saveTimeout = null; 
 
         if (!localStorage.getItem('currentUser')) window.location.replace("index.html");
 
@@ -205,13 +229,10 @@
             const context = new (window.AudioContext || window.webkitAudioContext)();
             const oscillator = context.createOscillator();
             const gainNode = context.createGain();
-            oscillator.type = 'sine';
-            oscillator.frequency.value = 1000;
+            oscillator.type = 'sine'; oscillator.frequency.value = 1000;
             gainNode.gain.setValueAtTime(0.1, context.currentTime);
-            oscillator.connect(gainNode);
-            gainNode.connect(context.destination);
-            oscillator.start();
-            oscillator.stop(context.currentTime + 0.1);
+            oscillator.connect(gainNode); gainNode.connect(context.destination);
+            oscillator.start(); oscillator.stop(context.currentTime + 0.1);
         }
 
         window.addEventListener('load', async () => {
@@ -241,9 +262,7 @@
             else { renderTabs(); loadActiveBillToUI(); }
         }
 
-        function saveToLocalMemory() {
-            localStorage.setItem('sahuSavedBills', JSON.stringify(billsList));
-        }
+        function saveToLocalMemory() { localStorage.setItem('sahuSavedBills', JSON.stringify(billsList)); }
 
         function createNewBill(prefilledData = null) {
             const newId = Date.now().toString();
@@ -256,16 +275,10 @@
                 cloudKey: prefilledData ? prefilledData.cloudKey : null
             });
             activeBillId = newId;
-            saveToLocalMemory();
-            renderTabs();
-            loadActiveBillToUI();
+            saveToLocalMemory(); renderTabs(); loadActiveBillToUI();
         }
 
-        function switchBill(id) {
-            activeBillId = id;
-            loadActiveBillToUI();
-            renderTabs();
-        }
+        function switchBill(id) { activeBillId = id; loadActiveBillToUI(); renderTabs(); }
 
         function renderTabs() {
             const container = document.getElementById('tabsContainer');
@@ -291,9 +304,7 @@
                 if (billsList.length === 0) createNewBill();
                 else {
                     if (activeBillId === id) activeBillId = billsList[0].id;
-                    saveToLocalMemory();
-                    renderTabs();
-                    loadActiveBillToUI();
+                    saveToLocalMemory(); renderTabs(); loadActiveBillToUI();
                 }
             }
         }
@@ -305,9 +316,8 @@
             if(!activeBill) return;
             activeBill.custName = document.getElementById('custName').value;
             activeBill.custPhone = document.getElementById('custPhone').value;
-            saveToLocalMemory();
-            renderTabs(); 
-            triggerAutoSaveToCloud(); // 🔥 AUTO-SAVE TRIGGER
+            activeBill.isSavedToCloud = false; 
+            saveToLocalMemory(); renderTabs(); triggerAutoSaveToCloud();
         }
 
         function loadActiveBillToUI() {
@@ -324,85 +334,64 @@
             return parseFloat(priceStr.split('/')[0].replace(/[^0-9.]/g, '')) || 0;
         }
 
-        // --- 🔥 3. AUTO-SAVE ENGINE (REAL-TIME) ---
         function triggerAutoSaveToCloud() {
             clearTimeout(saveTimeout);
             const activeBill = getActiveBill();
-            if(!activeBill) return;
-            
-            // Save only if there's at least one item OR customer details are filled
-            if(activeBill.items.length === 0 && !activeBill.custName && !activeBill.custPhone) return;
-
+            if(!activeBill || (activeBill.items.length === 0 && !activeBill.custName && !activeBill.custPhone)) return;
             document.getElementById('syncStatus').innerText = "⏳ Saving...";
-
             saveTimeout = setTimeout(() => {
                 const payload = {
-                    date: new Date().toLocaleString(),
-                    timestamp: Date.now(),
-                    custName: activeBill.custName || 'Guest',
-                    custPhone: activeBill.custPhone || '',
-                    items: activeBill.items || [],
-                    total: getBillTotalAmt()
+                    date: new Date().toLocaleString(), timestamp: Date.now(),
+                    custName: activeBill.custName || 'Guest', custPhone: activeBill.custPhone || '',
+                    items: activeBill.items || [], total: getBillTotalAmt()
                 };
-
                 if (activeBill.cloudKey) {
-                    fetch(`${DB_URL}/billing_history/${activeBill.cloudKey}.json`, {
-                        method: 'PATCH', body: JSON.stringify(payload)
-                    }).then(() => { document.getElementById('syncStatus').innerText = "☁️ Auto-Saved"; });
+                    fetch(`${DB_URL}/billing_history/${activeBill.cloudKey}.json`, { method: 'PATCH', body: JSON.stringify(payload) })
+                    .then(() => { document.getElementById('syncStatus').innerText = "☁️ Auto-Saved"; });
                 } else {
-                    fetch(`${DB_URL}/billing_history.json`, {
-                        method: 'POST', body: JSON.stringify(payload)
-                    }).then(res => res.json()).then(data => {
-                        activeBill.cloudKey = data.name;
-                        saveToLocalMemory();
+                    fetch(`${DB_URL}/billing_history.json`, { method: 'POST', body: JSON.stringify(payload) })
+                    .then(res => res.json()).then(data => {
+                        activeBill.cloudKey = data.name; saveToLocalMemory();
                         document.getElementById('syncStatus').innerText = "☁️ Auto-Saved";
                     });
                 }
-            }, 1000); // 1 second delay to avoid spamming database on fast typing
+            }, 1000); 
         }
 
-        // --- 4. ADD TO CART & RENDER LOGIC ---
+        // --- 3. ADD TO CART LOGIC ---
         function injectProductToCart(foundProduct) {
             playBeep(); 
             const activeBill = getActiveBill();
-            const existingCartItem = activeBill.items.find(item => item.id === foundProduct.id);
-            if (existingCartItem) existingCartItem.qty += 1;
-            else {
+            const existingCartItem = activeBill.items.find(item => item.id === foundProduct.id && !item.isCustom);
+            
+            if (existingCartItem) {
+                existingCartItem.qty += 1;
+                existingCartItem.rowTotal = existingCartItem.qty * existingCartItem.unitPrice;
+            } else {
+                const cleanPrice = extractCleanPrice(foundProduct.price);
                 activeBill.items.push({
-                    id: foundProduct.id, name: foundProduct.name, unitPrice: extractCleanPrice(foundProduct.price), qty: 1
+                    id: foundProduct.id, name: foundProduct.name, basePriceStr: foundProduct.price,
+                    unitPrice: cleanPrice, qty: 1, displayQtyStr: "1", isCustom: false, rowTotal: cleanPrice
                 });
             }
-            saveToLocalMemory();
-            renderCartTable();
-            triggerAutoSaveToCloud(); // 🔥 AUTO-SAVE TRIGGER
+            activeBill.isSavedToCloud = false; saveToLocalMemory(); renderCartTable(); triggerAutoSaveToCloud(); 
         }
 
         function addItemToCartByBarcode(barcodeString) {
             if (!barcodeString) return;
             const foundProduct = productsDatabase.find(p => p.barcode && p.barcode.toLowerCase() === barcodeString.trim().toLowerCase());
             if (foundProduct) injectProductToCart(foundProduct);
-            else alert(`❌ No product: ${barcodeString}`);
+            else alert(`❌ No product registered with barcode: ${barcodeString}`);
         }
 
-        function processManualBarcode() {
-            const inputField = document.getElementById('manualBarcode');
-            addItemToCartByBarcode(inputField.value);
-            inputField.value = ''; inputField.focus();
-        }
-
+        function processManualBarcode() { const inputField = document.getElementById('manualBarcode'); addItemToCartByBarcode(inputField.value); inputField.value = ''; inputField.focus(); }
         function handleManualEntry(event) { if (event.key === 'Enter') processManualBarcode(); }
 
         function showNameSuggestions(val) {
-            const box = document.getElementById('nameSuggestions');
-            box.innerHTML = ''; val = val.trim().toLowerCase();
+            const box = document.getElementById('nameSuggestions'); box.innerHTML = ''; val = val.trim().toLowerCase();
             if(!val) { box.style.display = 'none'; return; }
-
             const matches = productsDatabase.filter(p => p.name.toLowerCase().includes(val));
-            if(matches.length === 0) {
-                box.innerHTML = '<div style="padding:10px; color:#aaa; font-size:11px; text-align:center;">No match...</div>';
-                box.style.display = 'block'; return;
-            }
-
+            if(matches.length === 0) { box.innerHTML = '<div style="padding:10px; color:#aaa; font-size:11px; text-align:center;">No match...</div>'; box.style.display = 'block'; return; }
             matches.forEach(p => {
                 const div = document.createElement('div'); div.className = 'suggestion-item';
                 let shortPrice = p.price.toLowerCase().includes("on call") ? "On Call" : '₹' + extractCleanPrice(p.price);
@@ -412,9 +401,92 @@
             });
             box.style.display = 'block';
         }
-
         window.addEventListener('click', (e) => { if(!document.getElementById('searchItemName').contains(e.target)) document.getElementById('nameSuggestions').style.display = 'none'; });
 
+        // --- 🔥 4. SMART AUTO-CALCULATOR ENGINE ---
+        let calcActiveIndex = -1;
+        let calcNormRate = 0; 
+        let calcNormUnit = 'piece'; 
+
+        function openCalculator(index) {
+            const item = getActiveBill().items[index];
+            calcActiveIndex = index;
+            
+            document.getElementById('calcItemName').innerText = item.name;
+            document.getElementById('calcBaseRate').innerText = `Base Rate: ${item.basePriceStr}`;
+            
+            // Smart Parsing
+            let parts = (item.basePriceStr || "").split('/');
+            let amt = parseFloat(parts[0].replace(/[^0-9.]/g, '')) || 0;
+            let unitStr = parts.length > 1 ? parts[1].trim().toLowerCase() : 'piece';
+            
+            let baseQty = parseFloat(unitStr.match(/[0-9.]+/) || 1);
+            let baseUnitType = 'piece';
+            if (unitStr.includes('kg')) baseUnitType = 'kg';
+            else if (unitStr.includes('gram') || unitStr.includes('g')) baseUnitType = 'gram';
+            else if (unitStr.includes('litre') || unitStr.includes('l')) baseUnitType = 'litre';
+            else if (unitStr.includes('ml')) baseUnitType = 'ml';
+
+            let perUnitRate = amt / baseQty;
+            calcNormRate = perUnitRate;
+            calcNormUnit = baseUnitType;
+
+            if (baseUnitType === 'kg') { calcNormRate = perUnitRate / 1000; calcNormUnit = 'gram'; }
+            else if (baseUnitType === 'litre') { calcNormRate = perUnitRate / 1000; calcNormUnit = 'ml'; }
+
+            let select = document.getElementById('calcUnitSelect');
+            if(calcNormUnit === 'gram') select.value = 'Gram';
+            else if(calcNormUnit === 'ml') select.value = 'ml';
+            else select.value = 'Piece';
+
+            document.getElementById('calcQtyInput').value = '';
+            document.getElementById('calcPriceInput').value = '';
+
+            document.getElementById('calcModal').style.display = 'flex';
+        }
+
+        function closeCalculator() { document.getElementById('calcModal').style.display = 'none'; }
+
+        function getMultiplier(selectedUnit) {
+            if(selectedUnit === 'Kg' && calcNormUnit === 'gram') return 1000;
+            if(selectedUnit === 'Litre' && calcNormUnit === 'ml') return 1000;
+            return 1; 
+        }
+
+        function calcFromQty() {
+            let q = parseFloat(document.getElementById('calcQtyInput').value) || 0;
+            let selectedUnit = document.getElementById('calcUnitSelect').value;
+            let price = (q * getMultiplier(selectedUnit)) * calcNormRate;
+            document.getElementById('calcPriceInput').value = parseFloat(price.toFixed(2));
+        }
+
+        function calcFromPrice() {
+            let p = parseFloat(document.getElementById('calcPriceInput').value) || 0;
+            let selectedUnit = document.getElementById('calcUnitSelect').value;
+            if(calcNormRate <= 0) return;
+            let finalQty = (p / calcNormRate) / getMultiplier(selectedUnit);
+            document.getElementById('calcQtyInput').value = parseFloat(finalQty.toFixed(3));
+        }
+
+        function saveCalculation() {
+            let p = parseFloat(document.getElementById('calcPriceInput').value) || 0;
+            let q = parseFloat(document.getElementById('calcQtyInput').value) || 0;
+            let u = document.getElementById('calcUnitSelect').value;
+            
+            if(p <= 0 || q <= 0) { alert("Please enter valid price or quantity!"); return; }
+
+            const activeBill = getActiveBill();
+            const item = activeBill.items[calcActiveIndex];
+            
+            item.isCustom = true;
+            item.displayQtyStr = `${q} ${u}`;
+            item.rowTotal = p;
+            item.qty = q; 
+
+            activeBill.isSavedToCloud = false; saveToLocalMemory(); renderCartTable(); triggerAutoSaveToCloud(); closeCalculator();
+        }
+
+        // --- 5. CART RENDERING ---
         function renderCartTable() {
             const activeBill = getActiveBill();
             const tbody = document.getElementById('cartBody');
@@ -428,8 +500,7 @@
             }
 
             activeBill.items.forEach((item, index) => {
-                const itemTotal = item.qty * item.unitPrice;
-                grandTotal += itemTotal;
+                grandTotal += item.rowTotal;
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${item.name}</td>
@@ -437,66 +508,61 @@
                     <td>
                         <div class="qty-controls">
                             <button class="qty-btn" onclick="updateQuantity(${index}, -1)">-</button>
-                            <span style="width: 15px; text-align:center;">${item.qty}</span>
+                            <span style="min-width: 15px; text-align:center; font-size:10px;">${item.isCustom ? item.displayQtyStr : item.qty}</span>
                             <button class="qty-btn" onclick="updateQuantity(${index}, 1)">+</button>
+                            <button class="qty-btn calc-btn" onclick="openCalculator(${index})" title="Custom Weight Calculator">⚖️</button>
                         </div>
                     </td>
-                    <td style="font-weight:bold; color:#0ef;">₹${itemTotal}</td>
+                    <td style="font-weight:bold; color:#0ef;">₹${item.rowTotal.toFixed(2)}</td>
                     <td class="del-item" onclick="removeCartItem(${index})">×</td>
                 `;
                 tbody.appendChild(tr);
             });
-            document.getElementById('grandTotalAmt').innerText = '₹' + grandTotal;
+            document.getElementById('grandTotalAmt').innerText = '₹' + grandTotal.toFixed(2);
         }
 
         function updateQuantity(index, change) {
             const activeBill = getActiveBill();
-            activeBill.items[index].qty += change;
-            if (activeBill.items[index].qty <= 0) activeBill.items.splice(index, 1);
-            saveToLocalMemory();
-            renderCartTable();
-            triggerAutoSaveToCloud(); // 🔥 AUTO-SAVE TRIGGER
+            let item = activeBill.items[index];
+            if (item.isCustom) {
+                item.isCustom = false; item.qty = 1; item.rowTotal = item.unitPrice;
+            } else {
+                item.qty += change; item.rowTotal = item.qty * item.unitPrice;
+            }
+            if (item.qty <= 0) activeBill.items.splice(index, 1);
+            activeBill.isSavedToCloud = false; saveToLocalMemory(); renderCartTable(); triggerAutoSaveToCloud();
         }
 
         function removeCartItem(index) {
             getActiveBill().items.splice(index, 1);
-            saveToLocalMemory();
-            renderCartTable();
-            triggerAutoSaveToCloud(); // 🔥 AUTO-SAVE TRIGGER
+            getActiveBill().isSavedToCloud = false; saveToLocalMemory(); renderCartTable(); triggerAutoSaveToCloud();
         }
 
         function clearCurrentBill() {
             const activeBill = getActiveBill();
-            if (activeBill.items.length > 0 && confirm("Clear all items in this bill?")) {
-                
-                // If it was saved to cloud, delete it from cloud too to keep history clean
-                if(activeBill.cloudKey) {
-                    fetch(`${DB_URL}/billing_history/${activeBill.cloudKey}.json`, { method: 'DELETE' });
-                }
-
-                activeBill.items = [];
-                activeBill.custName = '';
-                activeBill.custPhone = '';
-                activeBill.cloudKey = null;
-                saveToLocalMemory();
-                loadActiveBillToUI();
-                document.getElementById('syncStatus').innerText = "";
+            if (activeBill.items.length > 0 && confirm("Delete all items in this bill?")) {
+                if(activeBill.cloudKey) fetch(`${DB_URL}/billing_history/${activeBill.cloudKey}.json`, { method: 'DELETE' });
+                activeBill.items = []; activeBill.custName = ''; activeBill.custPhone = ''; activeBill.cloudKey = null;
+                saveToLocalMemory(); loadActiveBillToUI(); document.getElementById('syncStatus').innerText = "";
             }
         }
 
-        function getBillTotalAmt() { return getActiveBill().items.reduce((sum, item) => sum + (item.qty * item.unitPrice), 0); }
+        function getBillTotalAmt() { return getActiveBill().items.reduce((sum, item) => sum + item.rowTotal, 0); }
 
-        // --- 5. ACTION BUTTONS (WhatsApp & PDF) ---
+        // --- 6. ACTION BUTTONS (WhatsApp & PDF) ---
         function sendWhatsAppBill() {
             const activeBill = getActiveBill();
             if (activeBill.items.length === 0) { alert("Bill is empty!"); return; }
-            if (!activeBill.custPhone) { alert("Enter Customer's WhatsApp Number!"); document.getElementById('custPhone').focus(); return; }
+            if (!activeBill.custPhone) { alert("Enter WhatsApp Number above!"); document.getElementById('custPhone').focus(); return; }
 
             let textMsg = `*🧾 SAHU HOTEL - INVOICE*\n`;
             if(activeBill.custName) textMsg += `Customer: ${activeBill.custName}\n`;
             textMsg += `--------------------------\n`;
-            activeBill.items.forEach((item, index) => { textMsg += `${index + 1}. ${item.name}\n   ${item.qty} x ₹${item.unitPrice} = *₹${item.qty * item.unitPrice}*\n`; });
-            textMsg += `--------------------------\n*Grand Total: ₹${getBillTotalAmt()}*\n\n_Thank you for visiting!_\n📍 Jhurre Colony, Chhindwara`;
+            activeBill.items.forEach((item, index) => { 
+                let qtyDisplay = item.isCustom ? item.displayQtyStr : item.qty;
+                textMsg += `${index + 1}. ${item.name}\n   ${qtyDisplay} x ₹${item.unitPrice} = *₹${item.rowTotal.toFixed(2)}*\n`; 
+            });
+            textMsg += `--------------------------\n*Grand Total: ₹${getBillTotalAmt().toFixed(2)}*\n\n_Thank you for visiting!_\n📍 Jhurre Colony, Chhindwara`;
 
             let phoneStr = activeBill.custPhone.toString().trim();
             if(phoneStr.length === 10) phoneStr = "91" + phoneStr;
@@ -524,7 +590,7 @@
             if(activeBill.custPhone) doc.text(`Phone: ${activeBill.custPhone}`, 130, 59);
 
             const tableBody = activeBill.items.map((item, index) => [
-                index + 1, item.name, `Rs. ${item.unitPrice}`, item.qty, `Rs. ${item.qty * item.unitPrice}`
+                index + 1, item.name, `Rs. ${item.unitPrice}`, (item.isCustom ? item.displayQtyStr : item.qty), `Rs. ${item.rowTotal.toFixed(2)}`
             ]);
 
             doc.autoTable({
@@ -534,22 +600,20 @@
 
             const finalY = doc.lastAutoTable.finalY;
             doc.setFont("helvetica", "bold"); doc.setFontSize(14);
-            doc.text(`Grand Total: Rs. ${getBillTotalAmt()}`, 145, finalY + 12);
+            doc.text(`Grand Total: Rs. ${getBillTotalAmt().toFixed(2)}`, 145, finalY + 12);
             doc.setFont("helvetica", "italic"); doc.setFontSize(10);
             doc.text("Thank you for shopping with us! Visit Again.", 105, finalY + 25, null, null, "center");
 
             doc.save(activeBill.custName ? `Bill_${activeBill.custName}.pdf` : `Bill_${Date.now()}.pdf`);
         }
 
-        // --- 6. HISTORY MODAL CONTROLS ---
+        // --- 7. HISTORY MODAL CONTROLS ---
         function openHistoryModal() {
             document.getElementById('historyModal').style.display = 'flex';
             const listContainer = document.getElementById('historyListContainer');
             listContainer.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">Fetching cloud history...</div>';
 
-            fetch(`${DB_URL}/billing_history.json`)
-            .then(res => res.json())
-            .then(data => {
+            fetch(`${DB_URL}/billing_history.json`).then(res => res.json()).then(data => {
                 listContainer.innerHTML = '';
                 if(!data) { listContainer.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">No billing history found.</div>'; return; }
                 const historyArray = Object.keys(data).map(key => ({ cloudKey: key, ...data[key] })).sort((a,b) => b.timestamp - a.timestamp);
@@ -559,7 +623,7 @@
                         <div class="history-info">
                             <h4>${bill.custName} <span style="font-size:11px; color:#aaa; font-weight:normal;">(${bill.items ? bill.items.length : 0} items)</span></h4>
                             <p>Date: ${bill.date}</p>
-                            <p style="color:#0ef; font-weight:bold; margin-top:2px;">Total: ₹${bill.total}</p>
+                            <p style="color:#0ef; font-weight:bold; margin-top:2px;">Total: ₹${parseFloat(bill.total).toFixed(2)}</p>
                         </div>
                         <div class="history-actions"><button onclick="reopenBillForEdit('${encodeURIComponent(JSON.stringify(bill))}')">✏️ Edit</button></div>
                     `;
@@ -567,11 +631,10 @@
                 });
             }).catch(() => { listContainer.innerHTML = '<div style="text-align: center; color: #ff4d4d; padding: 20px;">Error loading history.</div>'; });
         }
-
         function closeHistoryModal() { document.getElementById('historyModal').style.display = 'none'; }
         function reopenBillForEdit(encodedStr) { createNewBill(JSON.parse(decodeURIComponent(encodedStr))); closeHistoryModal(); }
 
-        // --- 7. CAMERA SCANNER ENGINE ---
+        // --- 8. CAMERA SCANNER ENGINE ---
         function toggleScanner() {
             const btn = document.getElementById('camToggleBtn');
             const readerDiv = document.getElementById('reader');
@@ -581,7 +644,7 @@
                         html5QrcodeScanner.clear(); isScannerRunning = false;
                         btn.innerText = "Start Camera"; btn.style.background = "#0ef"; btn.style.color = "#1f242d";
                         readerDiv.style.border = "2px dashed #0ef";
-                    }).catch(err => console.log(err));
+                    });
                 }
             } else {
                 html5QrcodeScanner = new Html5Qrcode("reader");
@@ -592,7 +655,7 @@
                 ).then(() => {
                     isScannerRunning = true; btn.innerText = "Stop Camera"; btn.style.background = "#ff4d4d"; btn.style.color = "#fff";
                     readerDiv.style.border = "2px solid #28a745"; 
-                }).catch(() => { alert("Camera access denied."); });
+                });
             }
         }
     </script>
