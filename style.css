@@ -262,12 +262,17 @@ section {
     font-weight: 500;
 }
 
-/* Contact Section */
+/* Contact / Entry Form Section (DESIGN UPDATED HERE) */
 .contact form {
     max-width: 70rem;
     margin: 1rem auto;
     text-align: center;
     margin-bottom: 3rem;
+    background: var(--second-bg-color);
+    padding: 3.5rem;
+    border-radius: 1.6rem;
+    border: 0.2rem solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0.8rem 3.2rem rgba(0, 0, 0, 0.25);
 }
 
 .contact form .input-box {
@@ -282,9 +287,18 @@ section {
     padding: 1.5rem;
     font-size: 1.6rem;
     color: var(--text-color);
-    background: var(--second-bg-color);
+    background: var(--bg-color);
+    border: 0.2rem solid var(--second-bg-color);
     border-radius: .8rem;
     margin: .7rem 0;
+    outline: none;
+    transition: 0.3s ease;
+}
+
+.contact form .input-box input:focus, 
+.contact form textarea:focus {
+    border-color: var(--main-color);
+    box-shadow: 0 0 1rem rgba(0, 238, 255, 0.2);
 }
 
 .contact form .input-box input {
@@ -350,16 +364,43 @@ footer {
     .contact form .input-box input { width: 100%; }
 }
 
-/* Admin Panel Sub-Elements Styles */
+/* Admin Panel Sub-Elements Styles (MODAL & LOGIN ELEMENTS STYLED PERFECTLY HERE) */
 .image-preview-container { margin: 10px 0; text-align: center; }
 #imagePreview { max-width: 150px; max-height: 150px; border-radius: 4px; display: none; border: 1px solid #ccc; }
 #editImagePreview { max-width: 100px; max-height: 100px; border-radius: 4px; margin-bottom: 10px; }
 .admin-action-btns { display: flex; gap: 5px; margin-top: 5px; }
 .edit-btn { background: #ffc107 !important; color: #333 !important; border: none; padding: 5px; cursor: pointer; width: 50%; border-radius: 4px; font-weight: bold; font-size: 14px;}
-.edit-modal-box { background: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 400px; position: relative; color: #333 !important; text-align: left;}
-.edit-modal-box h3 { color: #333; margin-bottom: 15px; font-size: 18px; font-weight: bold;}
-.edit-modal-box label { color: #555; font-size: 14px; font-weight: 500; display: block; margin-top: 5px;}
-.edit-modal-box input, .edit-modal-box select { width: 100% !important; padding: 8px !important; margin-bottom: 10px !important; border: 1px solid #ccc !important; border-radius: 4px !important; box-sizing: border-box !important; font-size: 14px !important; color: #333 !important; background: #fff !important;}
+
+.edit-modal-box { 
+    background: var(--second-bg-color); 
+    padding: 25px; 
+    border-radius: 12px; 
+    width: 90%; 
+    max-width: 400px; 
+    position: relative; 
+    color: var(--text-color) !important; 
+    text-align: left;
+    border: 2px solid var(--main-color);
+    box-shadow: 0 0 2rem rgba(0, 238, 255, 0.2);
+}
+.edit-modal-box h3 { color: var(--main-color); margin-bottom: 15px; font-size: 20px; font-weight: bold;}
+.edit-modal-box label { color: #ccc; font-size: 14px; font-weight: 500; display: block; margin-top: 5px;}
+.edit-modal-box input, .edit-modal-box select { 
+    width: 100% !important; 
+    padding: 10px !important; 
+    margin-bottom: 12px !important; 
+    border: 2px solid var(--bg-color) !important; 
+    border-radius: 6px !important; 
+    box-sizing: border-box !important; 
+    font-size: 14px !important; 
+    color: var(--text-color) !important; 
+    background: var(--bg-color) !important;
+    outline: none;
+    transition: 0.3s;
+}
+.edit-modal-box input:focus, .edit-modal-box select:focus {
+    border-color: var(--main-color) !important;
+}
 
 /* =======================================================
    🔥 PERFECT PURE BLACK INITIAL LOADER OVERLAY (NO TEXT)
@@ -370,8 +411,8 @@ footer {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #000000 !important; /* Ekdum Full Black Screen */
-    z-index: 999999 !important; /* Covers everything completely */
+    background-color: #000000 !important;
+    z-index: 999999 !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -379,11 +420,11 @@ footer {
 
 .page-loader-spinner {
     border: 5px solid #1a1a1a;
-    border-top: 5px solid #0ef; /* Neon Cyan Spinning Chakri */
+    border-top: 5px solid #0ef;
     border-radius: 50%;
     width: 55px;
     height: 55px;
-    animation: spin-page-loader 0.8s linear infinite; /* Smooth fast animation */
+    animation: spin-page-loader 0.8s linear infinite;
 }
 
 @keyframes spin-page-loader {
