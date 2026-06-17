@@ -7,35 +7,27 @@
     
     <link rel="manifest" href="/SAHU-HOTEL/manifest.json">
     <meta name="theme-color" content="#007bff">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
     <link rel="icon" type="image/png" href="4c788179-bf9a-4776-8165-35933ee9efd5 (1) (1).png"> 
     <link rel="stylesheet" href="Home.css">
     
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
     <style>
+        /* Custom Select Shrinked */
         .custom-dropdown-container { position: relative; width: 100%; }
-        .custom-dropdown-selected { padding: 12px 16px; border: 2px solid #2c3341; border-radius: 8px; font-size: 14px; color: #fff; background: #2c3341; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; transition: 0.2s; }
-        .custom-dropdown-selected:after { content: "▼"; font-size: 10px; color: #0ef; }
-        .custom-dropdown-selected.active { border-color: #0ef; }
-        .custom-dropdown-menu { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #2c3341; border: 1px solid rgba(0, 238, 255, 0.2); border-radius: 8px; margin-top: 5px; max-height: 250px; overflow-y: auto; z-index: 999; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .custom-dropdown-selected { padding: 8px 10px; border: 1px solid #323946; border-radius: 6px; font-size: 12px; color: #fff; background: #2c3341; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .custom-dropdown-menu { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #2c3341; border: 1px solid rgba(0, 238, 255, 0.2); border-radius: 6px; margin-top: 2px; max-height: 200px; overflow-y: auto; z-index: 999; }
         .custom-dropdown-menu.show { display: block; }
-        .custom-dropdown-option { padding: 10px 16px; font-size: 14px; color: #fff; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
-        .custom-dropdown-option:hover { background: #1f242d; }
-        .opt-create-trigger { color: #0ef !important; font-weight: 700; border-bottom: 1px dashed rgba(0, 238, 255, 0.2); background: rgba(0, 238, 255, 0.05); }
-        .opt-cut-btn { color: #ff4d4d; font-weight: bold; font-size: 16px; padding: 2px 8px; border-radius: 4px; cursor: pointer; transition: 0.2s; }
-        .opt-cut-btn:hover { background: #ff4d4d; color: #fff; }
-        .inline-create-wrapper { display: flex; gap: 8px; background: #1f242d; padding: 10px; border-radius: 8px; border: 1px solid #0ef; margin-top: 8px; }
-        .inline-submit-btn, .inline-cancel-btn { padding: 6px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; border: none; }
-        .inline-submit-btn { background: #0ef; color: #1f242d; font-size: 12px; }
-        .inline-cancel-btn { background: rgba(255,255,255,0.1); color: #fff; font-size: 16px; padding: 6px 10px; }
+        .custom-dropdown-option { padding: 8px 10px; font-size: 12px; color: #fff; cursor: pointer; display: flex; justify-content: space-between; }
+        .opt-create-trigger { color: #0ef !important; font-weight: bold; background: rgba(0, 238, 255, 0.05); }
+        .opt-cut-btn { color: #ff4d4d; font-weight: bold; font-size: 14px; padding: 0 5px; }
+        .inline-create-wrapper { display: flex; gap: 5px; background: #1f242d; padding: 8px; border-radius: 6px; border: 1px solid #0ef; margin-top: 5px; }
+        .inline-submit-btn, .inline-cancel-btn { padding: 5px 10px; border-radius: 4px; font-weight: bold; border: none; font-size: 11px;}
+        .inline-submit-btn { background: #0ef; color: #1f242d; }
+        .inline-cancel-btn { background: rgba(255,255,255,0.1); color: #fff; }
         
-        .drawer-maps-btn { display: inline-block; background: #0ef; color: #1f242d; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 13px; margin-top: 8px; transition: 0.2s; }
-        .drawer-maps-btn:hover { background: #05ccdf; }
-        .admin-scanner-wrapper { background: #2c3341; border: 1px dashed #0ef; border-radius: 8px; padding: 10px; margin-top: 10px; display: none; text-align: center; }
-        #adminBarcodeReader { width: 100%; max-width: 320px; margin: 0 auto; background: #1f242d; border-radius: 6px; overflow: hidden; }
+        .admin-scanner-wrapper { background: #2c3341; border: 1px dashed #0ef; border-radius: 6px; padding: 5px; margin-bottom: 10px; display: none; text-align: center; }
+        #adminBarcodeReader { width: 100%; max-width: 300px; margin: 0 auto; background: #1f242d; border-radius: 4px; overflow: hidden; }
     </style>
 </head>
 <body>
@@ -47,9 +39,7 @@
         </div>
         <div class="nav-right">
             <div class="three-line-toggle" onclick="toggleSideMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </div>
         </div>
     </header>
@@ -60,25 +50,20 @@
             <span class="drawer-close" onclick="toggleSideMenu()">×</span>
         </div>
         <div class="drawer-body">
-            
             <div class="info-card-block" style="border-color: #ffc107;">
                 <h4 style="color: #ffc107;">🛒 Smart POS Billing</h4>
-                <a href="billing.html" class="drawer-maps-btn" style="background: #ffc107; color: #1f242d; width: 100%; text-align: center; font-size: 14px; margin-top: 5px;">🧾 Open POS Counter</a>
-                <a href="billing.html?view=history" class="drawer-maps-btn" style="background: transparent; border: 1px solid #ffc107; color: #ffc107; width: 100%; text-align: center; font-size: 14px; margin-top: 8px;">📜 View Billing History</a>
+                <a href="billing.html" class="drawer-maps-btn" style="background: #ffc107; color: #1f242d; width: 100%;">🧾 Open POS Counter</a>
+                <a href="billing.html?view=history" class="drawer-maps-btn" style="background: transparent; border: 1px solid #ffc107; color: #ffc107; width: 100%;">📜 View Billing History</a>
             </div>
-
             <div class="info-card-block">
                 <h4>📍 Store Information</h4>
                 <p><strong>Name:</strong> Sahu Hotel</p>
-                <p><strong>Address:</strong> Jhurre Colony, Chhindwara, Madhya Pradesh 480441</p>
+                <p><strong>Address:</strong> Jhurre Colony, Chhindwara, MP 480441</p>
                 <a href="https://maps.app.goo.gl/MMSYvsiXWTqtz2bp6" target="_blank" class="drawer-maps-btn">🗺️ Open in Google Maps</a>
             </div>
-            
             <div class="info-card-block">
                 <h4>📞 Quick Contact</h4>
-                <a href="tel:+918319332387" class="drawer-call-link">
-                    <span>📱 Call Owner:</span> +91 8319332387
-                </a>
+                <a href="tel:+918319332387" class="drawer-call-link">📱 Call Owner: +91 8319332387</a>
             </div>
         </div>
         <div class="drawer-footer">
@@ -90,15 +75,33 @@
     <main class="main-container">
         <div id="adminSection" class="admin-box" style="display: none;">
             
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; margin-bottom: 25px;">
-                <h3 style="border: none; margin: 0; padding: 0;">Admin Panel — Add Product</h3>
-                <a href="billing.html" style="background: #0ef; color: #1f242d; padding: 10px 15px; border-radius: 6px; font-weight: bold; text-decoration: none; font-size: 13px; box-shadow: 0 0 10px rgba(0, 238, 255, 0.3);">🧾 Open POS Billing</a>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 8px; margin-bottom: 15px;">
+                <h3 style="margin: 0; font-size: 14px; color: #0ef;">Admin Panel — Add Product</h3>
+                <a href="billing.html" style="background: #0ef; color: #1f242d; padding: 6px 10px; border-radius: 4px; font-weight: bold; text-decoration: none; font-size: 11px;">🧾 POS Billing</a>
             </div>
             
             <form id="addProductForm">
+                
                 <div class="systematic-row-2col">
                     <div class="form-group-block">
-                        <label>Product Title Name:</label>
+                        <label class="optional-label">1. Barcode Number (Optional):</label>
+                        <input type="text" id="prodBarcode" placeholder="Scan ya Type karein">
+                    </div>
+                    <div class="form-group-block" style="justify-content: flex-end;">
+                        <button type="button" onclick="toggleAdminBarcodeScanner()" class="camera-btn" style="border: 1px solid #0ef; color: #0ef;">
+                            📷 Scan Barcode via Camera
+                        </button>
+                    </div>
+                </div>
+
+                <div id="adminScannerRegion" class="admin-scanner-wrapper">
+                    <div id="adminBarcodeReader"></div>
+                    <button type="button" onclick="toggleAdminBarcodeScanner()" class="inline-cancel-btn" style="margin-top: 8px; background: #ff4d4d; width: 100%;">❌ Stop Camera</button>
+                </div>
+
+                <div class="systematic-row-2col">
+                    <div class="form-group-block">
+                        <label>2. Product Title Name:</label>
                         <input type="text" id="prodName" placeholder="Enter Item Name" required>
                     </div>
                     <div class="form-group-block">
@@ -109,7 +112,7 @@
                         </div>
                         <input type="hidden" id="prodCategory" required>
                         <div id="inlineCreateCategoryWrapper" class="inline-create-wrapper" style="display: none;">
-                            <input type="text" id="newCategoryName" placeholder="Enter new category title">
+                            <input type="text" id="newCategoryName" placeholder="New category">
                             <button type="button" onclick="submitInlineCategory()" class="inline-submit-btn">Add</button>
                             <button type="button" onclick="cancelInlineCategory()" class="inline-cancel-btn">×</button>
                         </div>
@@ -118,15 +121,15 @@
                 
                 <div class="systematic-row-3col">
                     <div class="form-group-block">
-                        <label class="optional-label">Retail Price (₹) (Optional):</label>
-                        <input type="number" id="prodPrice" placeholder="Selling Rate (Blank = On Call)">
+                        <label class="optional-label">Retail Price (₹):</label>
+                        <input type="number" id="prodPrice" placeholder="Blank = On Call">
                     </div>
                     <div class="form-group-block">
-                        <label class="optional-label">Weight/Qty (Optional):</label>
-                        <input type="number" id="prodWeight" placeholder="e.g. 400, 250">
+                        <label class="optional-label">Weight/Qty:</label>
+                        <input type="number" id="prodWeight" placeholder="e.g. 400">
                     </div>
                     <div class="form-group-block">
-                        <label>Measurement Unit:</label>
+                        <label>Unit:</label>
                         <select id="prodUnit">
                             <option value="Piece">Piece (pc)</option>
                             <option value="Gram">Gram (g)</option>
@@ -137,57 +140,30 @@
                     </div>
                 </div>
 
-                <div class="systematic-row-2col" style="margin-top: 5px;">
-                    <div class="form-group-block">
-                        <label class="optional-label">Barcode Number (Optional):</label>
-                        <input type="text" id="prodBarcode" placeholder="Scan or type barcode string">
-                    </div>
-                    <div class="form-group-block" style="justify-content: flex-end;">
-                        <button type="button" onclick="toggleAdminBarcodeScanner()" class="camera-btn" style="border-style: solid; border-color: #0ef; color: #0ef;">
-                            📷 Scan Barcode via Camera
-                        </button>
-                    </div>
-                </div>
-
-                <div id="adminScannerRegion" class="admin-scanner-wrapper">
-                    <div id="adminBarcodeReader"></div>
-                    <button type="button" onclick="toggleAdminBarcodeScanner()" class="inline-cancel-btn" style="margin-top: 10px; background: #ff4d4d;">Stop Camera</button>
-                </div>
-
-                <div class="form-group-block" style="margin-top: 15px;">
-                    <label class="optional-label">Wholesale Price (Optional — Only visible to Owner):</label>
-                    <input type="number" id="prodWholesalePrice" placeholder="Enter Wholesale Rate if applicable">
+                <div class="form-group-block">
+                    <label class="optional-label">Wholesale Price (Visible to Owner only):</label>
+                    <input type="number" id="prodWholesalePrice" placeholder="Enter Wholesale Rate">
                 </div>
                 
                 <div class="media-upload-systematic-container">
-                    <label class="optional-label">Product Photo Canvas (Optional):</label>
+                    <label class="optional-label">Product Photo (Optional):</label>
                     <div class="media-split-grid">
-                        <div class="media-input-box">
-                            <input type="text" id="prodImage" placeholder="Option A: Paste direct external Image URL Link">
-                        </div>
+                        <input type="text" id="prodImage" placeholder="Option A: Paste Image URL">
                         <div class="media-or-divider">— OR —</div>
-                        <div class="media-action-box">
-                            <label for="prodImageFile" class="camera-btn">
-                                📷 Open Camera / Gallery
-                            </label>
-                            <input type="file" id="prodImageFile" accept="image/*" capture="environment" style="display: none;">
-                            <span id="fileChosenText" class="status-chosen-text">No photo selected</span>
-                        </div>
+                        <label for="prodImageFile" class="camera-btn">📷 Open Camera / Gallery</label>
+                        <input type="file" id="prodImageFile" accept="image/*" capture="environment" style="display: none;">
+                        <span id="fileChosenText" class="status-chosen-text">No photo selected</span>
                     </div>
                 </div>
                 
-                <div class="image-preview-container">
-                    <img id="imagePreview" src="" alt="Preview">
-                </div>
+                <div class="image-preview-container"><img id="imagePreview" src="" alt="Preview"></div>
                 
                 <button type="submit" class="publish-submit-btn">Publish Product Globally</button>
             </form>
         </div>
 
         <div class="search-filter-box">
-            <div style="margin-bottom: 15px;">
-                <input type="text" id="searchBar" placeholder="🔍 Search by item name or category..." oninput="filterProducts()">
-            </div>
+            <input type="text" id="searchBar" placeholder="🔍 Search by name, category or barcode..." oninput="filterProducts()" style="margin-bottom: 10px;">
             <div id="categoryTabsContainer"></div>
         </div>
 
@@ -198,25 +174,14 @@
         <div class="modal-box">
             <span class="close-modal" onclick="closeModal()">×</span>
             <h3 id="modalProdName">Product Details</h3>
-            
             <div class="modal-address-box">
-                <strong>📍 Store Address:</strong><br>
-                Sahu Kirana & Restaurant,<br>
-                Jhurre Colony, Chhindwara,<br>
-                Madhya Pradesh 480441<br><br>
-                
-                <strong>📞 Contact Number:</strong><br>
-                <a href="tel:+918319332387" style="color: #0ef; text-decoration: none; font-weight: bold; font-size: 15px;">+91 8319332387</a>
+                <strong>📍 Store Address:</strong><br>Sahu Kirana & Restaurant,<br>Jhurre Colony, Chhindwara, MP<br><br>
+                <strong>📞 Contact:</strong><br><a href="tel:+918319332387" style="color: #0ef; text-decoration: none; font-weight: bold;">+91 8319332387</a>
                 <a href="https://maps.app.goo.gl/MMSYvsiXWTqtz2bp6" target="_blank" class="maps-btn">🗺️ Open in Google Maps</a>
             </div>
-            
             <div class="modal-notice">
-                <p style="margin-bottom: 8px;">Notice: Online ordering is currently unavailable. This is a digital price catalog. Please visit our offline store to purchase this item.</p>
-                <a href="tel:+918319332387" style="display: inline-block; color: #ff4d4d; font-weight: bold; text-decoration: underline; font-size: 14px;">
-                    📞 Click Here to Call Store Directly: +91 8319332387
-                </a>
+                <a href="tel:+918319332387" style="display: block; color: #ff4d4d; font-weight: bold; text-decoration: underline;">📞 Click Here to Call Store: +91 8319332387</a>
             </div>
-            
             <button onclick="closeModal()" class="modal-close-btn">Close</button>
         </div>
     </div>
@@ -224,118 +189,73 @@
     <div id="editProductModal" class="modal-overlay" style="display:none;">
         <div class="edit-modal-box">
             <span class="close-modal" onclick="closeEditModal()">×</span>
-            <h3>Edit Existing Item Record</h3>
+            <h3 style="font-size: 14px; margin-bottom: 10px; color: #0ef;">Edit Record</h3>
             <input type="hidden" id="editProdId">
-            <label>Product Name:</label>
-            <input type="text" id="editProdName" required>
             
-            <div style="display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
-                <input type="number" id="editProdPrice" placeholder="Price (Optional)" style="flex: 1.5; min-width: 80px;">
-                <input type="number" id="editProdWeight" placeholder="Weight (Optional)" style="flex: 1.5; min-width: 100px;">
-                <select id="editProdUnit" style="flex: 1; min-width: 90px; background: #2c3341;">
-                    <option value="Piece">Piece (pc)</option>
-                    <option value="Gram">Gram (g)</option>
-                    <option value="Kg">Kg</option>
-                    <option value="Litre">Litre (l)</option>
-                    <option value="Packet">Packet</option>
+            <label style="font-size:11px; color:#fff;">Product Name:</label>
+            <input type="text" id="editProdName" required style="margin-bottom: 8px;">
+            
+            <div style="display: flex; gap: 5px; margin-bottom: 8px;">
+                <input type="number" id="editProdPrice" placeholder="Price" style="flex: 1;">
+                <input type="number" id="editProdWeight" placeholder="Weight" style="flex: 1;">
+                <select id="editProdUnit" style="flex: 1;">
+                    <option value="Piece">Piece</option><option value="Gram">Gram</option>
+                    <option value="Kg">Kg</option><option value="Litre">Litre</option><option value="Packet">Packet</option>
                 </select>
             </div>
 
-            <label class="optional-label">Barcode String (Optional):</label>
-            <input type="text" id="editProdBarcode" style="margin-bottom: 10px;">
+            <label style="font-size:11px; color:#0ef;">Barcode String:</label>
+            <input type="text" id="editProdBarcode" style="margin-bottom: 8px;">
 
-            <label class="optional-label">Wholesale Price (Optional):</label>
-            <input type="number" id="editProdWholesalePrice" style="margin-bottom: 10px;">
-            <label>Current Photo Preview:</label><br>
-            <img id="editImagePreview" src="" alt="Current Photo" style="display: block; margin-bottom: 10px;"><br>
+            <label style="font-size:11px; color:#0ef;">Wholesale Price:</label>
+            <input type="number" id="editProdWholesalePrice" style="margin-bottom: 8px;">
             
-            <div style="background: #1f242d; padding: 15px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px;">
-                <label class="optional-label">Change Photo (Optional):</label>
-                <input type="text" id="editProdImage" placeholder="Paste New Image URL">
-                <div style="text-align: center; font-weight: bold; color: #666; font-size: 11px; margin: 8px 0;">— OR —</div>
-                <div style="text-align: center;">
-                    <label for="editProdImageFile" class="camera-btn">📷 Open Camera / Gallery</label>
-                    <input type="file" id="editProdImageFile" accept="image/*" capture="environment" style="display:none;">
-                    <span id="editFileChosenText" style="font-size: 12px; color: #aaa; display: block; margin-top: 5px;">No photo selected</span>
-                </div>
+            <div style="background: #1f242d; padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 8px;">
+                <img id="editImagePreview" src="" alt="Current" style="display: block; margin: 0 auto 5px; max-height:60px;">
+                <input type="text" id="editProdImage" placeholder="Paste New Image URL" style="margin-bottom: 5px;">
+                <div style="text-align: center; color: #666; font-size: 10px; margin: 4px 0;">— OR —</div>
+                <label for="editProdImageFile" class="camera-btn">📷 Camera / Gallery</label>
+                <input type="file" id="editProdImageFile" accept="image/*" capture="environment" style="display:none;">
             </div>
-            <label>Category Group:</label>
-            <select id="editProdCategory"></select>
-            <button type="button" onclick="submitProductEdit()" class="publish-submit-btn" style="background: #ffc107; color: #1f242d; margin-top: 15px;">Save Changes</button>
+            
+            <select id="editProdCategory" style="margin-bottom: 10px;"></select>
+            <button type="button" onclick="submitProductEdit()" class="publish-submit-btn" style="background: #ffc107; color: #1f242d; margin-top: 5px;">Save Changes</button>
         </div>
     </div>
 
-    <footer class="footer">
-        <p>© 2026 Sahu Kirana & Restaurant. All Rights Reserved.</p>
-    </footer>
+    <footer class="footer"><p>© 2026 Sahu Kirana & Restaurant.</p></footer>
 
     <script>
-        function toggleSideMenu() {
-            document.getElementById('sideMenuDrawer').classList.toggle('open');
-            document.getElementById('drawerOverlay').classList.toggle('show');
-        }
+        function toggleSideMenu() { document.getElementById('sideMenuDrawer').classList.toggle('open'); document.getElementById('drawerOverlay').classList.toggle('show'); }
+        function toggleCustomDropdown() { document.getElementById('dropdownMenuOptions').classList.toggle('show'); document.getElementById('dropdownSelectedValue').classList.toggle('active'); }
+        window.addEventListener('click', function(e) { if (!document.getElementById('customCategoryDropdown').contains(e.target)) { document.getElementById('dropdownMenuOptions').classList.remove('show'); document.getElementById('dropdownSelectedValue').classList.remove('active'); } });
+        function selectCustomCategoryValue(val) { document.getElementById('prodCategory').value = val; document.getElementById('dropdownSelectedValue').innerText = val; document.getElementById('inlineCreateCategoryWrapper').style.display = 'none'; toggleCustomDropdown(); }
+        function triggerInlineCategoryCreation() { document.getElementById('inlineCreateCategoryWrapper').style.display = 'flex'; document.getElementById('newCategoryName').focus(); toggleCustomDropdown(); }
+        function cancelInlineCategory() { document.getElementById('inlineCreateCategoryWrapper').style.display = 'none'; document.getElementById('prodCategory').value = ''; document.getElementById('dropdownSelectedValue').innerText = '-- Choose Category --'; }
+        function submitInlineCategory() { const inputVal = document.getElementById('newCategoryName').value.trim(); if(!inputVal) { alert('Enter category name!'); return; } if (typeof createNewCategory === 'function') { createNewCategory(); setTimeout(() => { cancelInlineCategory(); }, 800); } }
 
-        function toggleCustomDropdown() {
-            document.getElementById('dropdownMenuOptions').classList.toggle('show');
-            document.getElementById('dropdownSelectedValue').classList.toggle('active');
-        }
-
-        window.addEventListener('click', function(e) {
-            if (!document.getElementById('customCategoryDropdown').contains(e.target)) {
-                document.getElementById('dropdownMenuOptions').classList.remove('show');
-                document.getElementById('dropdownSelectedValue').classList.remove('active');
-            }
-        });
-
-        function selectCustomCategoryValue(val) {
-            document.getElementById('prodCategory').value = val;
-            document.getElementById('dropdownSelectedValue').innerText = val;
-            document.getElementById('inlineCreateCategoryWrapper').style.display = 'none';
-            toggleCustomDropdown();
-        }
-
-        function triggerInlineCategoryCreation() {
-            document.getElementById('inlineCreateCategoryWrapper').style.display = 'flex';
-            document.getElementById('newCategoryName').focus();
-            toggleCustomDropdown();
-        }
-
-        function cancelInlineCategory() {
-            document.getElementById('inlineCreateCategoryWrapper').style.display = 'none';
-            document.getElementById('prodCategory').value = '';
-            document.getElementById('dropdownSelectedValue').innerText = '-- Choose Category --';
-        }
-
-        function submitInlineCategory() {
-            const inputVal = document.getElementById('newCategoryName').value.trim();
-            if(!inputVal) { alert('Please enter a category name first!'); return; }
-            if (typeof createNewCategory === 'function') {
-                createNewCategory();
-                setTimeout(() => { cancelInlineCategory(); }, 800);
-            }
-        }
-
+        // 🔥 FIX 1: Scanner Error Fix (No Alert Loop)
         let html5QrcodeScanner = null;
         function toggleAdminBarcodeScanner() {
             const region = document.getElementById('adminScannerRegion');
             if (region.style.display === 'block') {
                 region.style.display = 'none';
                 if(html5QrcodeScanner) {
-                    html5QrcodeScanner.clear().catch(err => console.log(err));
+                    html5QrcodeScanner.stop().then(() => { html5QrcodeScanner.clear(); }).catch(e => console.log(e));
                 }
             } else {
                 region.style.display = 'block';
                 html5QrcodeScanner = new Html5Qrcode("adminBarcodeReader");
                 html5QrcodeScanner.start(
                     { facingMode: "environment" }, 
-                    { fps: 10, qrbox: { width: 250, height: 150 } },
+                    { fps: 10, qrbox: { width: 250, height: 100 } },
                     (decodedText) => {
+                        // Success: Fill input and CLOSE quietly. NO ALERT.
                         document.getElementById('prodBarcode').value = decodedText;
-                        alert(`Barcode Scanned: ${decodedText}`);
-                        toggleAdminBarcodeScanner(); 
+                        toggleAdminBarcodeScanner(); // Band kar do turant
                     },
-                    (errorMessage) => { }
-                ).catch(err => console.log(err));
+                    (errorMessage) => { /* Ignore background errors */ }
+                ).catch(err => console.log("Camera Error", err));
             }
         }
     </script>
