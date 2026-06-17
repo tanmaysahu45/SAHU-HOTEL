@@ -12,10 +12,10 @@
     
     <link rel="icon" type="image/png" href="4c788179-bf9a-4776-8165-35933ee9efd5 (1) (1).png"> 
     <link rel="stylesheet" href="Home.css">
+    
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
     <style>
-        /* =========================================
-           🔥 CUSTOM SELECT DROPDOWN ARCHITECTURE
-        ========================================= */
         .custom-dropdown-container { position: relative; width: 100%; }
         .custom-dropdown-selected { padding: 12px 16px; border: 2px solid #2c3341; border-radius: 8px; font-size: 14px; color: #fff; background: #2c3341; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; transition: 0.2s; }
         .custom-dropdown-selected:after { content: "▼"; font-size: 10px; color: #0ef; }
@@ -32,9 +32,10 @@
         .inline-submit-btn { background: #0ef; color: #1f242d; font-size: 12px; }
         .inline-cancel-btn { background: rgba(255,255,255,0.1); color: #fff; font-size: 16px; padding: 6px 10px; }
         
-        /* Drawer maps button styling */
         .drawer-maps-btn { display: inline-block; background: #0ef; color: #1f242d; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 13px; margin-top: 8px; transition: 0.2s; }
         .drawer-maps-btn:hover { background: #05ccdf; }
+        .admin-scanner-wrapper { background: #2c3341; border: 1px dashed #0ef; border-radius: 8px; padding: 10px; margin-top: 10px; display: none; text-align: center; }
+        #adminBarcodeReader { width: 100%; max-width: 320px; margin: 0 auto; background: #1f242d; border-radius: 6px; overflow: hidden; }
     </style>
 </head>
 <body>
@@ -59,6 +60,13 @@
             <span class="drawer-close" onclick="toggleSideMenu()">×</span>
         </div>
         <div class="drawer-body">
+            
+            <div class="info-card-block" style="border-color: #ffc107;">
+                <h4 style="color: #ffc107;">🛒 Smart POS Billing</h4>
+                <a href="billing.html" class="drawer-maps-btn" style="background: #ffc107; color: #1f242d; width: 100%; text-align: center; font-size: 14px; margin-top: 5px;">🧾 Open POS Counter</a>
+                <a href="billing.html?view=history" class="drawer-maps-btn" style="background: transparent; border: 1px solid #ffc107; color: #ffc107; width: 100%; text-align: center; font-size: 14px; margin-top: 8px;">📜 View Billing History</a>
+            </div>
+
             <div class="info-card-block">
                 <h4>📍 Store Information</h4>
                 <p><strong>Name:</strong> Sahu Hotel</p>
@@ -81,7 +89,11 @@
 
     <main class="main-container">
         <div id="adminSection" class="admin-box" style="display: none;">
-            <h3>Admin Panel — Add Product</h3>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; margin-bottom: 25px;">
+                <h3 style="border: none; margin: 0; padding: 0;">Admin Panel — Add Product</h3>
+                <a href="billing.html" style="background: #0ef; color: #1f242d; padding: 10px 15px; border-radius: 6px; font-weight: bold; text-decoration: none; font-size: 13px; box-shadow: 0 0 10px rgba(0, 238, 255, 0.3);">🧾 Open POS Billing</a>
+            </div>
             
             <form id="addProductForm">
                 <div class="systematic-row-2col">
@@ -125,7 +137,24 @@
                     </div>
                 </div>
 
-                <div class="form-group-block">
+                <div class="systematic-row-2col" style="margin-top: 5px;">
+                    <div class="form-group-block">
+                        <label class="optional-label">Barcode Number (Optional):</label>
+                        <input type="text" id="prodBarcode" placeholder="Scan or type barcode string">
+                    </div>
+                    <div class="form-group-block" style="justify-content: flex-end;">
+                        <button type="button" onclick="toggleAdminBarcodeScanner()" class="camera-btn" style="border-style: solid; border-color: #0ef; color: #0ef;">
+                            📷 Scan Barcode via Camera
+                        </button>
+                    </div>
+                </div>
+
+                <div id="adminScannerRegion" class="admin-scanner-wrapper">
+                    <div id="adminBarcodeReader"></div>
+                    <button type="button" onclick="toggleAdminBarcodeScanner()" class="inline-cancel-btn" style="margin-top: 10px; background: #ff4d4d;">Stop Camera</button>
+                </div>
+
+                <div class="form-group-block" style="margin-top: 15px;">
                     <label class="optional-label">Wholesale Price (Optional — Only visible to Owner):</label>
                     <input type="number" id="prodWholesalePrice" placeholder="Enter Wholesale Rate if applicable">
                 </div>
@@ -178,7 +207,6 @@
                 
                 <strong>📞 Contact Number:</strong><br>
                 <a href="tel:+918319332387" style="color: #0ef; text-decoration: none; font-weight: bold; font-size: 15px;">+91 8319332387</a>
-                
                 <a href="https://maps.app.goo.gl/MMSYvsiXWTqtz2bp6" target="_blank" class="maps-btn">🗺️ Open in Google Maps</a>
             </div>
             
@@ -212,6 +240,9 @@
                     <option value="Packet">Packet</option>
                 </select>
             </div>
+
+            <label class="optional-label">Barcode String (Optional):</label>
+            <input type="text" id="editProdBarcode" style="margin-bottom: 10px;">
 
             <label class="optional-label">Wholesale Price (Optional):</label>
             <input type="number" id="editProdWholesalePrice" style="margin-bottom: 10px;">
@@ -281,6 +312,30 @@
             if (typeof createNewCategory === 'function') {
                 createNewCategory();
                 setTimeout(() => { cancelInlineCategory(); }, 800);
+            }
+        }
+
+        let html5QrcodeScanner = null;
+        function toggleAdminBarcodeScanner() {
+            const region = document.getElementById('adminScannerRegion');
+            if (region.style.display === 'block') {
+                region.style.display = 'none';
+                if(html5QrcodeScanner) {
+                    html5QrcodeScanner.clear().catch(err => console.log(err));
+                }
+            } else {
+                region.style.display = 'block';
+                html5QrcodeScanner = new Html5Qrcode("adminBarcodeReader");
+                html5QrcodeScanner.start(
+                    { facingMode: "environment" }, 
+                    { fps: 10, qrbox: { width: 250, height: 150 } },
+                    (decodedText) => {
+                        document.getElementById('prodBarcode').value = decodedText;
+                        alert(`Barcode Scanned: ${decodedText}`);
+                        toggleAdminBarcodeScanner(); 
+                    },
+                    (errorMessage) => { }
+                ).catch(err => console.log(err));
             }
         }
     </script>

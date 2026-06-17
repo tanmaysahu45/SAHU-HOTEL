@@ -461,6 +461,9 @@ if (addProductForm) {
         const category = document.getElementById('prodCategory').value; 
         let urlImage = document.getElementById('prodImage').value.trim();
         
+        // 🔥 NEW: BARCODE CAPTURE ON SUBMIT
+        const barcode = document.getElementById('prodBarcode').value.trim();
+
         if(!category) {
             alert('Please select or create a Category Group first!');
             return;
@@ -468,10 +471,9 @@ if (addProductForm) {
 
         const dynamicUnitString = weightValue ? `${weightValue} ${unit}` : unit;
         
-        // 🔥 PRICE OPTIONAL ENGINE CONDITIONAL CHECK HERE
         let finalPriceString = "";
         if (!rawPrice || rawPrice.trim() === "") {
-            finalPriceString = "Price On Call"; // Blank chhodne par ye automatic database me jayega
+            finalPriceString = "Price On Call"; 
         } else {
             finalPriceString = '₹' + rawPrice + ' / ' + dynamicUnitString;
         }
@@ -487,12 +489,14 @@ if (addProductForm) {
             finalImage = urlImage;
         }
 
+        // Updated Schema parameters to lock barcode
         const productObject = {
             name: name,
             price: finalPriceString,
             wholesalePrice: finalWholesaleString, 
             image: finalImage,
-            category: category
+            category: category,
+            barcode: barcode // Cloud node assignment
         };
 
         const submitBtn = addProductForm.querySelector('button[type="submit"]');
@@ -510,7 +514,7 @@ if (addProductForm) {
             document.getElementById('dropdownSelectedValue').innerText = '-- Choose Category --';
             selectedAddImageBase64 = null;
             filterProducts(); 
-            alert('Product Published Globally!');
+            alert('Product Published Globally with Barcode Data!');
         })
         .catch(() => {
             alert('Error updating database!');
@@ -555,8 +559,12 @@ function filterProducts() {
 
         const filteredList = productsList.filter(product => {
             const matchesCategory = (currentCategory === 'All' || product.category === currentCategory);
+            
+            // Search criteria updated for direct barcode search tracking also
+            const productBarcode = product.barcode ? product.barcode.toLowerCase() : '';
             const matchesSearch = product.name.toLowerCase().includes(searchText) || 
-                                  product.category.toLowerCase().includes(searchText);
+                                  product.category.toLowerCase().includes(searchText) ||
+                                  productBarcode.includes(searchText);
             return matchesCategory && matchesSearch;
         });
 
@@ -572,18 +580,23 @@ function filterProducts() {
             const safeName = product.name.replace(/'/g, "\\'").replace(/"/g, '"');
             const safePrice = product.price.replace(/'/g, "\\'");
             const safeWholesale = product.wholesalePrice ? product.wholesalePrice.replace(/'/g, "\\'") : '';
+            const safeBarcode = product.barcode ? product.barcode.replace(/'/g, "\\'") : '';
 
             let actionHtml = '';
             let wholesaleHtml = '';
+            let barcodeTagHtml = '';
             const userRole = localStorage.getItem('userRole') || 'customer';
             
             if (userRole === 'admin') {
+                if (product.barcode) {
+                    barcodeTagHtml = `<div style="font-size:11px; color:#aaa; margin-top:4px;">🏷️ Code: ${product.barcode}</div>`;
+                }
                 if (product.wholesalePrice) {
                     wholesaleHtml = `<div style="font-size: 13px; color: #ff9800; font-weight: bold; margin-bottom: 5px; background: rgba(255,152,0,0.1); padding: 4px 6px; border-radius: 6px;">📦 Wholesale: ${product.wholesalePrice}</div>`;
                 }
                 actionHtml = `
                     <div class="admin-action-btns">
-                        <button class="edit-btn" onclick="openEditModal('${product.id}', '${safeName}', '${safePrice}', '${safeWholesale}', '${product.category}', '${product.image}')">Edit</button>
+                        <button class="edit-btn" onclick="openEditModal('${product.id}', '${safeName}', '${safePrice}', '${safeWholesale}', '${product.category}', '${product.image}', '${safeBarcode}')">Edit</button>
                         <button class="delete-btn" onclick="deleteProduct('${product.id}')">Delete</button>
                     </div>
                 `;
@@ -594,6 +607,7 @@ function filterProducts() {
                     <img src="${product.image}" alt="${product.name}" onerror="this.onerror=null; this.src='${NO_IMAGE_URL}';">
                     <h4>${product.name}</h4>
                     <div class="price">${product.price}</div>
+                    ${barcodeTagHtml}
                     ${wholesaleHtml}
                 </div>
                 ${actionHtml}
@@ -615,15 +629,15 @@ function closeModal() {
     document.getElementById('productModal').style.display = 'none';
 }
 
-function openEditModal(id, name, priceWithSymbol, wholesaleWithSymbol, category, image) {
+function openEditModal(id, name, priceWithSymbol, wholesaleWithSymbol, category, image, barcode) {
     document.getElementById('editProdId').value = id;
     document.getElementById('editProdName').value = name;
+    document.getElementById('editProdBarcode').value = (barcode && barcode !== 'undefined') ? barcode : '';
     
     let rawPrice = "";
     let weightNum = '';
     let unitStr = 'Piece';
 
-    // Extraction handling check for non-numeric dynamic fields like "Price On Call"
     if (priceWithSymbol.includes(' / ')) {
         const parts = priceWithSymbol.split(' / ');
         rawPrice = parts[0].replace('₹', '').trim();
@@ -636,7 +650,7 @@ function openEditModal(id, name, priceWithSymbol, wholesaleWithSymbol, category,
         }
     }
     
-    document.getElementById('editProdPrice').value = rawPrice; // Keeps input clear if blank initially
+    document.getElementById('editProdPrice').value = rawPrice; 
     document.getElementById('editProdWeight').value = weightNum; 
     document.getElementById('editProdUnit').value = unitStr;
     
@@ -668,6 +682,9 @@ function submitProductEdit() {
     const category = document.getElementById('editProdCategory').value;
     let editUrlImage = document.getElementById('editProdImage').value.trim();
     const currentImageUrl = document.getElementById('editImagePreview').src; 
+    
+    // Capture barcode on edit mode submit
+    const barcode = document.getElementById('editProdBarcode').value.trim();
 
     if (!name) {
         alert("Please fill the product name.");
@@ -676,7 +693,6 @@ function submitProductEdit() {
 
     const dynamicUnitString = weightValue ? `${weightValue} ${unit}` : unit;
     
-    // 🔥 EDIT CONDITIONAL PATTERN
     let finalPriceString = "";
     if (!rawPrice || rawPrice.trim() === "") {
         finalPriceString = "Price On Call";
@@ -700,7 +716,8 @@ function submitProductEdit() {
         price: finalPriceString,
         wholesalePrice: finalWholesaleString,
         image: finalImage,
-        category: category
+        category: category,
+        barcode: barcode
     };
 
     const editBtn = document.querySelector('#editProductModal .publish-submit-btn');
@@ -715,7 +732,7 @@ function submitProductEdit() {
     .then(() => {
         closeEditModal();
         filterProducts(); 
-        alert('Product Updated Successfully!');
+        alert('Product Record Patched with Barcode Data!');
     })
     .catch(() => {
         alert('Error updating database!');
