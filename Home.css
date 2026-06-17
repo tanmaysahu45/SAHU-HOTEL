@@ -1,5 +1,5 @@
 /* =========================================
-   GLOBAL RESET & THEME BASICS
+   GLOBAL RESET & ENVIRONMENT VARIABLES
 ========================================= */
 * {
     box-sizing: border-box;
@@ -18,9 +18,7 @@ body {
     width: 100%;
 }
 
-/* =========================================
-   NAVBAR (HEADER) - PRO SLEEK LOOK
-========================================= */
+/* TOP HEAD STRIP */
 .navbar {
     background-color: #2c3341;
     color: white;
@@ -36,22 +34,20 @@ body {
     z-index: 1000;
 }
 .nav-left { display: flex; flex-direction: column; gap: 2px; }
-.logo { font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
-.status-banner { font-size: 12px; font-weight: bold; letter-spacing: 0.5px; }
+.logo { font-size: 20px; font-weight: 700; }
+.status-banner { font-size: 12px; font-weight: bold; }
 .nav-right { display: flex; align-items: center; gap: 15px; }
 #welcomeMessage { font-size: 15px; font-weight: 500; color: rgba(255,255,255,0.8); }
-.logout-btn { background-color: #ff4d4d; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; transition: 0.3s; }
-.logout-btn:hover { background-color: #cc0000; transform: translateY(-1px); }
+.logout-btn { background-color: #ff4d4d; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; }
 
-/* Main Workspace */
 .main-container { flex: 1; padding: 25px 20px; max-width: 1200px; margin: 0 auto; width: 100%; }
 
 /* =========================================
-   🔥 ULTRA-PROFESSIONAL ADMIN BOX (MANAGE SHOP)
+   🔥 ADMINISTRATIVE CONTAINER MATRIX
 ========================================= */
 .admin-box { 
     background: #2c3341; 
-    padding: 30px; 
+    padding: 25px; 
     border-radius: 16px; 
     margin-bottom: 35px; 
     border: 1px solid rgba(0, 238, 255, 0.2); 
@@ -63,38 +59,67 @@ body {
     margin-top: 0; 
     margin-bottom: 25px; 
     font-size: 22px;
-    font-weight: 700;
     color: #0ef; 
-    border-bottom: 2px solid rgba(255, 255, 255, 0.05); 
-    padding-bottom: 12px; 
-    letter-spacing: 0.5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08); 
+    padding-bottom: 10px; 
 }
 
-/* Inner Forms Setup inside Admin Box */
-.admin-box h4 {
-    font-size: 16px;
-    color: #fff;
-    font-weight: 600;
-    margin-bottom: 12px;
-}
-
-.admin-box label {
-    font-size: 13px;
-    font-weight: 600;
-    display: block;
-    margin-bottom: 6px;
-}
-
-/* Perfect Symmetrical Flex Layout for Inner Sections */
-.admin-box > div, #addProductForm {
+#addProductForm {
     background: #1f242d !important;
     padding: 20px !important;
     border-radius: 12px !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-    margin-bottom: 20px;
+    border: 1px solid rgba(255,255,255,0.04) !important;
 }
 
-/* Universal Input and Dropdown Alignment Specs */
+.form-group-block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    position: relative;
+}
+
+.form-group-block label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+}
+
+/* Dynamic popup window underneath select dropdown */
+.inline-create-wrapper {
+    display: flex;
+    gap: 8px;
+    background: #2c3341;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #0ef;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    z-index: 50;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+    margin-top: 5px;
+}
+.inline-create-wrapper input {
+    padding: 8px 12px;
+    background: #1f242d;
+    font-size: 13px;
+}
+.inline-submit-btn, .inline-cancel-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}
+.inline-submit-btn { background: #0ef; color: #1f242d; font-size: 12px; }
+.inline-cancel-btn { background: rgba(255,255,255,0.1); color: #fff; font-size: 16px; padding: 6px 10px; }
+
+/* Structural alignments definitions */
+.systematic-row-2col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 15px; }
+.systematic-row-3col { display: grid; grid-template-columns: 1.5fr 1.5fr 1fr; gap: 15px; margin-bottom: 15px; }
+
 input, select { 
     padding: 12px 16px; 
     border: 2px solid #2c3341; 
@@ -104,81 +129,33 @@ input, select {
     width: 100%; 
     background: #2c3341;
     outline: none;
-    transition: all 0.3s ease;
+    transition: 0.2s;
 }
+input:focus, select:focus { border-color: #0ef; background: #242b37; }
 
-input:focus, select:focus { 
-    border-color: #0ef; 
-    background: #242b37;
-    box-shadow: 0 0 10px rgba(0, 238, 255, 0.15);
-}
+.optional-label { color: #0ef !important; }
 
-input::placeholder {
-    color: rgba(255, 255, 255, 0.4);
-}
+/* Media attachment frames layout specifications */
+.media-upload-systematic-container { background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-top: 15px; }
+.media-split-grid { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 15px; margin-top: 8px; }
+.media-or-divider { font-size: 12px; font-weight: bold; color: #666; }
+.camera-btn { background-color: #323946; color: #fff; padding: 12px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; cursor: pointer; display: block; font-weight: 600; font-size: 13px; text-align: center; }
+.status-chosen-text { font-size: 12px; color: #aaa; display: block; text-align: center; margin-top: 4px; }
 
-/* Solid Action Buttons Styling */
-.add-btn { 
-    padding: 12px 24px; 
-    background: #0ef; 
-    color: #1f242d; 
-    border: none; 
-    border-radius: 8px; 
-    cursor: pointer; 
-    font-weight: 700; 
-    font-size: 14px; 
-    text-align: center; 
-    transition: all 0.3s ease;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.add-btn:hover { 
-    background: #ffffff;
-    color: #1f242d;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 238, 255, 0.3);
-}
-
-/* CAMERA BUTTON SPECIFIC CONFIG */
-.camera-btn {
-    background-color: #323946;
-    color: #fff;
-    padding: 12px;
-    border: 2px dashed rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    display: block;
-    cursor: pointer;
-    width: 100%;
-    font-weight: 600;
-    font-size: 14px;
-    text-align: center;
-    transition: all 0.3s ease;
-}
-.camera-btn:hover { 
-    background-color: #2c3341; 
-    border-color: #0ef;
-    color: #0ef;
-}
+.publish-submit-btn { width: 100%; padding: 14px; background: #0ef; color: #1f242d; font-weight: 700; font-size: 15px; border-radius: 8px; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 15px rgba(0, 238, 255, 0.2); }
 
 /* =========================================
-   SEARCH BAR & SLICK HORIZONTAL TABS
+   SEARCH REGION & DYNAMIC CUTTING CAPSULES
 ========================================= */
-.search-filter-box { 
-    background: #2c3341; 
-    padding: 20px; 
-    border-radius: 12px; 
-    margin-bottom: 25px; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-    border: 1px solid rgba(255, 255, 255, 0.05); 
-    width: 100%; 
-}
-
+.search-filter-box { background: #2c3341; padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.05); }
 #categoryTabsContainer { display: flex; gap: 8px; flex-wrap: wrap; }
 
+/* Filter Tabs modified to act as inline flex containers for Cross markers */
 .filter-tab { 
-    padding: 8px 18px; 
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px; 
     border: 1px solid rgba(255,255,255,0.05); 
     background: #1f242d; 
     color: rgba(255, 255, 255, 0.7); 
@@ -186,119 +163,61 @@ input::placeholder {
     cursor: pointer; 
     font-weight: 600; 
     font-size: 13px; 
-    display: inline-block; 
-    white-space: nowrap;
-    transition: all 0.2s ease;
+    white-space: nowrap; 
 }
+.active-tab { background: #0ef !important; color: #1f242d !important; border-color: #0ef !important; font-weight: 700; }
 
-.filter-tab:hover { 
-    background: rgba(255, 255, 255, 0.05); 
-    color: #fff; 
+/* CROSS ICON INSIDE TAB SPECIFICATION */
+.tab-cross-cut {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(255, 77, 77, 0.15);
+    color: #ff4d4d;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease;
 }
-
-.active-tab { 
-    background: #0ef !important; 
-    color: #1f242d !important; 
-    border-color: #0ef !important; 
-    font-weight: 700;
-    box-shadow: 0 4px 12px rgba(0, 238, 255, 0.2);
-}
-
-/* =========================================
-   PRODUCTS GRID (SABSE TAGDA CONFIGURATION)
-========================================= */
-.products-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); 
-    gap: 15px; 
-    width: 100%; 
-}
-
-.product-card { 
-    background: #2c3341; 
-    border: 1px solid rgba(255, 255, 255, 0.05); 
-    border-radius: 12px; 
-    padding: 15px; 
-    text-align: center; 
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
-    display: flex; 
-    flex-direction: column; 
-    justify-content: space-between; 
+.tab-cross-cut:hover {
+    background: #ff4d4d;
     color: #fff;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.product-card:hover { 
-    transform: translateY(-4px); 
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-    border-color: rgba(0, 238, 255, 0.2);
-}
+/* CATALOG ARRAYS PRESENTATION */
+.products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 15px; width: 100%; }
+.product-card { background: #2c3341; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 15px; display: flex; flex-direction: column; justify-content: space-between; color: #fff; }
+.product-card img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 8px; background-color: #1f242d; }
+.product-card h4 { margin: 12px 0 4px 0; color: #fff; font-size: 15px; text-align: left; }
+.product-card .price { font-size: 16px; font-weight: 700; color: #0ef; text-align: left; margin-bottom: 5px; }
 
-.product-card img { 
-    width: 100%; 
-    aspect-ratio: 1 / 1; 
-    object-fit: cover; 
-    border-radius: 8px; 
-    background-color: #1f242d; 
-}
-
-.product-card h4 { 
-    margin: 12px 0 4px 0; 
-    color: #fff; 
-    font-size: 15px; 
-    font-weight: 600;
-    text-align: left;
-}
-
-.product-card .price { 
-    font-size: 16px; 
-    font-weight: 700; 
-    color: #0ef; 
-    margin-bottom: 5px; 
-    text-align: left;
-}
-
-/* Wholesale Secret Label inside Card */
-.product-card div[style*="Wholesale"] {
-    font-size: 12px !important;
-    background: rgba(255, 152, 0, 0.1) !important;
-    color: #ff9800 !important;
-    border: 1px solid rgba(255, 152, 0, 0.2) !important;
-    padding: 4px 6px !important;
-    border-radius: 6px !important;
-    text-align: left !important;
-}
-
-/* Admin Item Controls buttons */
 .admin-action-btns { display: flex; gap: 8px; margin-top: 10px; width: 100%; }
-.edit-btn { background: #ffc107 !important; color: #333 !important; border: none; padding: 8px; cursor: pointer; flex: 1; border-radius: 6px; font-weight: bold; font-size: 13px; transition: 0.2s;}
-.edit-btn:hover { background: #fff !important; }
-.delete-btn { background: #dc3545 !important; color: white !important; border: none; padding: 8px; cursor: pointer; flex: 1; border-radius: 6px; font-weight: bold; font-size: 13px; transition: 0.2s;}
-.delete-btn:hover { opacity: 0.9; }
+.edit-btn { background: #ffc107 !important; color: #333 !important; padding: 8px; cursor: pointer; flex: 1; border-radius: 6px; font-weight: bold; font-size: 13px; }
+.delete-btn { background: #dc3545 !important; color: white !important; padding: 8px; cursor: pointer; flex: 1; border-radius: 6px; font-weight: bold; font-size: 13px; }
 
-/* =========================================
-   MODALS - SMOOTH DARK WINDOWS
-========================================= */
+/* MODALS LAYOUT PRESENTATION */
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); z-index: 99999 !important; justify-content: center; align-items: center; padding: 15px; }
 .modal-box, .edit-modal-box { background: #2c3341; padding: 25px; border-radius: 16px; width: 100%; max-width: 400px; position: relative; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); text-align: left; color: #fff; max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.05); }
 .modal-box { border-top: 4px solid #0ef; text-align: center; }
-.close-modal { position: absolute; top: 10px; right: 15px; font-size: 28px; font-weight: bold; color: #aaa; cursor: pointer; line-height: 1;}
+.close-modal { position: absolute; top: 10px; right: 15px; font-size: 28px; font-weight: bold; color: #aaa; cursor: pointer; }
 .close-modal:hover { color: #0ef; }
 #modalProdName { margin: 5px 0 15px 0; color: #fff; font-size: 18px; font-weight: bold; }
-.modal-address-box { text-align: left; margin: 15px 0 10px 0; background: #1f242d; padding: 15px; border-radius: 8px; font-size: 13px; line-height: 1.5; border: 1px solid rgba(255,255,255,0.05); color: #fff; }
+.modal-address-box { text-align: left; margin: 15px 0 10px 0; background: #1f242d; padding: 15px; border-radius: 8px; font-size: 13px; border-left: 4px solid #0ef; }
 .maps-btn { display: block; background: #0ef; color: #1f242d; text-decoration: none; padding: 12px; border-radius: 6px; font-weight: bold; font-size: 14px; text-align: center; margin-top: 15px; }
-.modal-notice { color: #ff4d4d; font-weight: bold; font-size: 13px; background: rgba(220, 53, 69, 0.1); padding: 12px; border-radius: 6px; border: 1px solid rgba(220, 53, 69, 0.2); text-align: left; margin: 15px 0; line-height: 1.4; }
-.modal-close-btn { background: #6c757d; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; font-size: 14px; }
+.modal-notice { color: #ff4d4d; font-weight: bold; font-size: 13px; background: rgba(220, 53, 69, 0.1); padding: 12px; border-radius: 6px; border: 1px solid rgba(220, 53, 69, 0.2); margin: 15px 0; }
+.modal-close-btn { background: #6c757d; color: white; padding: 12px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; font-size: 14px; }
 
-/* Previews Config */
 .image-preview-container { margin: 10px 0; text-align: center; width: 100%; }
-#imagePreview { max-width: 140px; max-height: 140px; border-radius: 6px; display: none; border: 1px solid #1f242d; margin: 0 auto;}
-#editImagePreview { max-width: 100px; max-height: 100px; border-radius: 6px; margin-bottom: 10px; }
+#imagePreview { max-width: 140px; max-height: 140px; border-radius: 6px; display: none; margin: 0 auto; border: 1px solid #1f242d;}
+#editImagePreview { max-width: 100px; max-height: 100px; border-radius: 6px; }
 
 .footer { background-color: #2c3341; color: rgba(255,255,255,0.5); text-align: center; padding: 20px; font-size: 13px; margin-top: auto; width: 100%; border-top: 1px solid rgba(255,255,255,0.05); }
 
 /* =========================================
-   MOBILE RESPONSIVENESS FIXES (NO BREAKS)
+   MOBILE RESPONSIVENESS ADAPTATIONS
 ========================================= */
 @media (max-width: 600px) {
     .navbar { padding: 10px 15px; }
@@ -306,33 +225,18 @@ input::placeholder {
     .status-banner { font-size: 11px; }
     .logout-btn { padding: 6px 12px; font-size: 12px; }
 
-    .main-container { padding: 12px; }
-    .admin-box { padding: 15px; margin-bottom: 20px; }
-    .search-filter-box { padding: 15px; margin-bottom: 20px; }
-
-    /* Admin Forms Alignment Patch for Mobile Layouts */
-    #addProductForm > div { flex-direction: column !important; gap: 8px !important; }
-    #prodUnit, #editProdUnit { width: 100% !important; }
-
-    /* HORIZONTAL CATEGORY SLIDER RETENTION */
-    #categoryTabsContainer {
-        flex-wrap: nowrap !important; 
-        overflow-x: auto; 
-        padding-bottom: 8px; 
-        gap: 8px;
+    .systematic-flex-grid, .systematic-row-2col, .systematic-row-3col, .media-split-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
     }
+    .media-or-divider { text-align: center; margin: 2px 0; }
+    
+    #categoryTabsContainer { flex-wrap: nowrap !important; overflow-x: auto; padding-bottom: 8px; gap: 8px; }
     #categoryTabsContainer::-webkit-scrollbar { display: none; }
+    .filter-tab { width: auto !important; flex-shrink: 0; font-size: 12px; padding: 8px 14px; }
 
-    .filter-tab {
-        width: auto !important; 
-        flex-shrink: 0; 
-        font-size: 12px;
-        padding: 8px 14px;
-    }
-
-    /* CRITICAL DOUBLE COLUMN GRID RETENTION FOR SMARTPHONES */
     .products-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
-    .product-card { padding: 10px; border-radius: 8px; }
-    .product-card h4 { font-size: 13px; margin-top: 8px; }
+    .product-card { padding: 10px; }
+    .product-card h4 { font-size: 13px; }
     .product-card .price { font-size: 14px; }
 }

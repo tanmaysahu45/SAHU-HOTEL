@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sahu Kirana & Restaurant</title>
     
-    <!-- PWA Configuration Links -->
     <link rel="manifest" href="/SAHU-HOTEL/manifest.json">
     <meta name="theme-color" content="#007bff">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,6 +12,105 @@
     
     <link rel="icon" type="image/png" href="4c788179-bf9a-4776-8165-35933ee9efd5 (1) (1).png"> 
     <link rel="stylesheet" href="Home.css">
+    <style>
+        /* =========================================
+           🔥 CUSTOM SELECT DROPDOWN ARCHITECTURE
+        ========================================= */
+        .custom-dropdown-container {
+            position: relative;
+            width: 100%;
+        }
+        .custom-dropdown-selected {
+            padding: 12px 16px;
+            border: 2px solid #2c3341;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #fff;
+            background: #2c3341;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: 0.2s;
+        }
+        .custom-dropdown-selected:after {
+            content: "▼";
+            font-size: 10px;
+            color: #0ef;
+        }
+        .custom-dropdown-selected.active {
+            border-color: #0ef;
+        }
+        .custom-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: #2c3341;
+            border: 1px solid rgba(0, 238, 255, 0.2);
+            border-radius: 8px;
+            margin-top: 5px;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 999;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .custom-dropdown-menu.show {
+            display: block;
+        }
+        .custom-dropdown-option {
+            padding: 10px 16px;
+            font-size: 14px;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+        }
+        .custom-dropdown-option:hover {
+            background: #1f242d;
+        }
+        .opt-create-trigger {
+            color: #0ef !important;
+            font-weight: 700;
+            border-bottom: 1px dashed rgba(0, 238, 255, 0.2);
+            background: rgba(0, 238, 255, 0.05);
+        }
+        .opt-cut-btn {
+            color: #ff4d4d;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .opt-cut-btn:hover {
+            background: #ff4d4d;
+            color: #fff;
+        }
+        .inline-create-wrapper {
+            display: flex;
+            gap: 8px;
+            background: #1f242d;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #0ef;
+            margin-top: 8px;
+        }
+        .inline-submit-btn, .inline-cancel-btn {
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+        }
+        .inline-submit-btn { background: #0ef; color: #1f242d; font-size: 12px; }
+        .inline-cancel-btn { background: rgba(255,255,255,0.1); color: #fff; font-size: 16px; padding: 6px 10px; }
+    </style>
 </head>
 <body>
 
@@ -30,39 +128,47 @@
     <main class="main-container">
         
         <div id="adminSection" class="admin-box" style="display: none;">
-            <h3>Admin Panel (Manage Shop)</h3>
+            <h3>Admin Panel — Add Product</h3>
             
-            <div style="background: #fff; padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #ccc;">
-                <h4 style="margin-top: 0; color: #333;">1. Manage Categories</h4>
-                <label style="font-size: 13px; font-weight: bold; color: #555;">Create New Category:</label>
-                <div style="display: flex; gap: 10px; margin-bottom: 15px; margin-top: 5px;">
-                    <input type="text" id="newCategoryName" placeholder="e.g., Soap, Spices, Sweets">
-                    <button type="button" onclick="createNewCategory()" class="add-btn" style="background-color: #007bff;">Create</button>
-                </div>
-
-                <div style="border-top: 1px dashed #ccc; margin: 15px 0;"></div>
+            <form id="addProductForm">
                 
-                <label style="font-size: 13px; font-weight: bold; color: #dc3545;">Delete Existing Category:</label>
-                <div style="display: flex; gap: 10px; margin-top: 5px;">
-                    <select id="deleteCategorySelect" style="flex: 1; padding: 10px; border: 1px solid #ced4da; border-radius: 4px; background: #fff; color: #333;"></select>
-                    <button type="button" onclick="deleteCategory()" class="add-btn" style="background-color: #dc3545;">Delete</button>
-                </div>
-            </div>
-
-            <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #ccc;">
-                <h4 style="margin-top: 0; color: #333;">2. Add New Product</h4>
-                <form id="addProductForm">
-                    <input type="text" id="prodName" placeholder="Product Name" required>
+                <div class="systematic-row-2col">
+                    <div class="form-group-block">
+                        <label>Product Title Name:</label>
+                        <input type="text" id="prodName" placeholder="Enter Item Name" required>
+                    </div>
                     
-                    <div style="display: flex; gap: 8px; width: 100%; margin-bottom: 10px; flex-wrap: wrap;">
-                        <!-- Price Input -->
-                        <input type="number" id="prodPrice" placeholder="Price (₹)" required style="flex: 1.5; margin-bottom: 0; min-width: 80px;">
+                    <div class="form-group-block">
+                        <label>Category Group:</label>
                         
-                        <!-- 🔥 NEW: Optional Weight Number Input (e.g., 400, 250, 5) -->
-                        <input type="number" id="prodWeight" placeholder="Weight/Qty (Optional, e.g. 400)" style="flex: 1.5; margin-bottom: 0; min-width: 100px;">
+                        <div class="custom-dropdown-container" id="customCategoryDropdown">
+                            <div class="custom-dropdown-selected" id="dropdownSelectedValue" onclick="toggleCustomDropdown()">-- Choose Category --</div>
+                            <div class="custom-dropdown-menu" id="dropdownMenuOptions">
+                                </div>
+                        </div>
                         
-                        <!-- Unit Dropdown -->
-                        <select id="prodUnit" style="flex: 1; margin-bottom: 0; background: #f8f9fa; min-width: 90px;">
+                        <input type="hidden" id="prodCategory" required>
+                        
+                        <div id="inlineCreateCategoryWrapper" class="inline-create-wrapper" style="display: none;">
+                            <input type="text" id="newCategoryName" placeholder="Enter new category title">
+                            <button type="button" onclick="submitInlineCategory()" class="inline-submit-btn">Add</button>
+                            <button type="button" onclick="cancelInlineCategory()" class="inline-cancel-btn">×</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="systematic-row-3col">
+                    <div class="form-group-block">
+                        <label class="optional-label">Retail Price (₹) (Optional):</label>
+                        <input type="number" id="prodPrice" placeholder="Selling Rate (Blank = On Call)">
+                    </div>
+                    <div class="form-group-block">
+                        <label class="optional-label">Weight/Qty (Optional):</label>
+                        <input type="number" id="prodWeight" placeholder="e.g. 400, 250">
+                    </div>
+                    <div class="form-group-block">
+                        <label>Measurement Unit:</label>
+                        <select id="prodUnit">
                             <option value="Piece">Piece (pc)</option>
                             <option value="Gram">Gram (g)</option>
                             <option value="Kg">Kg</option>
@@ -70,49 +176,46 @@
                             <option value="Packet">Packet</option>
                         </select>
                     </div>
+                </div>
 
-                    <!-- Optional Wholesale Price Field for Admin -->
-                    <div style="margin-bottom: 10px;">
-                        <input type="number" id="prodWholesalePrice" placeholder="Wholesale Price (Optional - Only visible to Boss)">
-                    </div>
-                    
-                    <div style="width: 100%; display: flex; flex-direction: column; gap: 5px; margin: 5px 0; padding: 15px; background: #f8f9fa; border: 1px dashed #ccc; border-radius: 6px;">
-                        <label style="font-weight: bold; color: #333; font-size: 14px; text-align: left; margin-bottom: 5px;">Product Photo (Optional):</label>
-                        <input type="text" id="prodImage" placeholder="Option A: Yahan Image URL paste karein">
-                        <div style="text-align: center; font-weight: bold; color: #888; font-size: 12px; margin: 8px 0;">— OR —</div>
-                        
-                        <div style="text-align: center;">
+                <div class="form-group-block">
+                    <label class="optional-label">Wholesale Price (Optional — Only visible to Boss):</label>
+                    <input type="number" id="prodWholesalePrice" placeholder="Enter Wholesale Rate if applicable">
+                </div>
+                
+                <div class="media-upload-systematic-container">
+                    <label class="optional-label">Product Photo Canvas (Optional):</label>
+                    <div class="media-split-grid">
+                        <div class="media-input-box">
+                            <input type="text" id="prodImage" placeholder="Option A: Paste direct external Image URL Link">
+                        </div>
+                        <div class="media-or-divider">— OR —</div>
+                        <div class="media-action-box">
                             <label for="prodImageFile" class="camera-btn">
                                 📷 Open Camera / Gallery
                             </label>
                             <input type="file" id="prodImageFile" accept="image/*" capture="environment" style="display: none;">
-                            <span id="fileChosenText" style="font-size: 12px; color: #666; display: block; margin-top: 5px;">No photo selected</span>
+                            <span id="fileChosenText" class="status-chosen-text">No photo selected</span>
                         </div>
                     </div>
-                    
-                    <div class="image-preview-container">
-                        <img id="imagePreview" src="" alt="Preview">
-                    </div>
-                    
-                    <label style="display:block; margin-top: 10px; margin-bottom: 5px; font-weight:bold; color: #333; text-align: left;">Select Category:</label>
-                    <select id="prodCategory">
-                    </select>
-                    
-                    <button type="submit" class="add-btn" style="margin-top: 15px; width: 100%;">Publish Product</button>
-                </form>
-            </div>
+                </div>
+                
+                <div class="image-preview-container">
+                    <img id="imagePreview" src="" alt="Preview">
+                </div>
+                
+                <button type="submit" class="publish-submit-btn">Publish Product Globally</button>
+            </form>
         </div>
 
         <div class="search-filter-box">
             <div style="margin-bottom: 15px;">
                 <input type="text" id="searchBar" placeholder="🔍 Search by item name or category..." oninput="filterProducts()">
             </div>
-            <div id="categoryTabsContainer" style="display: flex; gap: 10px; flex-wrap: wrap;">
-            </div>
+            <div id="categoryTabsContainer"></div>
         </div>
 
-        <div class="products-grid" id="productsGrid">
-        </div>
+        <div class="products-grid" id="productsGrid"></div>
     </main>
 
     <div id="productModal" class="modal-overlay">
@@ -137,30 +240,24 @@
                 Notice: Online ordering is currently unavailable. This is a digital price catalog. Please visit our offline store to purchase this item.
             </p>
             
-            <button onclick="closeModal()" class="modal-close-btn">
-                Close
-            </button>
+            <button onclick="closeModal()" class="modal-close-btn">Close</button>
         </div>
     </div>
 
     <div id="editProductModal" class="modal-overlay" style="display:none;">
         <div class="edit-modal-box">
             <span class="close-modal" onclick="closeEditModal()">×</span>
-            <h3>Edit Product</h3>
+            <h3>Edit Existing Item Record</h3>
             
             <input type="hidden" id="editProdId">
             
             <label>Product Name:</label>
             <input type="text" id="editProdName" required>
             
-            <label>Price, Weight & Unit:</label>
             <div style="display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
-                <input type="number" id="editProdPrice" required style="flex: 1.5; margin-bottom: 0; min-width: 80px;">
-                
-                <!-- 🔥 NEW: Optional Weight Number Input for Edit Modal -->
-                <input type="number" id="editProdWeight" placeholder="Weight/Qty (Optional)" style="flex: 1.5; margin-bottom: 0; min-width: 100px;">
-                
-                <select id="editProdUnit" style="flex: 1; margin-bottom: 0; background: #f8f9fa; min-width: 90px;">
+                <input type="number" id="editProdPrice" placeholder="Price (Optional)" style="flex: 1.5; min-width: 80px;">
+                <input type="number" id="editProdWeight" placeholder="Weight (Optional)" style="flex: 1.5; min-width: 100px;">
+                <select id="editProdUnit" style="flex: 1; min-width: 90px; background: #2c3341;">
                     <option value="Piece">Piece (pc)</option>
                     <option value="Gram">Gram (g)</option>
                     <option value="Kg">Kg</option>
@@ -169,15 +266,15 @@
                 </select>
             </div>
 
-            <label>Wholesale Price (Optional):</label>
+            <label class="optional-label">Wholesale Price (Optional):</label>
             <input type="number" id="editProdWholesalePrice" style="margin-bottom: 10px;">
             
             <label>Current Photo Preview:</label><br>
             <img id="editImagePreview" src="" alt="Current Photo" style="display: block; margin-bottom: 10px;"><br>
             
-            <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #ddd; margin-bottom: 10px;">
-                <label style="font-weight: bold; margin: 0 0 5px 0;">Change Photo (Optional):</label>
-                <input type="text" id="editProdImage" placeholder="Naya Image URL paste karein">
+            <div style="background: #1f242d; padding: 15px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px;">
+                <label class="optional-label">Change Photo (Optional):</label>
+                <input type="text" id="editProdImage" placeholder="Paste New Image URL">
                 <div style="text-align: center; font-weight: bold; color: #666; font-size: 11px; margin: 8px 0;">— OR —</div>
                 
                 <div style="text-align: center;">
@@ -185,15 +282,14 @@
                         📷 Open Camera / Gallery
                     </label>
                     <input type="file" id="editProdImageFile" accept="image/*" capture="environment" style="display:none;">
-                    <span id="editFileChosenText" style="font-size: 12px; color: #666; display: block; margin-top: 5px;">No photo selected</span>
+                    <span id="editFileChosenText" style="font-size: 12px; color: #aaa; display: block; margin-top: 5px;">No photo selected</span>
                 </div>
             </div>
             
-            <label>Category:</label>
-            <select id="editProdCategory">
-            </select>
+            <label>Category Group:</label>
+            <select id="editProdCategory"></select>
             
-            <button type="button" onclick="submitProductEdit()" class="add-btn" style="background-color: #ffc107; color: #333; margin-top: 15px; width: 100%;">Save Changes</button>
+            <button type="button" onclick="submitProductEdit()" class="publish-submit-btn" style="background: #ffc107; color: #1f242d; margin-top: 15px;">Save Changes</button>
         </div>
     </div>
 
@@ -201,18 +297,53 @@
         <p>© 2026 Sahu Kirana & Restaurant. All Rights Reserved.</p>
     </footer>
 
+    <script>
+        function toggleCustomDropdown() {
+            document.getElementById('dropdownMenuOptions').classList.toggle('show');
+            document.getElementById('dropdownSelectedValue').classList.toggle('active');
+        }
+
+        window.addEventListener('click', function(e) {
+            if (!document.getElementById('customCategoryDropdown').contains(e.target)) {
+                document.getElementById('dropdownMenuOptions').classList.remove('show');
+                document.getElementById('dropdownSelectedValue').classList.remove('active');
+            }
+        });
+
+        function selectCustomCategoryValue(val) {
+            document.getElementById('prodCategory').value = val;
+            document.getElementById('dropdownSelectedValue').innerText = val;
+            document.getElementById('inlineCreateCategoryWrapper').style.display = 'none';
+            toggleCustomDropdown();
+        }
+
+        function triggerInlineCategoryCreation() {
+            document.getElementById('inlineCreateCategoryWrapper').style.display = 'flex';
+            document.getElementById('newCategoryName').focus();
+            toggleCustomDropdown();
+        }
+
+        function cancelInlineCategory() {
+            document.getElementById('inlineCreateCategoryWrapper').style.display = 'none';
+            document.getElementById('prodCategory').value = '';
+            document.getElementById('dropdownSelectedValue').innerText = '-- Choose Category --';
+        }
+
+        function submitInlineCategory() {
+            const inputVal = document.getElementById('newCategoryName').value.trim();
+            if(!inputVal) {
+                alert('Please enter a category name first!');
+                return;
+            }
+            if (typeof createNewCategory === 'function') {
+                createNewCategory();
+                setTimeout(() => { cancelInlineCategory(); }, 800);
+            }
+        }
+    </script>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="script.js"></script>
-
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/SAHU-HOTEL/sw.js')
-            .then(reg => console.log('PWA Service Worker connected for Home!'))
-            .catch(err => console.log('PWA Service Worker error:', err));
-        });
-      }
-    </script>
 </body>
 </html>

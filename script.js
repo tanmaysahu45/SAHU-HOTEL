@@ -185,18 +185,42 @@ function updateShopStatus() {
 }
 
 function renderCategoryElements() {
-    const prodCategoryDropdown = document.getElementById('prodCategory');
+    const dropdownMenu = document.getElementById('dropdownMenuOptions');
     const editProdCategoryDropdown = document.getElementById('editProdCategory'); 
-    const deleteCategorySelect = document.getElementById('deleteCategorySelect');
     const tabsContainer = document.getElementById('categoryTabsContainer');
 
-    if (prodCategoryDropdown) {
-        prodCategoryDropdown.innerHTML = '';
+    if (dropdownMenu) {
+        dropdownMenu.innerHTML = '';
+        
+        const createOpt = document.createElement('div');
+        createOpt.className = 'custom-dropdown-option opt-create-trigger';
+        createOpt.innerText = '[ ➕ Create New Category ]';
+        createOpt.onclick = function() { triggerInlineCategoryCreation(); };
+        dropdownMenu.appendChild(createOpt);
+
         DEFAULT_CATEGORIES.forEach(cat => {
-            const option = document.createElement('option');
-            option.value = cat;
-            option.innerText = cat;
-            prodCategoryDropdown.appendChild(option);
+            const opt = document.createElement('div');
+            opt.className = 'custom-dropdown-option';
+            opt.innerHTML = `<span>${cat}</span>`;
+            
+            let cloudKey = Object.keys(cloudCategoryMap).find(key => cloudCategoryMap[key] === cat);
+            if (cloudKey && localStorage.getItem('userRole') === 'admin') {
+                const cutBtn = document.createElement('span');
+                cutBtn.className = 'opt-cut-btn';
+                cutBtn.innerHTML = '×';
+                cutBtn.onclick = function(e) {
+                    e.stopPropagation(); 
+                    executeDirectDropdownDeletion(cloudKey, cat);
+                };
+                opt.appendChild(cutBtn);
+            }
+            
+            opt.addEventListener('click', function(e) {
+                if(e.target.className !== 'opt-cut-btn') {
+                    selectCustomCategoryValue(cat);
+                }
+            });
+            dropdownMenu.appendChild(opt);
         });
     }
 
@@ -207,16 +231,6 @@ function renderCategoryElements() {
             option.value = cat;
             option.innerText = cat;
             editProdCategoryDropdown.appendChild(option);
-        });
-    }
-
-    if (deleteCategorySelect) {
-        deleteCategorySelect.innerHTML = '<option value="">-- Select Category to Delete --</option>';
-        Object.keys(cloudCategoryMap).forEach(key => {
-            const option = document.createElement('option');
-            option.value = key; 
-            option.innerText = cloudCategoryMap[key];
-            deleteCategorySelect.appendChild(option);
         });
     }
 
@@ -235,6 +249,17 @@ function renderCategoryElements() {
             btn.onclick = function() { selectCategory(cat); };
             tabsContainer.appendChild(btn);
         });
+    }
+}
+
+function executeDirectDropdownDeletion(catId, catName) {
+    if (confirm(`Are you sure you want to permanently delete the category "${catName}"?`)) {
+        fetch(`${DB_URL}/categories/${catId}.json`, { method: 'DELETE' })
+        .then(() => {
+            alert(`Category "${catName}" deleted!`);
+            loadCategories(); 
+        })
+        .catch(() => alert('Error deleting category!'));
     }
 }
 
@@ -261,29 +286,8 @@ function createNewCategory() {
     .then(() => {
         catInput.value = '';
         loadCategories(); 
-        alert(`Category "${newCat}" added successfully! Form data is perfectly safe.`);
+        alert(`Category "${newCat}" added successfully!`);
     });
-}
-
-function deleteCategory() {
-    const select = document.getElementById('deleteCategorySelect');
-    if (!select) return;
-    const catId = select.value;
-    
-    if (catId === "") {
-        alert("Please select a category to delete.");
-        return;
-    }
-
-    const catName = cloudCategoryMap[catId];
-    if (confirm(`Are you sure you want to permanently delete the category "${catName}"?`)) {
-        fetch(`${DB_URL}/categories/${catId}.json`, { method: 'DELETE' })
-        .then(() => {
-            alert(`Category "${catName}" deleted!`);
-            loadCategories(); 
-        })
-        .catch(() => alert('Error deleting category!'));
-    }
 }
 
 function selectCategory(categoryName) {
@@ -293,7 +297,7 @@ function selectCategory(categoryName) {
 }
 
 // ==========================================
-// 5. IMAGE COMPRESSION ENGINE (FILE & URL ACCESSIBILITY)
+// 5. IMAGE COMPRESSION ENGINE
 // ==========================================
 function compressAndGetBase64(fileOrUrl, maxWidth = 800, quality = 0.7) {
     return new Promise((resolve, reject) => {
@@ -401,7 +405,7 @@ function setupImageUploadListeners() {
             }
         });
     }
-    
+
     if (editUrlInput) {
         editUrlInput.addEventListener('input', async function() {
             let val = editUrlInput.value.trim();
@@ -452,29 +456,36 @@ if (addProductForm) {
         event.preventDefault();
         const name = document.getElementById('prodName').value.trim();
         const rawPrice = document.getElementById('prodPrice').value;
-        
-        // 🔥 NEW: Reading Weight Number Value
         const weightValue = document.getElementById('prodWeight').value.trim();
         const unit = document.getElementById('prodUnit').value; 
         const category = document.getElementById('prodCategory').value; 
         let urlImage = document.getElementById('prodImage').value.trim();
         
-        // Dynamic combined Unit generation (e.g., "400 Gram" OR just "Gram")
+        if(!category) {
+            alert('Please select or create a Category Group first!');
+            return;
+        }
+
         const dynamicUnitString = weightValue ? `${weightValue} ${unit}` : unit;
+        
+        // 🔥 PRICE OPTIONAL ENGINE CONDITIONAL CHECK HERE
+        let finalPriceString = "";
+        if (!rawPrice || rawPrice.trim() === "") {
+            finalPriceString = "Price On Call"; // Blank chhodne par ye automatic database me jayega
+        } else {
+            finalPriceString = '₹' + rawPrice + ' / ' + dynamicUnitString;
+        }
 
         const wholesalePriceInput = document.getElementById('prodWholesalePrice').value;
         const finalWholesaleString = wholesalePriceInput ? '₹' + wholesalePriceInput + ' / ' + dynamicUnitString : '';
 
         urlImage = convertDriveLink(urlImage);
-
         let finalImage = NO_IMAGE_URL;
         if (selectedAddImageBase64) {
             finalImage = selectedAddImageBase64;
         } else if (urlImage !== '') {
             finalImage = urlImage;
         }
-
-        const finalPriceString = '₹' + rawPrice + ' / ' + dynamicUnitString;
 
         const productObject = {
             name: name,
@@ -496,13 +507,12 @@ if (addProductForm) {
         .then(() => {
             addProductForm.reset();
             document.getElementById('imagePreview').style.display = 'none';
-            const fileText = document.getElementById('fileChosenText');
-            if (fileText) fileText.innerText = "No photo selected";
+            document.getElementById('dropdownSelectedValue').innerText = '-- Choose Category --';
             selectedAddImageBase64 = null;
             filterProducts(); 
             alert('Product Published Globally!');
         })
-        .catch((err) => {
+        .catch(() => {
             alert('Error updating database!');
         })
         .finally(() => {
@@ -513,7 +523,7 @@ if (addProductForm) {
 }
 
 // ==========================================
-// 7. RENDER LIVE ITEMS FROM CLOUD (LATEST ON TOP & SECRET WHOLESALE RATE)
+// 7. RENDER LIVE ITEMS FROM CLOUD
 // ==========================================
 function filterProducts() {
     const productsGrid = document.getElementById('productsGrid');
@@ -561,7 +571,6 @@ function filterProducts() {
             
             const safeName = product.name.replace(/'/g, "\\'").replace(/"/g, '"');
             const safePrice = product.price.replace(/'/g, "\\'");
-            
             const safeWholesale = product.wholesalePrice ? product.wholesalePrice.replace(/'/g, "\\'") : '';
 
             let actionHtml = '';
@@ -570,12 +579,12 @@ function filterProducts() {
             
             if (userRole === 'admin') {
                 if (product.wholesalePrice) {
-                    wholesaleHtml = `<div style="font-size: 13px; color: #ff9800; font-weight: bold; margin-bottom: 5px; background: #fff3e0; padding: 2px; border-radius: 4px;">📦 Wholesale: ${product.wholesalePrice}</div>`;
+                    wholesaleHtml = `<div style="font-size: 13px; color: #ff9800; font-weight: bold; margin-bottom: 5px; background: rgba(255,152,0,0.1); padding: 4px 6px; border-radius: 6px;">📦 Wholesale: ${product.wholesalePrice}</div>`;
                 }
                 actionHtml = `
                     <div class="admin-action-btns">
                         <button class="edit-btn" onclick="openEditModal('${product.id}', '${safeName}', '${safePrice}', '${safeWholesale}', '${product.category}', '${product.image}')">Edit</button>
-                        <button class="delete-btn" style="background: #dc3545; color: white; border: none; padding: 5px; cursor: pointer; width: 50%; border-radius:4px; font-weight:bold; font-size:14px;" onclick="deleteProduct('${product.id}')">Delete</button>
+                        <button class="delete-btn" onclick="deleteProduct('${product.id}')">Delete</button>
                     </div>
                 `;
             }
@@ -589,7 +598,6 @@ function filterProducts() {
                 </div>
                 ${actionHtml}
             `;
-
             productsGrid.appendChild(card);
         });
     })
@@ -598,9 +606,6 @@ function filterProducts() {
     });
 }
 
-// ==========================================
-// 8. PRODUCT MODALS (Customer & Admin Edit)
-// ==========================================
 function openProductModal(name, price) {
     document.getElementById('modalProdName').innerText = name + " — " + price;
     document.getElementById('productModal').style.display = 'flex';
@@ -614,27 +619,28 @@ function openEditModal(id, name, priceWithSymbol, wholesaleWithSymbol, category,
     document.getElementById('editProdId').value = id;
     document.getElementById('editProdName').value = name;
     
-    const parts = priceWithSymbol.split(' / ');
-    const rawPrice = parts[0].replace('₹', '').trim();
-    
+    let rawPrice = "";
     let weightNum = '';
     let unitStr = 'Piece';
 
-    if (parts.length > 1) {
+    // Extraction handling check for non-numeric dynamic fields like "Price On Call"
+    if (priceWithSymbol.includes(' / ')) {
+        const parts = priceWithSymbol.split(' / ');
+        rawPrice = parts[0].replace('₹', '').trim();
         const unitParts = parts[1].trim().split(' ');
         if (unitParts.length > 1) {
-            weightNum = unitParts[0].trim(); // Extract 400
-            unitStr = unitParts[1].trim();   // Extract Gram
+            weightNum = unitParts[0].trim(); 
+            unitStr = unitParts[1].trim();   
         } else {
             unitStr = unitParts[0].trim();
         }
     }
     
-    document.getElementById('editProdPrice').value = rawPrice;
-    document.getElementById('editProdWeight').value = weightNum; // Fills weight number back correctly
+    document.getElementById('editProdPrice').value = rawPrice; // Keeps input clear if blank initially
+    document.getElementById('editProdWeight').value = weightNum; 
     document.getElementById('editProdUnit').value = unitStr;
     
-    if (wholesaleWithSymbol && wholesaleWithSymbol !== 'undefined') {
+    if (wholesaleWithSymbol && wholesaleWithSymbol !== 'undefined' && wholesaleWithSymbol.includes(' / ')) {
         const wParts = wholesaleWithSymbol.split(' / ');
         document.getElementById('editProdWholesalePrice').value = wParts[0].replace('₹', '').trim();
     } else {
@@ -643,11 +649,7 @@ function openEditModal(id, name, priceWithSymbol, wholesaleWithSymbol, category,
     
     document.getElementById('editProdCategory').value = category;
     document.getElementById('editImagePreview').src = image;
-    
     document.getElementById('editProdImage').value = '';
-    document.getElementById('editProdImageFile').value = '';
-    const fileText = document.getElementById('editFileChosenText');
-    if (fileText) fileText.innerText = "No photo selected";
     selectedEditImageBase64 = null;
 
     document.getElementById('editProductModal').style.display = 'flex';
@@ -667,26 +669,31 @@ function submitProductEdit() {
     let editUrlImage = document.getElementById('editProdImage').value.trim();
     const currentImageUrl = document.getElementById('editImagePreview').src; 
 
+    if (!name) {
+        alert("Please fill the product name.");
+        return;
+    }
+
     const dynamicUnitString = weightValue ? `${weightValue} ${unit}` : unit;
+    
+    // 🔥 EDIT CONDITIONAL PATTERN
+    let finalPriceString = "";
+    if (!rawPrice || rawPrice.trim() === "") {
+        finalPriceString = "Price On Call";
+    } else {
+        finalPriceString = '₹' + rawPrice + ' / ' + dynamicUnitString;
+    }
 
     const wholesaleInput = document.getElementById('editProdWholesalePrice').value;
     const finalWholesaleString = wholesaleInput ? '₹' + wholesaleInput + ' / ' + dynamicUnitString : '';
 
-    if (!name || !rawPrice) {
-        alert("Please fill name and price.");
-        return;
-    }
-
     editUrlImage = convertDriveLink(editUrlImage);
-
     let finalImage = currentImageUrl;
     if (selectedEditImageBase64) {
         finalImage = selectedEditImageBase64;
     } else if (editUrlImage !== '') {
         finalImage = editUrlImage;
     }
-
-    const finalPriceString = '₹' + rawPrice + ' / ' + dynamicUnitString;
 
     const updatedProduct = {
         name: name,
@@ -696,7 +703,7 @@ function submitProductEdit() {
         category: category
     };
 
-    const editBtn = document.querySelector('#editProductModal .add-btn');
+    const editBtn = document.querySelector('#editProductModal .publish-submit-btn');
     editBtn.innerText = 'Saving...';
     editBtn.disabled = true;
 
@@ -722,16 +729,13 @@ function submitProductEdit() {
 function deleteProduct(id) {
     if (confirm('Delete this item from global cloud?')) {
         fetch(`${DB_URL}/products/${id}.json`, { method: 'DELETE' })
-        .then(() => {
-            filterProducts();
-        });
+        .then(() => { filterProducts(); });
     }
 }
 
-// Global Hooks Setup
+// Hooks registration
 window.logout = logout;
 window.createNewCategory = createNewCategory;
-window.deleteCategory = deleteCategory;
 window.selectCategory = selectCategory;
 window.filterProducts = filterProducts;
 window.openProductModal = openProductModal;
@@ -741,10 +745,7 @@ window.openEditModal = openEditModal;
 window.closeEditModal = closeEditModal;
 window.submitProductEdit = submitProductEdit;
 
-// Initial Full Screen Loader Dismiss
 window.addEventListener('load', function() {
     const pageLoader = document.getElementById('pageLoader');
-    if (pageLoader) {
-        pageLoader.style.display = 'none';
-    }
+    if (pageLoader) pageLoader.style.display = 'none';
 });
