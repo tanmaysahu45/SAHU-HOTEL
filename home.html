@@ -13,12 +13,11 @@
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
     <style>
-        /* Custom Select Shrinked */
         .custom-dropdown-container { position: relative; width: 100%; }
-        .custom-dropdown-selected { padding: 8px 10px; border: 1px solid #323946; border-radius: 6px; font-size: 12px; color: #fff; background: #2c3341; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .custom-dropdown-selected { padding: 10px; border: 1px solid #323946; border-radius: 4px; font-size: 12px; color: #fff; background: #2c3341; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .custom-dropdown-menu { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #2c3341; border: 1px solid rgba(0, 238, 255, 0.2); border-radius: 6px; margin-top: 2px; max-height: 200px; overflow-y: auto; z-index: 999; }
         .custom-dropdown-menu.show { display: block; }
-        .custom-dropdown-option { padding: 8px 10px; font-size: 12px; color: #fff; cursor: pointer; display: flex; justify-content: space-between; }
+        .custom-dropdown-option { padding: 10px; font-size: 12px; color: #fff; cursor: pointer; display: flex; justify-content: space-between; }
         .opt-create-trigger { color: #0ef !important; font-weight: bold; background: rgba(0, 238, 255, 0.05); }
         .opt-cut-btn { color: #ff4d4d; font-weight: bold; font-size: 14px; padding: 0 5px; }
         .inline-create-wrapper { display: flex; gap: 5px; background: #1f242d; padding: 8px; border-radius: 6px; border: 1px solid #0ef; margin-top: 5px; }
@@ -50,7 +49,7 @@
             <span class="drawer-close" onclick="toggleSideMenu()">×</span>
         </div>
         <div class="drawer-body">
-            <div class="info-card-block" style="border-color: #ffc107;">
+            <div id="posBillingDrawerBlock" class="info-card-block" style="border-color: #ffc107; display: none;">
                 <h4 style="color: #ffc107;">🛒 Smart POS Billing</h4>
                 <a href="billing.html" class="drawer-maps-btn" style="background: #ffc107; color: #1f242d; width: 100%;">🧾 Open POS Counter</a>
                 <a href="billing.html?view=history" class="drawer-maps-btn" style="background: transparent; border: 1px solid #ffc107; color: #ffc107; width: 100%;">📜 View Billing History</a>
@@ -75,39 +74,44 @@
     <main class="main-container">
         <div id="adminSection" class="admin-box" style="display: none;">
             
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 8px; margin-bottom: 15px;">
-                <h3 style="margin: 0; font-size: 14px; color: #0ef;">Admin Panel — Add Product</h3>
-                <a href="billing.html" style="background: #0ef; color: #1f242d; padding: 6px 10px; border-radius: 4px; font-weight: bold; text-decoration: none; font-size: 11px;">🧾 POS Billing</a>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; margin-bottom: 15px;">
+                <h3 style="margin: 0; font-size: 15px; color: #0ef;">Add New Product</h3>
+                <a href="billing.html" style="background: #0ef; color: #1f242d; padding: 6px 12px; border-radius: 4px; font-weight: bold; text-decoration: none; font-size: 12px;">🧾 POS Billing</a>
             </div>
             
             <form id="addProductForm">
                 
-                <div class="systematic-row-2col">
+                <div class="systematic-row-2col" style="background: rgba(0,238,255,0.05); padding: 10px; border-radius: 6px; border: 1px dashed #0ef;">
                     <div class="form-group-block">
-                        <label class="optional-label">1. Barcode Number (Optional):</label>
-                        <input type="text" id="prodBarcode" placeholder="Scan ya Type karein">
+                        <label class="optional-label" style="font-weight:bold; font-size:12px;">1. Photo:</label>
+                        <label for="prodImageFile" class="camera-btn" style="background:#0ef; color:#1f242d;">📷 Camera</label>
+                        <input type="file" id="prodImageFile" accept="image/*" capture="environment" style="display:none;">
+                        <input type="text" id="prodImage" placeholder="Paste Link" style="margin-top:4px;">
                     </div>
-                    <div class="form-group-block" style="justify-content: flex-end;">
-                        <button type="button" onclick="toggleAdminBarcodeScanner()" class="camera-btn" style="border: 1px solid #0ef; color: #0ef;">
-                            📷 Scan Barcode via Camera
-                        </button>
+
+                    <div class="form-group-block">
+                        <label class="optional-label" style="font-weight:bold; font-size:12px;">2. Barcode:</label>
+                        <button type="button" onclick="toggleAdminBarcodeScanner()" class="camera-btn" style="border-color:#0ef;">📷 Scan Barcode</button>
+                        <input type="text" id="prodBarcode" placeholder="Scan/Type" style="margin-top:4px;">
                     </div>
                 </div>
+                
+                <div class="image-preview-container" style="margin: 0; text-align: center;"><img id="imagePreview" src="" alt="Preview" style="max-height: 80px; border-radius: 4px; display: none; margin-bottom: 10px;"></div>
 
                 <div id="adminScannerRegion" class="admin-scanner-wrapper">
                     <div id="adminBarcodeReader"></div>
-                    <button type="button" onclick="toggleAdminBarcodeScanner()" class="inline-cancel-btn" style="margin-top: 8px; background: #ff4d4d; width: 100%;">❌ Stop Camera</button>
+                    <button type="button" onclick="toggleAdminBarcodeScanner()" class="inline-cancel-btn" style="margin-top: 5px; background: #ff4d4d; width: 100%; padding: 10px;">❌ Stop Camera</button>
                 </div>
 
                 <div class="systematic-row-2col">
                     <div class="form-group-block">
-                        <label>2. Product Title Name:</label>
-                        <input type="text" id="prodName" placeholder="Enter Item Name" required>
+                        <label>3. Title Name:</label>
+                        <input type="text" id="prodName" placeholder="Product Name" required>
                     </div>
                     <div class="form-group-block">
-                        <label>Category Group:</label>
+                        <label>Category:</label>
                         <div class="custom-dropdown-container" id="customCategoryDropdown">
-                            <div class="custom-dropdown-selected" id="dropdownSelectedValue" onclick="toggleCustomDropdown()">-- Choose Category --</div>
+                            <div class="custom-dropdown-selected" id="dropdownSelectedValue" onclick="toggleCustomDropdown()">-- Choose --</div>
                             <div class="custom-dropdown-menu" id="dropdownMenuOptions"></div>
                         </div>
                         <input type="hidden" id="prodCategory" required>
@@ -119,52 +123,27 @@
                     </div>
                 </div>
                 
-                <div class="systematic-row-3col">
-                    <div class="form-group-block">
-                        <label class="optional-label">Retail Price (₹):</label>
-                        <input type="number" id="prodPrice" placeholder="Blank = On Call">
-                    </div>
-                    <div class="form-group-block">
-                        <label class="optional-label">Weight/Qty:</label>
-                        <input type="number" id="prodWeight" placeholder="e.g. 400">
-                    </div>
-                    <div class="form-group-block">
-                        <label>Unit:</label>
-                        <select id="prodUnit">
-                            <option value="Piece">Piece (pc)</option>
-                            <option value="Gram">Gram (g)</option>
-                            <option value="Kg">Kg</option>
-                            <option value="Litre">Litre (l)</option>
-                            <option value="Packet">Packet</option>
-                        </select>
+                <div id="priceContainer" style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+                    <label style="font-size: 12px; color: #0ef; font-weight: bold; display: block; margin-bottom: 8px;">4. Prices (Add Multiple Rates):</label>
+                    <div class="price-row">
+                        <input type="number" class="price-val" placeholder="Price (₹ e.g. 50)" style="flex: 1;" required>
+                        <input type="text" class="price-label" placeholder="Weight/Qty (e.g. 1 Kg)" style="flex: 1;" required>
                     </div>
                 </div>
+                <button type="button" onclick="addPriceField()" style="background: none; color: #0ef; border: 1px dashed #0ef; padding: 8px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; margin-bottom: 15px; width: 100%;">+ Add One More Price</button>
 
                 <div class="form-group-block">
-                    <label class="optional-label">Wholesale Price (Visible to Owner only):</label>
+                    <label class="optional-label">Wholesale Price (Boss Only):</label>
                     <input type="number" id="prodWholesalePrice" placeholder="Enter Wholesale Rate">
                 </div>
                 
-                <div class="media-upload-systematic-container">
-                    <label class="optional-label">Product Photo (Optional):</label>
-                    <div class="media-split-grid">
-                        <input type="text" id="prodImage" placeholder="Option A: Paste Image URL">
-                        <div class="media-or-divider">— OR —</div>
-                        <label for="prodImageFile" class="camera-btn">📷 Open Camera / Gallery</label>
-                        <input type="file" id="prodImageFile" accept="image/*" capture="environment" style="display: none;">
-                        <span id="fileChosenText" class="status-chosen-text">No photo selected</span>
-                    </div>
-                </div>
-                
-                <div class="image-preview-container"><img id="imagePreview" src="" alt="Preview"></div>
-                
-                <button type="submit" class="publish-submit-btn">Publish Product Globally</button>
+                <button type="submit" class="publish-submit-btn" style="margin-top: 10px;">Publish Product Globally</button>
             </form>
         </div>
 
         <div class="search-filter-box">
-            <input type="text" id="searchBar" placeholder="🔍 Search by name, category or barcode..." oninput="filterProducts()" style="margin-bottom: 10px;">
-            <div id="categoryTabsContainer"></div>
+            <input type="text" id="searchBar" placeholder="🔍 Search product, category or barcode..." oninput="filterProducts()">
+            <div id="categoryTabsContainer" style="margin-top: 10px;"></div>
         </div>
 
         <div class="products-grid" id="productsGrid"></div>
@@ -173,57 +152,48 @@
     <div id="productModal" class="modal-overlay">
         <div class="modal-box">
             <span class="close-modal" onclick="closeModal()">×</span>
-            <h3 id="modalProdName">Product Details</h3>
-            <div class="modal-address-box">
+            <h3 id="modalProdName" style="color: #fff; margin-bottom: 5px;">Product Details</h3>
+            <div id="modalPrices" style="margin-bottom: 15px; color: #0ef; font-size: 15px; font-weight: bold;"></div>
+            <div class="modal-address-box" style="background: #1f242d; padding: 10px; border-radius: 6px; font-size: 12px;">
                 <strong>📍 Store Address:</strong><br>Sahu Kirana & Restaurant,<br>Jhurre Colony, Chhindwara, MP<br><br>
                 <strong>📞 Contact:</strong><br><a href="tel:+918319332387" style="color: #0ef; text-decoration: none; font-weight: bold;">+91 8319332387</a>
-                <a href="https://maps.app.goo.gl/MMSYvsiXWTqtz2bp6" target="_blank" class="maps-btn">🗺️ Open in Google Maps</a>
             </div>
-            <div class="modal-notice">
-                <a href="tel:+918319332387" style="display: block; color: #ff4d4d; font-weight: bold; text-decoration: underline;">📞 Click Here to Call Store: +91 8319332387</a>
-            </div>
-            <button onclick="closeModal()" class="modal-close-btn">Close</button>
+            <button onclick="closeModal()" class="modal-close-btn">Close Window</button>
         </div>
     </div>
 
     <div id="editProductModal" class="modal-overlay" style="display:none;">
         <div class="edit-modal-box">
             <span class="close-modal" onclick="closeEditModal()">×</span>
-            <h3 style="font-size: 14px; margin-bottom: 10px; color: #0ef;">Edit Record</h3>
+            <h3 style="font-size: 16px; margin-bottom: 12px; color: #0ef;">Edit Record</h3>
             <input type="hidden" id="editProdId">
             
-            <label style="font-size:11px; color:#fff;">Product Name:</label>
-            <input type="text" id="editProdName" required style="margin-bottom: 8px;">
+            <label style="font-size:12px; color:#fff;">Product Name:</label>
+            <input type="text" id="editProdName" required style="margin-bottom: 10px;">
             
-            <div style="display: flex; gap: 5px; margin-bottom: 8px;">
-                <input type="number" id="editProdPrice" placeholder="Price" style="flex: 1;">
-                <input type="number" id="editProdWeight" placeholder="Weight" style="flex: 1;">
-                <select id="editProdUnit" style="flex: 1;">
-                    <option value="Piece">Piece</option><option value="Gram">Gram</option>
-                    <option value="Kg">Kg</option><option value="Litre">Litre</option><option value="Packet">Packet</option>
-                </select>
-            </div>
+            <label style="font-size:12px; color:#0ef; font-weight:bold;">Prices:</label>
+            <div id="editPriceContainer"></div>
+            <button type="button" onclick="addEditPriceField()" style="background: none; color: #0ef; border: 1px dashed #0ef; padding: 6px; border-radius: 4px; font-size: 11px; margin-bottom: 10px; cursor: pointer; width: 100%;">+ Add Price Option</button>
 
-            <label style="font-size:11px; color:#0ef;">Barcode String:</label>
-            <input type="text" id="editProdBarcode" style="margin-bottom: 8px;">
+            <label style="font-size:12px; color:#0ef;">Barcode String:</label>
+            <input type="text" id="editProdBarcode" style="margin-bottom: 10px;">
 
-            <label style="font-size:11px; color:#0ef;">Wholesale Price:</label>
-            <input type="number" id="editProdWholesalePrice" style="margin-bottom: 8px;">
+            <label style="font-size:12px; color:#0ef;">Wholesale Price:</label>
+            <input type="number" id="editProdWholesalePrice" style="margin-bottom: 10px;">
             
-            <div style="background: #1f242d; padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 8px;">
-                <img id="editImagePreview" src="" alt="Current" style="display: block; margin: 0 auto 5px; max-height:60px;">
-                <input type="text" id="editProdImage" placeholder="Paste New Image URL" style="margin-bottom: 5px;">
-                <div style="text-align: center; color: #666; font-size: 10px; margin: 4px 0;">— OR —</div>
-                <label for="editProdImageFile" class="camera-btn">📷 Camera / Gallery</label>
+            <div style="background: #1f242d; padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px;">
+                <img id="editImagePreview" src="" alt="Current" style="display: block; margin: 0 auto 5px; max-height:80px; border-radius: 4px;">
+                <input type="text" id="editProdImage" placeholder="Paste New Image URL" style="margin-bottom: 8px;">
+                <label for="editProdImageFile" class="camera-btn" style="background: #0ef; color: #000;">📷 Camera / Gallery</label>
                 <input type="file" id="editProdImageFile" accept="image/*" capture="environment" style="display:none;">
             </div>
             
             <select id="editProdCategory" style="margin-bottom: 10px;"></select>
-            <button type="button" onclick="submitProductEdit()" class="publish-submit-btn" style="background: #ffc107; color: #1f242d; margin-top: 5px;">Save Changes</button>
+            <button type="button" onclick="submitProductEdit()" class="publish-submit-btn" style="background: #ffc107; color: #1f242d; margin-top: 10px;">Save Changes</button>
         </div>
     </div>
 
-    <footer class="footer"><p>© 2026 Sahu Kirana & Restaurant.</p></footer>
+    <footer class="footer" style="text-align:center; padding: 20px; font-size: 12px; color: #666;"><p>© 2026 Sahu Kirana & Restaurant.</p></footer>
 
     <script>
         function toggleSideMenu() { document.getElementById('sideMenuDrawer').classList.toggle('open'); document.getElementById('drawerOverlay').classList.toggle('show'); }
@@ -234,7 +204,31 @@
         function cancelInlineCategory() { document.getElementById('inlineCreateCategoryWrapper').style.display = 'none'; document.getElementById('prodCategory').value = ''; document.getElementById('dropdownSelectedValue').innerText = '-- Choose Category --'; }
         function submitInlineCategory() { const inputVal = document.getElementById('newCategoryName').value.trim(); if(!inputVal) { alert('Enter category name!'); return; } if (typeof createNewCategory === 'function') { createNewCategory(); setTimeout(() => { cancelInlineCategory(); }, 800); } }
 
-        // 🔥 FIX 1: Scanner Error Fix (No Alert Loop)
+        function addPriceField() {
+            const container = document.getElementById('priceContainer');
+            const div = document.createElement('div');
+            div.className = 'price-row';
+            div.innerHTML = `
+                <input type="number" class="price-val" placeholder="Price (₹)" style="flex: 1;" required>
+                <input type="text" class="price-label" placeholder="Qty (e.g. 1 Kg)" style="flex: 1;" required>
+                <button type="button" onclick="this.parentElement.remove()" style="background: #ff4d4d; color: white; border: none; padding: 0 12px; border-radius: 4px; font-weight: bold; cursor: pointer;">X</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function addEditPriceField(rate = '', qty = '') {
+            const container = document.getElementById('editPriceContainer');
+            const div = document.createElement('div');
+            div.className = 'edit-price-row';
+            div.style = "display: flex; gap: 5px; margin-bottom: 8px;";
+            div.innerHTML = `
+                <input type="number" class="edit-price-val" placeholder="Price (₹)" value="${rate}" style="flex: 1;" required>
+                <input type="text" class="edit-price-label" placeholder="Qty (e.g. 1 Kg)" value="${qty}" style="flex: 1;" required>
+                <button type="button" onclick="this.parentElement.remove()" style="background: #ff4d4d; color: white; border: none; padding: 0 12px; border-radius: 4px; font-weight: bold; cursor: pointer;">X</button>
+            `;
+            container.appendChild(div);
+        }
+
         let html5QrcodeScanner = null;
         function toggleAdminBarcodeScanner() {
             const region = document.getElementById('adminScannerRegion');
@@ -248,18 +242,16 @@
                 html5QrcodeScanner = new Html5Qrcode("adminBarcodeReader");
                 html5QrcodeScanner.start(
                     { facingMode: "environment" }, 
-                    { fps: 10, qrbox: { width: 250, height: 100 } },
+                    { fps: 20, qrbox: { width: 250, height: 100 } },
                     (decodedText) => {
-                        // Success: Fill input and CLOSE quietly. NO ALERT.
                         document.getElementById('prodBarcode').value = decodedText;
-                        toggleAdminBarcodeScanner(); // Band kar do turant
+                        toggleAdminBarcodeScanner(); // AUTOMATIC STOP AUR FILL HOGA
                     },
-                    (errorMessage) => { /* Ignore background errors */ }
+                    (errorMessage) => { }
                 ).catch(err => console.log("Camera Error", err));
             }
         }
     </script>
-
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="script.js"></script>

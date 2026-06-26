@@ -23,7 +23,7 @@ function checkPageSession() {
         window.location.replace("home.html");
     }
 }
-checkPageSession(); // Instant run
+checkPageSession(); 
 
 function logout() {
     localStorage.removeItem('currentUser');
@@ -32,7 +32,7 @@ function logout() {
 }
 
 // ==========================================
-// 2. LIVE LOGIN & REGISTER SYSTEM (GLOBAL)
+// 2. LIVE LOGIN & REGISTER SYSTEM
 // ==========================================
 const loginForm = document.getElementById('loginForm');
 
@@ -70,14 +70,6 @@ if (loginForm) {
             return;
         }
 
-        if (uValue === "tanmaysahu" && pValue === "boss") {
-            localStorage.setItem('currentUser', 'tanmaysahu');
-            localStorage.setItem('userRole', 'admin');
-            alert('Welcome Back, Boss!');
-            window.location.replace("home.html");
-            return;
-        }
-
         fetch(`${DB_URL}/users/${uValue}.json`)
         .then(res => res.json())
         .then(registeredUser => {
@@ -100,7 +92,7 @@ if (loginForm) {
                 if (registeredUser.password === pValue) {
                     localStorage.setItem('currentUser', registeredUser.username);
                     localStorage.setItem('userRole', registeredUser.role);
-                    alert('Login Successful!');
+                    alert(`Welcome Back, ${registeredUser.role === 'admin' ? 'Boss!' : registeredUser.username}`);
                     window.location.replace("home.html");
                 } else {
                     showRedError("⚠️ Incorrect Password! Access Denied.");
@@ -136,6 +128,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (userRole === 'admin') {
             const adminSection = document.getElementById('adminSection');
             if (adminSection) adminSection.style.display = 'block';
+            
+            const posBillingDrawerBlock = document.getElementById('posBillingDrawerBlock');
+            if (posBillingDrawerBlock) posBillingDrawerBlock.style.display = 'block';
+            
             setupImageUploadListeners(); 
         }
         
@@ -167,9 +163,6 @@ function loadCategories() {
     });
 }
 
-// ==========================================
-// 4. MANAGEMENT STATIONS, TABS & SHOP STATUS
-// ==========================================
 function updateShopStatus() {
     const banner = document.getElementById('shopStatusBanner');
     if (!banner) return;
@@ -322,7 +315,6 @@ function compressAndGetBase64(fileOrUrl, maxWidth = 800, quality = 0.7) {
                 height = Math.round((height * maxWidth) / width);
                 width = maxWidth;
             }
-
             canvas.width = width;
             canvas.height = height;
 
@@ -354,30 +346,25 @@ function setupImageUploadListeners() {
     const addFileInput = document.getElementById('prodImageFile');
     const addUrlInput = document.getElementById('prodImage');
     const addPreviewImg = document.getElementById('imagePreview');
-    const addFileText = document.getElementById('fileChosenText');
     
     const editFileInput = document.getElementById('editProdImageFile');
     const editUrlInput = document.getElementById('editProdImage');
     const editPreviewImg = document.getElementById('editImagePreview');
-    const editFileText = document.getElementById('editFileChosenText');
 
     if (addUrlInput) {
         addUrlInput.addEventListener('input', async function() {
             let val = addUrlInput.value.trim();
             if (val !== '') {
                 val = convertDriveLink(val);
-                if (addFileText) addFileText.innerText = "Processing URL Image...";
                 try {
                     selectedAddImageBase64 = await compressAndGetBase64(val, 800, 0.7);
                     addPreviewImg.src = selectedAddImageBase64;
                     addPreviewImg.style.display = 'block';
                     if(addFileInput) addFileInput.value = ''; 
-                    if(addFileText) addFileText.innerText = "URL Loaded & Optimized!";
                 } catch(e) {
                     addPreviewImg.src = val;
                     addPreviewImg.style.display = 'block';
                     selectedAddImageBase64 = val;
-                    if(addFileText) addFileText.innerText = "Direct External URL loaded.";
                 }
             } else if (!selectedAddImageBase64) {
                 addPreviewImg.style.display = 'none';
@@ -389,19 +376,14 @@ function setupImageUploadListeners() {
         addFileInput.addEventListener('change', async function(e) {
             const file = e.target.files[0];
             if (file) {
-                if(addFileText) addFileText.innerText = "Processing & Compressing...";
                 try {
                     selectedAddImageBase64 = await compressAndGetBase64(file, 800, 0.7);
                     addPreviewImg.src = selectedAddImageBase64;
                     addPreviewImg.style.display = 'block';
                     if(addUrlInput) addUrlInput.value = ''; 
-                    if(addFileText) addFileText.innerText = "Selected & Compressed: " + file.name;
                 } catch (error) {
-                    if(addFileText) addFileText.innerText = "Error processing image";
                     selectedAddImageBase64 = null;
                 }
-            } else {
-                if(addFileText) addFileText.innerText = "No photo selected";
             }
         });
     }
@@ -411,16 +393,13 @@ function setupImageUploadListeners() {
             let val = editUrlInput.value.trim();
             if (val !== '') {
                 val = convertDriveLink(val);
-                if (editFileText) editFileText.innerText = "Processing Edit URL...";
                 try {
                     selectedEditImageBase64 = await compressAndGetBase64(val, 800, 0.7);
                     editPreviewImg.src = selectedEditImageBase64;
                     if(editFileInput) editFileInput.value = ''; 
-                    if(editFileText) editFileText.innerText = "Edit URL Compressed!";
                 } catch(e) {
                     editPreviewImg.src = val;
                     selectedEditImageBase64 = val;
-                    if(editFileText) editFileText.innerText = "Direct Edit URL Loaded.";
                 }
             }
         });
@@ -430,38 +409,28 @@ function setupImageUploadListeners() {
         editFileInput.addEventListener('change', async function(e) {
             const file = e.target.files[0];
             if (file) {
-                if(editFileText) editFileText.innerText = "Processing & Compressing...";
                 try {
                     selectedEditImageBase64 = await compressAndGetBase64(file, 800, 0.7);
                     editPreviewImg.src = selectedEditImageBase64; 
                     if(editUrlInput) editUrlInput.value = ''; 
-                    if(editFileText) editFileText.innerText = "Selected & Compressed: " + file.name;
                 } catch (error) {
-                    if(editFileText) editFileText.innerText = "Error processing image";
                     selectedEditImageBase64 = null;
                 }
-            } else {
-                if(editFileText) editFileText.innerText = "No photo selected";
             }
         });
     }
 }
 
 // ==========================================
-// 6. LIVE GLOBAL PRODUCT ADD SYSTEM
+// 6. LIVE GLOBAL PRODUCT ADD SYSTEM (MULTIPLE PRICES)
 // ==========================================
 const addProductForm = document.getElementById('addProductForm');
 if (addProductForm) {
     addProductForm.addEventListener('submit', function(event) {
         event.preventDefault();
         const name = document.getElementById('prodName').value.trim();
-        const rawPrice = document.getElementById('prodPrice').value;
-        const weightValue = document.getElementById('prodWeight').value.trim();
-        const unit = document.getElementById('prodUnit').value; 
         const category = document.getElementById('prodCategory').value; 
         let urlImage = document.getElementById('prodImage').value.trim();
-        
-        // 🔥 NEW: BARCODE CAPTURE ON SUBMIT
         const barcode = document.getElementById('prodBarcode').value.trim();
 
         if(!category) {
@@ -469,17 +438,21 @@ if (addProductForm) {
             return;
         }
 
-        const dynamicUnitString = weightValue ? `${weightValue} ${unit}` : unit;
-        
-        let finalPriceString = "";
-        if (!rawPrice || rawPrice.trim() === "") {
-            finalPriceString = "Price On Call"; 
-        } else {
-            finalPriceString = '₹' + rawPrice + ' / ' + dynamicUnitString;
+        // PRICE ARRAY CAPTURE KAREN
+        let priceArray = [];
+        document.querySelectorAll('#priceContainer .price-row').forEach(row => {
+            let val = row.querySelector('.price-val').value;
+            let label = row.querySelector('.price-label').value;
+            if(val && label) priceArray.push({ rate: val, qty: label });
+        });
+
+        if (priceArray.length === 0) {
+            alert('Please add at least one Price and Quantity!');
+            return;
         }
 
         const wholesalePriceInput = document.getElementById('prodWholesalePrice').value;
-        const finalWholesaleString = wholesalePriceInput ? '₹' + wholesalePriceInput + ' / ' + dynamicUnitString : '';
+        const finalWholesaleString = wholesalePriceInput ? `₹${wholesalePriceInput}` : '';
 
         urlImage = convertDriveLink(urlImage);
         let finalImage = NO_IMAGE_URL;
@@ -489,14 +462,13 @@ if (addProductForm) {
             finalImage = urlImage;
         }
 
-        // Updated Schema parameters to lock barcode
         const productObject = {
             name: name,
-            price: finalPriceString,
+            prices: priceArray,
             wholesalePrice: finalWholesaleString, 
             image: finalImage,
             category: category,
-            barcode: barcode // Cloud node assignment
+            barcode: barcode
         };
 
         const submitBtn = addProductForm.querySelector('button[type="submit"]');
@@ -511,16 +483,24 @@ if (addProductForm) {
         .then(() => {
             addProductForm.reset();
             document.getElementById('imagePreview').style.display = 'none';
-            document.getElementById('dropdownSelectedValue').innerText = '-- Choose Category --';
+            document.getElementById('dropdownSelectedValue').innerText = '-- Choose --';
+            // Price rows ko wapas reset karo 1 row par
+            document.getElementById('priceContainer').innerHTML = `
+                <label style="font-size: 12px; color: #0ef; font-weight: bold; display: block; margin-bottom: 8px;">4. Prices (Add Multiple Rates):</label>
+                <div class="price-row">
+                    <input type="number" class="price-val" placeholder="Price (₹ e.g. 50)" style="flex: 1;" required>
+                    <input type="text" class="price-label" placeholder="Weight/Qty (e.g. 1 Kg)" style="flex: 1;" required>
+                </div>
+            `;
             selectedAddImageBase64 = null;
             filterProducts(); 
-            alert('Product Published Globally with Barcode Data!');
+            alert('Product Published Globally with Barcode & Prices!');
         })
         .catch(() => {
             alert('Error updating database!');
         })
         .finally(() => {
-            submitBtn.innerText = 'Publish Product';
+            submitBtn.innerText = 'Publish Product Globally';
             submitBtn.disabled = false;
         });
     });
@@ -539,7 +519,7 @@ function filterProducts() {
     productsGrid.innerHTML = `
         <div class="spinner-container">
             <div class="loading-spinner"></div>
-            <p class="spinner-text">Loading live items, please wait...</p>
+            <p class="spinner-text" style="color:white; margin-top:10px;">Loading live items, please wait...</p>
         </div>
     `;
 
@@ -559,8 +539,6 @@ function filterProducts() {
 
         const filteredList = productsList.filter(product => {
             const matchesCategory = (currentCategory === 'All' || product.category === currentCategory);
-            
-            // Search criteria updated for direct barcode search tracking also
             const productBarcode = product.barcode ? product.barcode.toLowerCase() : '';
             const matchesSearch = product.name.toLowerCase().includes(searchText) || 
                                   product.category.toLowerCase().includes(searchText) ||
@@ -578,9 +556,9 @@ function filterProducts() {
             card.className = 'product-card';
             
             const safeName = product.name.replace(/'/g, "\\'").replace(/"/g, '"');
-            const safePrice = product.price.replace(/'/g, "\\'");
             const safeWholesale = product.wholesalePrice ? product.wholesalePrice.replace(/'/g, "\\'") : '';
             const safeBarcode = product.barcode ? product.barcode.replace(/'/g, "\\'") : '';
+            const pricesJson = encodeURIComponent(JSON.stringify(product.prices || []));
 
             let actionHtml = '';
             let wholesaleHtml = '';
@@ -589,24 +567,33 @@ function filterProducts() {
             
             if (userRole === 'admin') {
                 if (product.barcode) {
-                    barcodeTagHtml = `<div style="font-size:11px; color:#aaa; margin-top:4px;">🏷️ Code: ${product.barcode}</div>`;
+                    barcodeTagHtml = `<div style="font-size:10px; color:#aaa; margin-top:4px;">🏷️ Code: ${product.barcode}</div>`;
                 }
                 if (product.wholesalePrice) {
-                    wholesaleHtml = `<div style="font-size: 13px; color: #ff9800; font-weight: bold; margin-bottom: 5px; background: rgba(255,152,0,0.1); padding: 4px 6px; border-radius: 6px;">📦 Wholesale: ${product.wholesalePrice}</div>`;
+                    wholesaleHtml = `<div style="font-size: 11px; color: #ff9800; font-weight: bold; margin-bottom: 5px; background: rgba(255,152,0,0.1); padding: 4px 6px; border-radius: 4px;">📦 Wholesale: ${product.wholesalePrice}</div>`;
                 }
                 actionHtml = `
                     <div class="admin-action-btns">
-                        <button class="edit-btn" onclick="openEditModal('${product.id}', '${safeName}', '${safePrice}', '${safeWholesale}', '${product.category}', '${product.image}', '${safeBarcode}')">Edit</button>
+                        <button class="edit-btn" onclick="openEditModal('${product.id}', '${safeName}', '${safeWholesale}', '${product.category}', '${product.image}', '${safeBarcode}', '${pricesJson}')">Edit</button>
                         <button class="delete-btn" onclick="deleteProduct('${product.id}')">Delete</button>
                     </div>
                 `;
             }
 
+            // SHOW FIRST PRICE ON CARD
+            let displayPrice = "Price On Call";
+            if (product.prices && product.prices.length > 0) {
+                displayPrice = `₹${product.prices[0].rate} / ${product.prices[0].qty}`;
+                if (product.prices.length > 1) displayPrice += ` <span style="font-size:10px; color:#aaa;">(+${product.prices.length - 1} options)</span>`;
+            } else if (product.price) {
+                displayPrice = product.price; // fallback for older data without array
+            }
+
             card.innerHTML = `
-                <div onclick="openProductModal('${safeName}', '${safePrice}')" style="width:100%; cursor:pointer;">
+                <div onclick="openProductModal('${safeName}', '${pricesJson}')" style="width:100%; cursor:pointer;">
                     <img src="${product.image}" alt="${product.name}" onerror="this.onerror=null; this.src='${NO_IMAGE_URL}';">
                     <h4>${product.name}</h4>
-                    <div class="price">${product.price}</div>
+                    <div class="price">${displayPrice}</div>
                     ${barcodeTagHtml}
                     ${wholesaleHtml}
                 </div>
@@ -620,8 +607,22 @@ function filterProducts() {
     });
 }
 
-function openProductModal(name, price) {
-    document.getElementById('modalProdName').innerText = name + " — " + price;
+function openProductModal(name, pricesJson) {
+    document.getElementById('modalProdName').innerText = name;
+    
+    let prices = [];
+    try { prices = JSON.parse(decodeURIComponent(pricesJson)); } catch(e){}
+    
+    let priceHtml = '';
+    if (prices && prices.length > 0) {
+        prices.forEach(p => {
+            priceHtml += `<div style="background: rgba(0,238,255,0.1); padding: 6px; margin-bottom: 4px; border-radius: 4px; border: 1px solid rgba(0,238,255,0.3);">₹${p.rate} / ${p.qty}</div>`;
+        });
+    } else {
+        priceHtml = `<div>Price On Call</div>`;
+    }
+    document.getElementById('modalPrices').innerHTML = priceHtml;
+
     document.getElementById('productModal').style.display = 'flex';
 }
 
@@ -629,36 +630,26 @@ function closeModal() {
     document.getElementById('productModal').style.display = 'none';
 }
 
-function openEditModal(id, name, priceWithSymbol, wholesaleWithSymbol, category, image, barcode) {
+function openEditModal(id, name, wholesaleWithSymbol, category, image, barcode, pricesJson) {
     document.getElementById('editProdId').value = id;
     document.getElementById('editProdName').value = name;
     document.getElementById('editProdBarcode').value = (barcode && barcode !== 'undefined') ? barcode : '';
     
-    let rawPrice = "";
-    let weightNum = '';
-    let unitStr = 'Piece';
-
-    if (priceWithSymbol.includes(' / ')) {
-        const parts = priceWithSymbol.split(' / ');
-        rawPrice = parts[0].replace('₹', '').trim();
-        const unitParts = parts[1].trim().split(' ');
-        if (unitParts.length > 1) {
-            weightNum = unitParts[0].trim(); 
-            unitStr = unitParts[1].trim();   
-        } else {
-            unitStr = unitParts[0].trim();
-        }
-    }
-    
-    document.getElementById('editProdPrice').value = rawPrice; 
-    document.getElementById('editProdWeight').value = weightNum; 
-    document.getElementById('editProdUnit').value = unitStr;
-    
-    if (wholesaleWithSymbol && wholesaleWithSymbol !== 'undefined' && wholesaleWithSymbol.includes(' / ')) {
-        const wParts = wholesaleWithSymbol.split(' / ');
-        document.getElementById('editProdWholesalePrice').value = wParts[0].replace('₹', '').trim();
+    if (wholesaleWithSymbol && wholesaleWithSymbol !== 'undefined') {
+        document.getElementById('editProdWholesalePrice').value = wholesaleWithSymbol.replace('₹', '').trim();
     } else {
         document.getElementById('editProdWholesalePrice').value = '';
+    }
+    
+    // LOAD PRICES DYNAMICALLY
+    document.getElementById('editPriceContainer').innerHTML = '';
+    let prices = [];
+    try { prices = JSON.parse(decodeURIComponent(pricesJson)); } catch(e){}
+    
+    if(prices && prices.length > 0) {
+        prices.forEach(p => addEditPriceField(p.rate, p.qty));
+    } else {
+        addEditPriceField('', ''); // Empty row if old product
     }
     
     document.getElementById('editProdCategory').value = category;
@@ -676,14 +667,9 @@ function closeEditModal() {
 function submitProductEdit() {
     const id = document.getElementById('editProdId').value;
     const name = document.getElementById('editProdName').value.trim();
-    const rawPrice = document.getElementById('editProdPrice').value;
-    const weightValue = document.getElementById('editProdWeight').value.trim();
-    const unit = document.getElementById('editProdUnit').value;
     const category = document.getElementById('editProdCategory').value;
     let editUrlImage = document.getElementById('editProdImage').value.trim();
     const currentImageUrl = document.getElementById('editImagePreview').src; 
-    
-    // Capture barcode on edit mode submit
     const barcode = document.getElementById('editProdBarcode').value.trim();
 
     if (!name) {
@@ -691,17 +677,16 @@ function submitProductEdit() {
         return;
     }
 
-    const dynamicUnitString = weightValue ? `${weightValue} ${unit}` : unit;
-    
-    let finalPriceString = "";
-    if (!rawPrice || rawPrice.trim() === "") {
-        finalPriceString = "Price On Call";
-    } else {
-        finalPriceString = '₹' + rawPrice + ' / ' + dynamicUnitString;
-    }
+    // GRAB PRICES FROM EDIT MODAL
+    let priceArray = [];
+    document.querySelectorAll('#editPriceContainer .edit-price-row').forEach(row => {
+        let val = row.querySelector('.edit-price-val').value;
+        let label = row.querySelector('.edit-price-label').value;
+        if(val && label) priceArray.push({ rate: val, qty: label });
+    });
 
     const wholesaleInput = document.getElementById('editProdWholesalePrice').value;
-    const finalWholesaleString = wholesaleInput ? '₹' + wholesaleInput + ' / ' + dynamicUnitString : '';
+    const finalWholesaleString = wholesaleInput ? `₹${wholesaleInput}` : '';
 
     editUrlImage = convertDriveLink(editUrlImage);
     let finalImage = currentImageUrl;
@@ -713,7 +698,7 @@ function submitProductEdit() {
 
     const updatedProduct = {
         name: name,
-        price: finalPriceString,
+        prices: priceArray,
         wholesalePrice: finalWholesaleString,
         image: finalImage,
         category: category,
@@ -732,7 +717,7 @@ function submitProductEdit() {
     .then(() => {
         closeEditModal();
         filterProducts(); 
-        alert('Product Record Patched with Barcode Data!');
+        alert('Product Record Patched successfully!');
     })
     .catch(() => {
         alert('Error updating database!');

@@ -4,7 +4,7 @@ const ASSETS = [
   '/SAHU-HOTEL/index.html',
   '/SAHU-HOTEL/manifest.json',
   '/SAHU-HOTEL/script.js',
-  '/SAHU-HOTEL/4c788179-bf9a-4776-8165-35933ee9efd5.jpg'
+  '/SAHU-HOTEL/4c788179-bf9a-4776-8165-35933ee9efd5 (1) (1).png'
 ];
 
 self.addEventListener('install', (e) => {
