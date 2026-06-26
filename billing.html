@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS Billing - Sahu Hotel</title>
+    
+    <meta name="theme-color" content="#007bff">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { background-color: #1f242d; color: #fff; display: flex; flex-direction: column; height: 100vh; overflow-x: hidden; }
+        
+        .navbar { background-color: #2c3341; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0ef; }
+        .logo { font-size: 16px; font-weight: 700; color: #fff; }
+        .logo span { color: #0ef; }
+        
+        .nav-btns { display: flex; gap: 8px; }
+        .history-btn { background: transparent; border: 1px solid #ffc107; color: #ffc107; padding: 6px 10px; border-radius: 4px; font-weight: 600; font-size: 11px; cursor: pointer; }
+        .back-btn { background: #ff4d4d; color: #fff; padding: 6px 10px; border-radius: 4px; text-decoration: none; font-weight: 600; font-size: 11px; }
+        
+        .billing-container { display: flex; flex-wrap: wrap; gap: 10px; padding: 10px; flex: 1; max-width: 1400px; margin: 0 auto; width: 100%; }
+        
+        /* SCANNER & SEARCH AREA */
+        .scanner-section { flex: 1; min-width: 100%; background: #2c3341; border-radius: 8px; padding: 12px; border: 1px solid rgba(0, 238, 255, 0.2); display: flex; flex-direction: column; }
+        .section-title { font-size: 14px; color: #0ef; margin-bottom: 10px; font-weight: 600; display: flex; justify-content: space-between; align-items: center;}
+        
+        #reader { width: 100%; min-height: 150px; background: #1f242d; border-radius: 6px; border: 2px dashed #0ef; overflow: hidden; margin-bottom: 10px; }
+        .camera-toggle-btn { background: #0ef; color: #1f242d; border: none; padding: 6px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; }
+        
+        .input-group label { display: block; font-size: 11px; color: #0ef; margin-bottom: 4px; }
+        .manual-entry { display: flex; gap: 6px; margin-bottom: 10px;}
+        .manual-entry input, .search-entry input { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #1f242d; background: #1f242d; color: #fff; outline: none; font-size: 12px;}
+        .manual-entry input:focus, .search-entry input:focus { border-color: #0ef; }
+        .manual-entry button { background: #ffc107; color: #1f242d; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;}
+
+        .search-entry { position: relative; }
+        .suggestions-box { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #2c3341; border: 1px solid rgba(0, 238, 255, 0.3); border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 100; box-shadow: 0 5px 15px rgba(0,0,0,0.6); }
+        .suggestion-item { padding: 10px; font-size: 12px; color: #fff; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; }
+        .sugg-price { color: #aaa; font-size: 11px; font-weight: bold; }
+
+        /* CART AREA & TABS */
+        .cart-section { flex: 1.5; min-width: 100%; background: #2c3341; border-radius: 8px; padding: 12px; border: 1px solid rgba(0, 238, 255, 0.2); display: flex; flex-direction: column; }
+        
+        .tabs-container { display: flex; gap: 5px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 4px; }
+        .tabs-container::-webkit-scrollbar { display: none; }
+        .bill-tab { background: #1f242d; color: #aaa; padding: 6px 12px; border-radius: 6px 6px 0 0; cursor: pointer; font-weight: 600; font-size: 11px; display: flex; align-items: center; gap: 6px; white-space: nowrap; border: 1px solid rgba(255,255,255,0.1); }
+        .bill-tab.active { background: #0ef; color: #1f242d; border-color: #0ef; }
+        .close-tab-btn { font-size: 12px; font-weight: bold; }
+        .add-tab-btn { background: #ffc107; color: #1f242d; border: none; padding: 6px 12px; border-radius: 6px 6px 0 0; cursor: pointer; font-weight: bold; font-size: 11px; white-space: nowrap; }
+
+        .customer-info-box { display: flex; gap: 6px; margin-bottom: 10px; background: #1f242d; padding: 8px; border-radius: 6px; flex-direction: column; }
+        .customer-info-box input { width: 100%; padding: 8px; background: #2c3341; border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 4px; outline: none; font-size: 11px; }
+
+        .cart-table-wrapper { flex: 1; background: #1f242d; border-radius: 6px; padding: 5px; overflow-y: auto; margin-bottom: 10px; min-height: 150px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { padding: 6px; color: #0ef; font-size: 10px; position: sticky; top: 0; background: #1f242d; z-index: 10; border-bottom: 1px solid rgba(255,255,255,0.1);}
+        td { padding: 6px; font-size: 10px; color: #ddd; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .qty-controls { display: flex; align-items: center; gap: 2px; }
+        .qty-btn { background: #323946; color: #fff; border: none; width: 18px; height: 18px; border-radius: 3px; cursor: pointer; font-weight: bold; font-size: 10px; display: flex; justify-content: center; align-items: center;}
+        .calc-btn { background: #ffc107 !important; color: #1f242d !important; font-size: 9px !important; margin-left: 3px;}
+        .del-item { color: #ff4d4d; cursor: pointer; font-weight: bold; font-size: 14px; text-align: center; }
+
+        .total-box { background: #1f242d; padding: 8px 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #0ef; margin-bottom: 10px; }
+        .total-box h3 { font-size: 12px; color: #fff; display: flex; align-items: center; gap: 5px;}
+        .sync-status { font-size: 9px; color: #aaa; font-weight: normal; }
+        .total-box .amount { font-size: 16px; color: #0ef; font-weight: 700; }
+
+        .action-btns { display: flex; gap: 6px; }
+        .action-btns button { flex: 1; padding: 8px; border: none; border-radius: 6px; font-weight: bold; font-size: 10px; cursor: pointer; }
+        .btn-print { background: #ffc107; color: #1f242d; }
+        .btn-whatsapp { background: #25D366; color: #fff; }
+        .btn-clear { background: rgba(255, 77, 77, 0.1); color: #ff4d4d; border: 1px solid rgba(255, 77, 77, 0.3); }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 99999; justify-content: center; align-items: center; padding: 15px; }
+        .modal-box { background: #2c3341; padding: 15px; border-radius: 10px; width: 100%; max-width: 300px; position: relative; border: 1px solid rgba(0,238,255,0.2); }
+        .close-modal { position: absolute; top: 8px; right: 15px; font-size: 22px; font-weight: bold; color: #aaa; cursor: pointer; }
+        
+        .calc-input-row { display: flex; gap: 5px; margin-bottom: 10px; margin-top: 5px; width: 100%; }
+        .calc-input-row input { width: 55%; padding: 8px; border-radius: 4px; border: 1px solid rgba(0,238,255,0.3); background: #2c3341; color: #fff; font-weight: bold; box-sizing: border-box; }
+        .calc-input-row select { width: 45%; padding: 8px; border-radius: 4px; border: 1px solid rgba(0,238,255,0.3); background: #2c3341; color: #fff; font-weight: bold; box-sizing: border-box; }
+
+        .history-card { background: #1f242d; border: 1px solid rgba(255,255,255,0.05); padding: 10px; border-radius: 6px; margin-bottom: 8px; }
+        .history-info h4 { color: #0ef; font-size: 12px; margin-bottom: 2px;}
+        .history-info p { font-size: 10px; color: #aaa; margin-bottom: 4px;}
+        .history-actions button { width: 100%; background: #ffc107; color: #1f242d; border: none; padding: 6px; border-radius: 4px; font-weight: bold; font-size: 11px; }
+
+        @media (min-width: 768px) {
+            .billing-container { flex-direction: row; }
+            .scanner-section { flex: 1; }
+            .cart-section { flex: 2; }
+            .customer-info-box { flex-direction: row; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo">Sahu <span>POS</span></div>
+        <div class="nav-btns">
+            <button class="history-btn" onclick="openHistoryModal()">📜 History</button>
+            <a href="home.html" class="back-btn">⬅ Back</a>
+        </div>
+    </header>
+
+    <div class="billing-container">
+        
+        <div class="scanner-section">
+            <div class="section-title">
+                <span>📷 Scan Barcode</span>
+                <button class="camera-toggle-btn" id="camToggleBtn" onclick="toggleScanner()">Start Camera</button>
+            </div>
+            
+            <div id="reader"></div>
+            
+            <div class="input-group">
+                <label>Barcode Number:</label>
+                <div class="manual-entry">
+                    <input type="text" placeholder="Type Barcode..." id="manualBarcode" onkeypress="handleManualEntry(event)">
+                    <button type="button" onclick="processManualBarcode()">Add</button>
+                </div>
+            </div>
+
+            <div style="text-align: center; color: #666; font-size: 10px; margin: 5px 0;">— OR —</div>
+
+            <div class="input-group search-entry">
+                <label>🔍 Search Item by Name:</label>
+                <input type="text" placeholder="Type product name (e.g. Samosa)..." id="searchItemName" autocomplete="off" oninput="showNameSuggestions(this.value)">
+                <div id="nameSuggestions" class="suggestions-box"></div>
+            </div>
+        </div>
+
+        <div class="cart-section">
+            <div class="tabs-container" id="tabsContainer"></div>
+
+            <div class="customer-info-box">
+                <input type="text" id="custName" placeholder="👤 Grahak Ka Naam (Optional)" oninput="updateCustomerInfo()">
+                <input type="number" id="custPhone" placeholder="📱 WhatsApp Number (Optional)" oninput="updateCustomerInfo()">
+            </div>
+            
+            <div class="cart-table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Rate</th>
+                            <th>Qty</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="cartBody">
+                        <tr><td colspan="5" style="text-align:center; color:#999; padding:20px;">Scan or Search items to start</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="total-box">
+                <h3>Grand Total: <span id="syncStatus" class="sync-status"></span></h3>
+                <div class="amount" id="grandTotalAmt">₹0</div>
+            </div>
+
+            <div class="action-btns">
+                <button class="btn-clear" onclick="clearCurrentBill()">🗑 Clear</button>
+                <button class="btn-whatsapp" onclick="sendWhatsAppBill()">💬 WhatsApp</button>
+                <button class="btn-print" onclick="generatePDFBill()">🖨️ PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="calcModal" class="modal-overlay">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeCalculator()">×</span>
+            <h3 style="color:#ffc107; font-size: 14px; margin-bottom:5px;">⚖️ Smart Auto-Calculator</h3>
+            <p id="calcItemName" style="color:#0ef; font-size:12px; font-weight:bold; margin-bottom: 2px;"></p>
+            <p id="calcBaseRate" style="color:#aaa; font-size:10px; margin-bottom:12px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px;"></p>
+            
+            <div style="background:#1f242d; padding:12px; border-radius:8px; border:1px dashed #0ef;">
+                <label style="font-size:10px; color:#0ef; font-weight:bold;">Enter Weight / Quantity:</label>
+                
+                <div class="calc-input-row">
+                    <input type="number" id="calcQtyInput" oninput="calcFromQty()" placeholder="e.g. 200">
+                    <select id="calcUnitSelect" onchange="calcFromQty()">
+                        <option value="Gram">Gram</option><option value="Kg">Kg</option>
+                        <option value="ml">ml</option><option value="Litre">Litre</option><option value="Piece">Piece</option>
+                    </select>
+                </div>
+
+                <div style="text-align:center; color:#ff4d4d; font-size:10px; font-weight:bold; margin:8px 0;">— OR DIRECT MONEY ENTRY —</div>
+
+                <label style="font-size:10px; color:#ffc107; font-weight:bold;">Enter Customer Price (₹):</label>
+                <input type="number" id="calcPriceInput" oninput="calcFromPrice()" style="width:100%; padding:8px; border-radius:4px; border:1px solid rgba(255,193,7,0.3); background:#2c3341; color:#fff; font-weight:bold; margin-top: 5px; box-sizing: border-box;" placeholder="e.g. 50">
+            </div>
+
+            <button onclick="saveCalculation()" style="width:100%; background:#0ef; color:#1f242d; border:none; padding:10px; border-radius:6px; font-weight:bold; margin-top:12px; cursor:pointer; font-size: 12px;">✅ Update Bill</button>
+        </div>
+    </div>
+
+    <div id="historyModal" class="modal-overlay">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeHistoryModal()">×</span>
+            <h3 style="color:#0ef; margin-bottom: 15px; font-size:16px;">📜 Cloud Billing History</h3>
+            <div id="historyListContainer" style="max-height: 350px; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. CONFIGURATION & ACCESS PROTECTION ---
+        const DB_URL = "https://sahu-hotel-app-default-rtdb.firebaseio.com";
+        let productsDatabase = [];
+        let html5QrcodeScanner = null;
+        let isScannerRunning = false;
+        let saveTimeout = null; 
+
+        // Client-side guard: Sirf Admin hi Billing panel khol sakega
+        if (!localStorage.getItem('currentUser') || localStorage.getItem('userRole') !== 'admin') {
+            window.location.replace("home.html");
+        }
+
+        function playBeep() {
+            const context = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = context.createOscillator();
+            const gainNode = context.createGain();
+            oscillator.type = 'sine'; oscillator.frequency.value = 1000;
+            gainNode.gain.setValueAtTime(0.1, context.currentTime);
+            oscillator.connect(gainNode); gainNode.connect(context.destination);
+            oscillator.start(); oscillator.stop(context.currentTime + 0.1);
+        }
+
+        window.addEventListener('load', async () => {
+            try {
+                let res = await fetch(`${DB_URL}/products.json`);
+                let data = await res.json();
+                if (data) productsDatabase = Object.keys(data).map(key => ({ id: key, ...data[key] })).reverse();
+            } catch(e) {}
+            
+            initMultiBillSystem();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('view') === 'history') openHistoryModal();
+        });
+
+        // --- 2. MULTI-BILL TABS & AUTO-SAVE ---
+        let billsList = [];
+        let activeBillId = null;
+
+        function initMultiBillSystem() {
+            const savedData = localStorage.getItem('sahuSavedBills');
+            if (savedData) {
+                billsList = JSON.parse(savedData);
+                if(billsList.length > 0) activeBillId = billsList[0].id;
+            }
+            if (billsList.length === 0) createNewBill();
+            else { renderTabs(); loadActiveBillToUI(); }
+        }
+
+        function saveToLocalMemory() { localStorage.setItem('sahuSavedBills', JSON.stringify(billsList)); }
+
+        function createNewBill(prefilledData = null) {
+            const newId = Date.now().toString();
+            billsList.push({
+                id: newId,
+                name: prefilledData ? `Edit: ${prefilledData.custName || 'Guest'}` : `Grahak ${billsList.length + 1}`,
+                custName: prefilledData ? (prefilledData.custName === 'Guest' ? '' : prefilledData.custName) : '',
+                custPhone: prefilledData ? prefilledData.custPhone : '',
+                items: prefilledData ? prefilledData.items : [],
+                cloudKey: prefilledData ? prefilledData.cloudKey : null
+            });
+            activeBillId = newId;
+            saveToLocalMemory(); renderTabs(); loadActiveBillToUI();
+        }
+
+        function switchBill(id) { activeBillId = id; loadActiveBillToUI(); renderTabs(); }
+
+        function renderTabs() {
+            const container = document.getElementById('tabsContainer');
+            container.innerHTML = '';
+            billsList.forEach((bill, index) => {
+                const isActive = bill.id === activeBillId ? 'active' : '';
+                const title = bill.custName ? bill.custName : `Grahak ${index + 1}`;
+                const tab = document.createElement('div');
+                tab.className = `bill-tab ${isActive}`;
+                tab.onclick = () => switchBill(bill.id);
+                tab.innerHTML = `<span>${title}</span><span class="close-tab-btn" onclick="event.stopPropagation(); closeBill('${bill.id}')">×</span>`;
+                container.appendChild(tab);
+            });
+            const addBtn = document.createElement('button');
+            addBtn.className = 'add-tab-btn'; addBtn.innerText = '+ Grahak';
+            addBtn.onclick = () => createNewBill();
+            container.appendChild(addBtn);
+        }
+
+        function closeBill(id) {
+            if(confirm("Close this bill tab?")) {
+                billsList = billsList.filter(b => b.id !== id);
+                if (billsList.length === 0) createNewBill();
+                else {
+                    if (activeBillId === id) activeBillId = billsList[0].id;
+                    saveToLocalMemory(); renderTabs(); loadActiveBillToUI();
+                }
+            }
+        }
+
+        function getActiveBill() { return billsList.find(b => b.id === activeBillId); }
+
+        function updateCustomerInfo() {
+            const activeBill = getActiveBill();
+            if(!activeBill) return;
+            activeBill.custName = document.getElementById('custName').value;
+            activeBill.custPhone = document.getElementById('custPhone').value;
+            activeBill.isSavedToCloud = false; 
+            saveToLocalMemory(); renderTabs(); triggerAutoSaveToCloud();
+        }
+
+        function loadActiveBillToUI() {
+            const activeBill = getActiveBill();
+            if(!activeBill) return;
+            document.getElementById('custName').value = activeBill.custName;
+            document.getElementById('custPhone').value = activeBill.custPhone;
+            document.getElementById('syncStatus').innerText = activeBill.cloudKey ? "☁️ Auto-Saved" : "";
+            renderCartTable();
+        }
+
+        function extractCleanPrice(priceStr) {
+            if (!priceStr || priceStr.toLowerCase().includes("on call")) return 0;
+            return parseFloat(priceStr.split('/')[0].replace(/[^0-9.]/g, '')) || 0;
+        }
+
+        function triggerAutoSaveToCloud() {
+            clearTimeout(saveTimeout);
+            const activeBill = getActiveBill();
+            if(!activeBill || (activeBill.items.length === 0 && !activeBill.custName && !activeBill.custPhone)) return;
+            document.getElementById('syncStatus').innerText = "⏳ Saving...";
+            saveTimeout = setTimeout(() => {
+                const payload = {
+                    date: new Date().toLocaleString(), timestamp: Date.now(),
+                    custName: activeBill.custName || 'Guest', custPhone: activeBill.custPhone || '',
+                    items: activeBill.items || [], total: getBillTotalAmt()
+                };
+                if (activeBill.cloudKey) {
+                    fetch(`${DB_URL}/billing_history/${activeBill.cloudKey}.json`, { method: 'PATCH', body: JSON.stringify(payload) })
+                    .then(() => { document.getElementById('syncStatus').innerText = "☁️ Auto-Saved"; });
+                } else {
+                    fetch(`${DB_URL}/billing_history.json`, { method: 'POST', body: JSON.stringify(payload) })
+                    .then(res => res.json()).then(data => {
+                        activeBill.cloudKey = data.name; saveToLocalMemory();
+                        document.getElementById('syncStatus').innerText = "☁️ Auto-Saved";
+                    });
+                }
+            }, 1000); 
+        }
+
+        // --- 3. ADD TO CART LOGIC ---
+        function injectProductToCart(foundProduct) {
+            playBeep(); 
+            const activeBill = getActiveBill();
+            const existingCartItem = activeBill.items.find(item => item.id === foundProduct.id && !item.isCustom);
+            
+            if (existingCartItem) {
+                existingCartItem.qty += 1;
+                existingCartItem.rowTotal = existingCartItem.qty * existingCartItem.unitPrice;
+            } else {
+                const cleanPrice = extractCleanPrice(foundProduct.price);
+                activeBill.items.push({
+                    id: foundProduct.id, name: foundProduct.name, basePriceStr: foundProduct.price,
+                    unitPrice: cleanPrice, qty: 1, displayQtyStr: "1", isCustom: false, rowTotal: cleanPrice
+                });
+            }
+            activeBill.isSavedToCloud = false; saveToLocalMemory(); renderCartTable(); triggerAutoSaveToCloud(); 
+        }
+
+        function addItemToCartByBarcode(barcodeString) {
+            if (!barcodeString) return;
+            const foundProduct = productsDatabase.find(p => p.barcode && p.barcode.toLowerCase() === barcodeString.trim().toLowerCase());
+            if (foundProduct) injectProductToCart(foundProduct);
+        }
+
+        function processManualBarcode() { const inputField = document.getElementById('manualBarcode'); addItemToCartByBarcode(inputField.value); inputField.value = ''; inputField.focus(); }
+        function handleManualEntry(event) { if (event.key === 'Enter') processManualBarcode(); }
+
+        function showNameSuggestions(val) {
+            const box = document.getElementById('nameSuggestions'); box.innerHTML = ''; val = val.trim().toLowerCase();
+            if(!val) { box.style.display = 'none'; return; }
+            const matches = productsDatabase.filter(p => p.name.toLowerCase().includes(val));
+            if(matches.length === 0) { box.style.display = 'none'; return; }
+            matches.forEach(p => {
+                const div = document.createElement('div'); div.className = 'suggestion-item';
+                let shortPrice = p.price.toLowerCase().includes("on call") ? "On Call" : '₹' + extractCleanPrice(p.price);
+                div.innerHTML = `<span>${p.name}</span> <span class="sugg-price">${shortPrice}</span>`;
+                div.onclick = () => { injectProductToCart(p); document.getElementById('searchItemName').value = ''; box.style.display = 'none'; };
+                box.appendChild(div);
+            });
+            box.style.display = 'block';
+        }
+        window.addEventListener('click', (e) => { if(!document.getElementById('searchItemName').contains(e.target)) document.getElementById('nameSuggestions').style.display = 'none'; });
+
+        // --- 4. SMART AUTO-CALCULATOR ENGINE ---
+        let calcActiveIndex = -1;
+        let calcNormRate = 0; let calcNormUnit = 'piece'; 
+
+        function openCalculator(index) {
+            const item = getActiveBill().items[index];
+            calcActiveIndex = index;
+            document.getElementById('calcItemName').innerText = item.name;
+            document.getElementById('calcBaseRate').innerText = `Base Rate: ${item.basePriceStr}`;
+            
+            let parts = (item.basePriceStr || "").split('/');
+            let amt = parseFloat(parts[0].replace(/[^0-9.]/g, '')) || 0;
+            let unitStr = parts.length > 1 ? parts[1].trim().toLowerCase() : 'piece';
+            
+            let baseQty = parseFloat(unitStr.match(/[0-9.]+/) || 1);
+            let baseUnitType = 'piece';
+            if (unitStr.includes('kg')) baseUnitType = 'kg';
+            else if (unitStr.includes('gram') || unitStr.includes('g')) baseUnitType = 'gram';
+            else if (unitStr.includes('litre') || unitStr.includes('l')) baseUnitType = 'litre';
+            else if (unitStr.includes('ml')) baseUnitType = 'ml';
+
+            let perUnitRate = amt / baseQty;
+            calcNormRate = perUnitRate; calcNormUnit = baseUnitType;
+
+            if (baseUnitType === 'kg') { calcNormRate = perUnitRate / 1000; calcNormUnit = 'gram'; }
+            else if (baseUnitType === 'litre') { calcNormRate = perUnitRate / 1000; calcNormUnit = 'ml'; }
+
+            let select = document.getElementById('calcUnitSelect');
+            if(calcNormUnit === 'gram') select.value = 'Gram';
+            else if(calcNormUnit === 'ml') select.value = 'ml';
+            else select.value = 'Piece';
+
+            document.getElementById('calcQtyInput').value = '';
+            document.getElementById('calcPriceInput').value = '';
+            document.getElementById('calcModal').style.display = 'flex';
+        }
+
+        function closeCalculator() { document.getElementById('calcModal').style.display = 'none'; }
+        function getMultiplier(selectedUnit) { if(selectedUnit === 'Kg' && calcNormUnit === 'gram') return 1000; if(selectedUnit === 'Litre' && calcNormUnit === 'ml') return 1000; return 1; }
+
+        function calcFromQty() {
+            let q = parseFloat(document.getElementById('calcQtyInput').value) || 0;
+            let selectedUnit = document.getElementById('calcUnitSelect').value;
+            let price = (q * getMultiplier(selectedUnit)) * calcNormRate;
+            document.getElementById('calcPriceInput').value = parseFloat(price.toFixed(2));
+        }
+
+        function calcFromPrice() {
+            let p = parseFloat(document.getElementById('calcPriceInput').value) || 0;
+            let selectedUnit = document.getElementById('calcUnitSelect').value;
+            if(calcNormRate <= 0) return;
+            let finalQty = (p / calcNormRate) / getMultiplier(selectedUnit);
+            document.getElementById('calcQtyInput').value = parseFloat(finalQty.toFixed(3));
+        }
+
+        function saveCalculation() {
+            let p = parseFloat(document.getElementById('calcPriceInput').value) || 0;
+            let q = parseFloat(document.getElementById('calcQtyInput').value) || 0;
+            let u = document.getElementById('calcUnitSelect').value;
+            if(p <= 0 || q <= 0) { alert("Enter valid price/qty!"); return; }
+
+            const activeBill = getActiveBill();
+            const item = activeBill.items[calcActiveIndex];
+            item.isCustom = true; item.displayQtyStr = `${q} ${u}`; item.rowTotal = p; item.qty = q; 
+
+            activeBill.isSavedToCloud = false; saveToLocalMemory(); renderCartTable(); triggerAutoSaveToCloud(); closeCalculator();
+        }
+
+        // --- 5. CART RENDERING ---
+        function renderCartTable() {
+            const activeBill = getActiveBill();
+            const tbody = document.getElementById('cartBody');
+            tbody.innerHTML = ''; let grandTotal = 0;
+
+            if (!activeBill || activeBill.items.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#999; padding:20px;">Scan or Search items</td></tr>';
+                document.getElementById('grandTotalAmt').innerText = '₹0'; return;
+            }
+
+            activeBill.items.forEach((item, index) => {
+                grandTotal += item.rowTotal;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>₹${item.unitPrice}</td>
+                    <td>
+                        <div class="qty-controls">
+                            <button class="qty-btn" onclick="updateQuantity(${index}, -1)">-</button>
+                            <span style="font-size:10px;">${item.isCustom ? item.displayQtyStr : item.qty}</span>
+                            <button class="qty-btn" onclick="updateQuantity(${index}, 1)">+</button>
+                            <button class="qty-btn calc-btn" onclick="openCalculator(${index})">⚖️</button>
+                        </div>
+                    </td>
+                    <td style="color:#0ef;">₹${item.rowTotal.toFixed(2)}</td>
+                    <td class="del-item" onclick="removeCartItem(${index})">×</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            document.getElementById('grandTotalAmt').innerText = '₹' + grandTotal.toFixed(2);
+        }
+
+        function updateQuantity(index, change) {
+            const activeBill = getActiveBill();
+            let item = activeBill.items[index];
+            if (item.isCustom) { item.isCustom = false; item.qty = 1; item.rowTotal = item.unitPrice; } 
+            else { item.qty += change; item.rowTotal = item.qty * item.unitPrice; }
+            if (item.qty <= 0) activeBill.items.splice(index, 1);
+            activeBill.isSavedToCloud = false; saveToLocalMemory(); renderCartTable(); triggerAutoSaveToCloud();
+        }
+
+        function removeCartItem(index) {
+            getActiveBill().items.splice(index, 1);
+            getActiveBill().isSavedToCloud = false; saveToLocalMemory(); renderCartTable(); triggerAutoSaveToCloud();
+        }
+
+        function clearCurrentBill() {
+            const activeBill = getActiveBill();
+            if (activeBill.items.length > 0 && confirm("Delete all items in this bill?")) {
+                if(activeBill.cloudKey) fetch(`${DB_URL}/billing_history/${activeBill.cloudKey}.json`, { method: 'DELETE' });
+                activeBill.items = []; activeBill.custName = ''; activeBill.custPhone = ''; activeBill.cloudKey = null;
+                saveToLocalMemory(); loadActiveBillToUI(); document.getElementById('syncStatus').innerText = "";
+            }
+        }
+
+        function getBillTotalAmt() { return getActiveBill().items.reduce((sum, item) => sum + item.rowTotal, 0); }
+
+        // --- 6. ACTION BUTTONS ---
+        function sendWhatsAppBill() {
+            const activeBill = getActiveBill();
+            if (activeBill.items.length === 0) return;
+            if (!activeBill.custPhone) { alert("Enter WhatsApp Number above!"); document.getElementById('custPhone').focus(); return; }
+
+            let textMsg = `*🧾 SAHU HOTEL - INVOICE*\n`;
+            if(activeBill.custName) textMsg += `Customer: ${activeBill.custName}\n`;
+            textMsg += `--------------------------\n`;
+            activeBill.items.forEach((item, index) => { 
+                let qtyDisplay = item.isCustom ? item.displayQtyStr : item.qty;
+                textMsg += `${index + 1}. ${item.name}\n   ${qtyDisplay} x ₹${item.unitPrice} = *₹${item.rowTotal.toFixed(2)}*\n`; 
+            });
+            textMsg += `--------------------------\n*Grand Total: ₹${getBillTotalAmt().toFixed(2)}*\n\n_Thank you!_\n📍 Jhurre Colony, Chhindwara`;
+
+            let phoneStr = activeBill.custPhone.toString().trim();
+            if(phoneStr.length === 10) phoneStr = "91" + phoneStr;
+            window.open(`https://wa.me/${phoneStr}?text=${encodeURIComponent(textMsg)}`, '_blank');
+        }
+
+        function generatePDFBill() {
+            const activeBill = getActiveBill();
+            if (activeBill.items.length === 0) return;
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+
+            doc.setFont("helvetica", "bold"); doc.setFontSize(22);
+            doc.text("SAHU HOTEL", 105, 20, null, null, "center");
+            doc.setFont("helvetica", "normal"); doc.setFontSize(12);
+            doc.text("Sahu Kirana & Restaurant", 105, 28, null, null, "center");
+            doc.text("Jhurre Colony, Chhindwara, MP 480441", 105, 34, null, null, "center");
+            doc.text("Contact: +91 8319332387", 105, 40, null, null, "center");
+            doc.setLineWidth(0.5); doc.line(15, 45, 195, 45);
+
+            doc.setFontSize(10);
+            doc.text(`Date: ${new Date().toLocaleString()}`, 15, 53);
+            if(activeBill.custName) doc.text(`Customer: ${activeBill.custName}`, 130, 53);
+
+            const tableBody = activeBill.items.map((item, index) => [
+                index + 1, item.name, `Rs. ${item.unitPrice}`, (item.isCustom ? item.displayQtyStr : item.qty), `Rs. ${item.rowTotal.toFixed(2)}`
+            ]);
+
+            doc.autoTable({
+                startY: 65, head: [['S.No', 'Item', 'Rate', 'Qty', 'Total']], body: tableBody, theme: 'striped',
+                headStyles: { fillColor: [0, 238, 255], textColor: [31, 36, 45], fontStyle: 'bold' },
+            });
+
+            doc.setFont("helvetica", "bold"); doc.setFontSize(14);
+            doc.text(`Grand Total: Rs. ${getBillTotalAmt().toFixed(2)}`, 145, doc.lastAutoTable.finalY + 12);
+            doc.save(activeBill.custName ? `Bill_${activeBill.custName}.pdf` : `Bill_${Date.now()}.pdf`);
+        }
+
+        // --- 7. HISTORY MODAL ---
+        function openHistoryModal() {
+            document.getElementById('historyModal').style.display = 'flex';
+            const listContainer = document.getElementById('historyListContainer');
+            listContainer.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">Fetching...</div>';
+            fetch(`${DB_URL}/billing_history.json`).then(res => res.json()).then(data => {
+                listContainer.innerHTML = '';
+                if(!data) { listContainer.innerHTML = '<div style="text-align: center; color: #999;">No history found.</div>'; return; }
+                const historyArray = Object.keys(data).map(key => ({ cloudKey: key, ...data[key] })).sort((a,b) => b.timestamp - a.timestamp);
+                historyArray.forEach(bill => {
+                    const card = document.createElement('div'); card.className = 'history-card';
+                    card.innerHTML = `
+                        <div class="history-info">
+                            <h4>${bill.custName} <span style="font-size:10px; color:#aaa; font-weight:normal;">(${bill.items ? bill.items.length : 0} items)</span></h4>
+                            <p>Date: ${bill.date}</p>
+                            <p style="color:#0ef; font-weight:bold; margin-top:2px;">Total: ₹${parseFloat(bill.total).toFixed(2)}</p>
+                        </div>
+                        <div class="history-actions"><button onclick="reopenBillForEdit('${encodeURIComponent(JSON.stringify(bill))}')">✏️ Edit</button></div>
+                    `;
+                    listContainer.appendChild(card);
+                });
+            }).catch(() => { listContainer.innerHTML = '<div style="color: #ff4d4d;">Error.</div>'; });
+        }
+        function closeHistoryModal() { document.getElementById('historyModal').style.display = 'none'; }
+        function reopenBillForEdit(encodedStr) { createNewBill(JSON.parse(decodeURIComponent(encodedStr))); closeHistoryModal(); }
+
+        // --- 8. CAMERA SCANNER ---
+        function toggleScanner() {
+            const btn = document.getElementById('camToggleBtn');
+            const readerDiv = document.getElementById('reader');
+            if (isScannerRunning) {
+                if (html5QrcodeScanner) {
+                    html5QrcodeScanner.stop().then(() => {
+                        html5QrcodeScanner.clear(); isScannerRunning = false;
+                        btn.innerText = "Start Camera"; btn.style.background = "#0ef"; btn.style.color = "#1f242d";
+                        readerDiv.style.border = "2px dashed #0ef";
+                    });
+                }
+            } else {
+                html5QrcodeScanner = new Html5Qrcode("reader");
+                html5QrcodeScanner.start(
+                    { facingMode: "environment" }, { fps: 10, qrbox: { width: 200, height: 100 } },
+                    (decodedText) => { 
+                        document.getElementById('manualBarcode').value = decodedText;
+                        processManualBarcode();
+                        toggleScanner(); 
+                    },
+                    (errorMessage) => { }
+                ).then(() => {
+                    isScannerRunning = true; btn.innerText = "Stop Camera"; btn.style.background = "#ff4d4d"; btn.style.color = "#fff";
+                    readerDiv.style.border = "2px solid #28a745"; 
+                });
+            }
+        }
+    </script>
+</body>
+</html>
