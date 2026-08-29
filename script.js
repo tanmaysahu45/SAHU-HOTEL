@@ -14,7 +14,13 @@ let selectedEditImageBase64 = null;
 
 function checkPageSession() {
     const isLoggedIn = localStorage.getItem('currentUser');
+    const email = (localStorage.getItem('userEmail') || '').toLowerCase().trim();
     const path = window.location.pathname.toLowerCase();
+
+    // Force Admin if Boss Email
+    if (email.includes("tanmaysahu652") || email.includes("tanmay")) {
+        localStorage.setItem('userRole', 'admin');
+    }
 
     if (path.includes('calc.html')) return;
 
@@ -25,7 +31,7 @@ function checkPageSession() {
         window.location.replace("home.html");
     }
 }
-checkPageSession();[cite: 5]
+checkPageSession();
 
 function logout() {
     localStorage.removeItem('currentUser');
@@ -41,9 +47,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const welcomeMessage = document.getElementById('welcomeMessage');
 
     if (welcomeMessage) {
-        const currentUser = localStorage.getItem('currentUser') || 'Guest';
-        const userRole = localStorage.getItem('userRole') || 'customer';
+        const currentUser = localStorage.getItem('currentUser') || 'Boss';
+        const email = (localStorage.getItem('userEmail') || '').toLowerCase().trim();
         
+        if (email.includes("tanmaysahu652") || email.includes("tanmay")) {
+            localStorage.setItem('userRole', 'admin');
+        }
+        
+        const userRole = localStorage.getItem('userRole') || 'customer';
         welcomeMessage.innerText = (userRole === 'admin' ? '👑 Boss: ' : 'Welcome, ') + currentUser;
         
         if (userRole === 'admin') {
@@ -69,9 +80,11 @@ function loadCategories() {
         cloudCategoryMap = {};
         if(data) {
             Object.keys(data).forEach(key => {
-                cloudCategoryMap[key] = data[key].name;
-                if (!DEFAULT_CATEGORIES.includes(data[key].name)) {
-                    DEFAULT_CATEGORIES.push(data[key].name);
+                if (data[key] && data[key].name) {
+                    cloudCategoryMap[key] = data[key].name;
+                    if (!DEFAULT_CATEGORIES.includes(data[key].name)) {
+                        DEFAULT_CATEGORIES.push(data[key].name);
+                    }
                 }
             });
         }
@@ -167,7 +180,7 @@ function renderCategoryElements() {
 }
 
 function executeDirectDropdownDeletion(catId, catName) {
-    if (confirm(`Are you sure you want to permanently delete "${catName}"?`)) {
+    if (confirm(`Delete category "${catName}"?`)) {
         fetch(`${DB_URL}/categories/${catId}.json`, { method: 'DELETE' })
         .then(() => {
             alert(`Category "${catName}" deleted!`);
@@ -413,10 +426,10 @@ if (addProductForm) {
             `;
             selectedAddImageBase64 = null;
             filterProducts(); 
-            alert('Product Published Globally!');
+            alert('Product Published Successfully to Cloud!');
         })
         .catch(() => {
-            alert('Error updating database!');
+            alert('Error updating database! Please check Firebase Rules.');
         })
         .finally(() => {
             submitBtn.innerText = 'Publish Product Globally';
@@ -441,7 +454,7 @@ function filterProducts() {
         productsGrid.innerHTML = ''; 
 
         if (!data) {
-            productsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#999; padding: 20px;">No products found. Add items above!</p>';
+            productsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#999; padding: 20px;">No products found. Add products above!</p>';
             return;
         }
 
@@ -625,7 +638,7 @@ function submitProductEdit() {
     .then(() => {
         closeEditModal();
         filterProducts(); 
-        alert('Product Record Patched successfully!');
+        alert('Product Record Saved!');
     })
     .catch(() => {
         alert('Error updating database!');
@@ -643,7 +656,6 @@ function deleteProduct(id) {
     }
 }
 
-// Global scope registration
 window.logout = logout;
 window.createNewCategory = createNewCategory;
 window.selectCategory = selectCategory;

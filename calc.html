@@ -1,1 +1,377 @@
-const FIREBASE_API = "https://sahu-hotel-22ad4-default-rtdb.firebaseio.com/shop_items.json";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Sahu Hotel - Rate Calculator</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2563eb">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --bg: #1f242d;
+      --card-bg: #2c3341;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #0ef;
+      --danger: #ff4d4d;
+      --border: #323946;
+    }
+
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
+    html, body { width: 100%; overflow-x: hidden; background: var(--bg); color: var(--text-main); }
+    body { padding: 8px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 10px; }
+
+    .header { display: flex; justify-content: space-between; align-items: center; padding: 6px 2px; border-bottom: 2px solid #0ef; margin-bottom: 4px; }
+    .header h2 { font-size: 18px; font-weight: 800; color: #fff; }
+    .header h2 span { color: #0ef; }
+    .status-badge { font-size: 11px; padding: 3px 8px; border-radius: 12px; font-weight: bold; }
+    .status-online { background: #065f46; color: #34d399; }
+    .status-offline { background: #7f1d1d; color: #fca5a5; }
+
+    .back-btn { background: #ff4d4d; color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; }
+
+    .card { background: var(--card-bg); border-radius: 12px; padding: 12px; border: 1px solid var(--border); width: 100%; }
+
+    .items-scroll { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+    .item-pill { background: #1f242d; color: var(--text-main); border: 2px solid transparent; padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 13px; white-space: nowrap; cursor: pointer; }
+    .item-pill.active { background: #0ef; border-color: #0ef; color: #1f242d; }
+
+    .active-banner { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .active-banner .name { font-size: 18px; font-weight: 800; color: #0ef; }
+    .active-banner .rate { font-size: 13px; font-weight: bold; color: #ffc107; }
+
+    .calc-box { background: #1f242d; border: 2px solid #0ef; border-radius: 12px; padding: 10px; }
+    .calc-title { text-align: center; font-size: 11px; color: var(--text-muted); margin-bottom: 8px; font-weight: bold; text-transform: uppercase; }
+    .sync-row { display: flex; gap: 6px; align-items: center; }
+    .input-wrap { flex: 1; min-width: 0; }
+    .input-wrap label { font-size: 11px; font-weight: bold; color: var(--text-muted); display: block; margin-bottom: 2px; }
+    .input-wrap input { background: #2c3341; border: 2px solid var(--border); border-radius: 8px; color: #fff; font-size: 18px; font-weight: bold; padding: 10px 4px; width: 100%; text-align: center; outline: none; }
+    .input-wrap input:focus { border-color: #0ef; }
+    .sync-icon { font-size: 18px; color: #0ef; font-weight: bold; margin-top: 14px; }
+
+    .chip-group { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; justify-content: center; }
+    .chip { background: #2c3341; border: 1px solid var(--border); border-radius: 15px; padding: 4px 8px; font-size: 12px; font-weight: bold; color: #f1f5f9; cursor: pointer; }
+
+    .rate-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px; }
+    .grid-box { background: #1f242d; border: 1px solid var(--border); border-radius: 8px; padding: 6px 2px; text-align: center; cursor: pointer; }
+    .grid-box span { font-size: 11px; color: var(--text-muted); display: block; }
+    .grid-box strong { font-size: 14px; color: #0ef; }
+
+    .manage-head h4 { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; }
+    .btn { background: #0ef; color: #1f242d; border: none; padding: 8px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-sm { padding: 4px 8px; font-size: 11px; }
+    
+    .form-col { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+    .form-inputs { display: flex; gap: 6px; }
+    .form-inputs input { background: #1f242d; border: 1px solid var(--border); color: #fff; padding: 8px; border-radius: 6px; font-size: 13px; outline: none; width: 50%; min-width: 0; }
+    
+    .item-list-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  
+  <div class="header">
+    <div>
+      <h2>Sahu <span>Hotel</span></h2>
+      <span id="networkStatus" class="status-badge status-online">Syncing...</span>
+    </div>
+    <a href="home.html" class="back-btn">⬅ Back to Shop</a>
+  </div>
+
+  <div class="card" style="padding: 8px;">
+    <div class="items-scroll" id="itemPills"></div>
+  </div>
+
+  <div class="card">
+    <div class="active-banner">
+      <div class="name" id="selectedName">-</div>
+      <div class="rate" id="selectedRate">₹0 / 100g</div>
+    </div>
+
+    <div class="calc-box">
+      <div class="calc-title">Instant 2-Way Sync</div>
+      <div class="sync-row">
+        <div class="input-wrap">
+          <label>Rupees (₹)</label>
+          <input type="number" id="inputRupees" placeholder="0">
+        </div>
+        <div class="sync-icon">⇄</div>
+        <div class="input-wrap">
+          <label>Weight (Gram)</label>
+          <input type="number" id="inputGrams" placeholder="0">
+        </div>
+      </div>
+
+      <div class="chip-group">
+        <div class="chip" data-rs="20">₹20</div>
+        <div class="chip" data-rs="50">₹50</div>
+        <div class="chip" data-rs="100">₹100</div>
+        <div class="chip" data-rs="200">₹200</div>
+        <div class="chip" data-rs="250">₹250</div>
+      </div>
+      <div class="chip-group" style="margin-top: 4px;">
+        <div class="chip" data-g="100">100g</div>
+        <div class="chip" data-g="200">200g</div>
+        <div class="chip" data-g="250">250g</div>
+        <div class="chip" data-g="500">500g</div>
+        <div class="chip" data-g="1000">1kg</div>
+      </div>
+    </div>
+
+    <div class="rate-grid">
+      <div class="grid-box" data-g="50"><span>50 Gram</span><strong id="q50">₹0</strong></div>
+      <div class="grid-box" data-g="100"><span>100 Gram</span><strong id="q100">₹0</strong></div>
+      <div class="grid-box" data-g="200"><span>200 Gram</span><strong id="q200">₹0</strong></div>
+      <div class="grid-box" data-g="250"><span>250 Gram</span><strong id="q250">₹0</strong></div>
+      <div class="grid-box" data-g="500"><span>500 Gram</span><strong id="q500">₹0</strong></div>
+      <div class="grid-box" data-g="1000"><span>1 Kg</span><strong id="q1000">₹0</strong></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="manage-head">
+      <h4>Manage Items & Rates</h4>
+    </div>
+    
+    <div class="form-col">
+      <div class="form-inputs">
+        <input type="text" id="itemNameInput" placeholder="Item Name (e.g. Paneer)">
+        <input type="number" id="itemRateInput" placeholder="Rate/100g (₹)">
+      </div>
+      <button class="btn" id="saveItemBtn" style="width: 100%;">Save & Sync Rate</button>
+    </div>
+
+    <div id="itemsContainer"></div>
+  </div>
+
+</div>
+
+<script>
+  // ✅ 100% सही Firebase Realtime Database URL
+  const FIREBASE_API = "https://sahu-hotel-22ad4-default-rtdb.firebaseio.com/shop_items.json";
+
+  let items = [];
+  let activeIndex = 0;
+
+  function loadLocalData() {
+    const saved = localStorage.getItem('sahu_hotel_items');
+    if (saved) {
+      try { items = JSON.parse(saved); } catch(e) {}
+    }
+    
+    if (!items || items.length === 0) {
+      items = [
+        { name: 'Paneer', rate100g: 36 },
+        { name: 'Khoya / Mawa', rate100g: 32 },
+        { name: 'Rasgulla', rate100g: 24 }
+      ];
+    }
+    renderTabs();
+    updateView();
+  }
+
+  async function fetchCloudData() {
+    if (!navigator.onLine) {
+      setOfflineBadge();
+      return;
+    }
+    try {
+      const response = await fetch(FIREBASE_API);
+      if (response.ok) {
+        const cloudData = await response.json();
+        if (cloudData && Array.isArray(cloudData) && cloudData.length > 0) {
+          if (JSON.stringify(cloudData) !== JSON.stringify(items)) {
+            items = cloudData;
+            localStorage.setItem('sahu_hotel_items', JSON.stringify(items));
+            renderTabs();
+            updateView();
+          }
+        } else if (cloudData === null) {
+          syncToCloud();
+        }
+        setOnlineBadge();
+      }
+    } catch(err) {
+      setOfflineBadge();
+    }
+  }
+
+  async function syncToCloud() {
+    localStorage.setItem('sahu_hotel_items', JSON.stringify(items));
+    if (navigator.onLine) {
+      try {
+        await fetch(FIREBASE_API, {
+          method: 'PUT',
+          body: JSON.stringify(items)
+        });
+        setOnlineBadge();
+      } catch(e) {
+        setOfflineBadge();
+      }
+    } else {
+      setOfflineBadge();
+    }
+  }
+
+  function setOnlineBadge() {
+    const b = document.getElementById('networkStatus');
+    b.className = 'status-badge status-online';
+    b.innerText = 'Live Sync 🟢';
+  }
+
+  function setOfflineBadge() {
+    const b = document.getElementById('networkStatus');
+    b.className = 'status-badge status-offline';
+    b.innerText = 'Offline Mode 🔴';
+  }
+
+  window.addEventListener('online', fetchCloudData);
+  window.addEventListener('offline', setOfflineBadge);
+
+  function renderTabs() {
+    const pills = document.getElementById('itemPills');
+    const list = document.getElementById('itemsContainer');
+    pills.innerHTML = '';
+    list.innerHTML = '';
+
+    if (activeIndex >= items.length) activeIndex = 0;
+
+    items.forEach((item, index) => {
+      const pill = document.createElement('div');
+      pill.className = `item-pill ${index === activeIndex ? 'active' : ''}`;
+      pill.innerText = item.name;
+      pill.onclick = () => { activeIndex = index; renderTabs(); updateView(); };
+      pills.appendChild(pill);
+
+      const row = document.createElement('div');
+      row.className = 'item-list-row';
+      row.innerHTML = `
+        <div><strong>${item.name}</strong> <span style="color:var(--text-muted);">(₹${item.rate100g}/100g)</span></div>
+        <div style="display:flex; gap:4px;">
+          <button class="btn btn-sm edit-btn" data-index="${index}">Edit</button>
+          <button class="btn btn-sm btn-danger del-btn" data-index="${index}">Del</button>
+        </div>
+      `;
+      list.appendChild(row);
+    });
+
+    document.querySelectorAll('.edit-btn').forEach(b => {
+      b.onclick = (e) => editItem(parseInt(e.target.dataset.index));
+    });
+    document.querySelectorAll('.del-btn').forEach(b => {
+      b.onclick = (e) => deleteItem(parseInt(e.target.dataset.index));
+    });
+  }
+
+  function updateView() {
+    const current = items[activeIndex];
+    if (!current) return;
+
+    document.getElementById('selectedName').innerText = current.name;
+    document.getElementById('selectedRate').innerText = `₹${current.rate100g} / 100g (₹${current.rate100g * 10}/kg)`;
+
+    const r = current.rate100g;
+    document.getElementById('q50').innerText = `₹${(r * 0.5).toFixed(1)}`;
+    document.getElementById('q100').innerText = `₹${r}`;
+    document.getElementById('q200').innerText = `₹${(r * 2).toFixed(1)}`;
+    document.getElementById('q250').innerText = `₹${(r * 2.5).toFixed(1)}`;
+    document.getElementById('q500').innerText = `₹${(r * 5).toFixed(1)}`;
+    document.getElementById('q1000').innerText = `₹${(r * 10).toFixed(1)}`;
+
+    const rsVal = document.getElementById('inputRupees').value;
+    if (rsVal) handleRupeesChange();
+    else handleGramsChange();
+  }
+
+  function handleRupeesChange() {
+    const current = items[activeIndex];
+    const rs = parseFloat(document.getElementById('inputRupees').value);
+    if (current && !isNaN(rs) && rs > 0) {
+      const grams = (rs / current.rate100g) * 100;
+      document.getElementById('inputGrams').value = grams % 1 === 0 ? grams : grams.toFixed(1);
+    } else if (isNaN(rs) || rs === 0) {
+      document.getElementById('inputGrams').value = '';
+    }
+  }
+
+  function handleGramsChange() {
+    const current = items[activeIndex];
+    const grams = parseFloat(document.getElementById('inputGrams').value);
+    if (current && !isNaN(grams) && grams > 0) {
+      const rs = (grams / 100) * current.rate100g;
+      document.getElementById('inputRupees').value = rs % 1 === 0 ? rs : rs.toFixed(2);
+    } else if (isNaN(grams) || grams === 0) {
+      document.getElementById('inputRupees').value = '';
+    }
+  }
+
+  document.getElementById('inputRupees').addEventListener('input', handleRupeesChange);
+  document.getElementById('inputGrams').addEventListener('input', handleGramsChange);
+
+  document.querySelectorAll('[data-rs]').forEach(chip => {
+    chip.onclick = () => {
+      document.getElementById('inputRupees').value = chip.dataset.rs;
+      handleRupeesChange();
+    };
+  });
+
+  document.querySelectorAll('[data-g]').forEach(chip => {
+    chip.onclick = () => {
+      document.getElementById('inputGrams').value = chip.dataset.g;
+      handleGramsChange();
+    };
+  });
+
+  document.getElementById('saveItemBtn').onclick = () => {
+    const name = document.getElementById('itemNameInput').value.trim();
+    const rate = parseFloat(document.getElementById('itemRateInput').value);
+
+    if (!name || isNaN(rate) || rate <= 0) {
+      alert('Please enter a valid Item Name and Rate for 100g!');
+      return;
+    }
+
+    const exist = items.findIndex(i => i.name.toLowerCase() === name.toLowerCase());
+    if (exist >= 0) {
+      items[exist].rate100g = rate;
+      activeIndex = exist;
+    } else {
+      items.push({ name, rate100g: rate });
+      activeIndex = items.length - 1;
+    }
+
+    syncToCloud();
+    renderTabs();
+    updateView();
+    document.getElementById('itemNameInput').value = '';
+    document.getElementById('itemRateInput').value = '';
+  };
+
+  function editItem(index) {
+    document.getElementById('itemNameInput').value = items[index].name;
+    document.getElementById('itemRateInput').value = items[index].rate100g;
+  }
+
+  function deleteItem(index) {
+    if (confirm(`Do you want to delete "${items[index].name}"?`)) {
+      items.splice(index, 1);
+      if (items.length === 0) {
+        items.push({ name: 'Paneer', rate100g: 36 });
+      }
+      syncToCloud();
+      renderTabs();
+      updateView();
+    }
+  }
+
+  loadLocalData();
+  fetchCloudData();
+  setInterval(fetchCloudData, 3000);
+</script>
+</body>
+</html>

@@ -124,26 +124,25 @@
         const btn = document.getElementById('googleSignInBtn');
         const errorDiv = document.getElementById('errorMessage');
 
-        // Check if already logged in
         if (localStorage.getItem('currentUser')) {
             window.location.replace("home.html");
         }
 
         btn.addEventListener('click', () => {
-            btn.innerText = "Signing in...";
+            btn.innerText = "Connecting Google...";
             btn.disabled = true;
 
             signInWithPopup(auth, provider)
                 .then((result) => {
                     const user = result.user;
-                    const email = (user.email || '').toLowerCase();
-                    const name = user.displayName || user.email.split('@')[0];
+                    const email = (user.email || '').toLowerCase().trim();
+                    const name = user.displayName || 'Tanmay Sahu';
 
                     localStorage.setItem('currentUser', name);
                     localStorage.setItem('userEmail', email);
 
-                    // Boss / Admin Email Match
-                    if (email === "tanmaysahu652@gmail.com") {
+                    // Boss Check (Checks tanmaysahu652 or tanmay)
+                    if (email.includes("tanmaysahu652") || email.includes("tanmay")) {
                         localStorage.setItem('userRole', 'admin');
                     } else {
                         localStorage.setItem('userRole', 'customer');
@@ -155,7 +154,7 @@
                     btn.innerHTML = `Sign in with Google`;
                     btn.disabled = false;
                     errorDiv.style.display = 'block';
-                    errorDiv.innerText = "Error: " + error.message;
+                    errorDiv.innerText = "Login Error: " + error.message;
                 });
         });
     </script>
