@@ -1,5 +1,5 @@
 // ==========================================
-// 1. GLOBAL CONFIGURATION & SESSION CONTROL
+// 1. GLOBAL CONFIGURATION & SESSION
 // ==========================================
 const DB_URL = "https://sahu-hotel-22ad4-default-rtdb.firebaseio.com";
 
@@ -17,7 +17,7 @@ function checkPageSession() {
     const email = (localStorage.getItem('userEmail') || '').toLowerCase().trim();
     const path = window.location.pathname.toLowerCase();
 
-    // Force Admin if Boss Email
+    // Auto boss role for your email
     if (email.includes("tanmaysahu652") || email.includes("tanmay")) {
         localStorage.setItem('userRole', 'admin');
     }
@@ -31,7 +31,7 @@ function checkPageSession() {
         window.location.replace("home.html");
     }
 }
-checkPageSession();
+checkPageSession();[cite: 5]
 
 function logout() {
     localStorage.removeItem('currentUser');
@@ -41,7 +41,7 @@ function logout() {
 }
 
 // ==========================================
-// 2. HOME DASHBOARD INITIAL LOAD
+// 2. DASHBOARD INIT
 // ==========================================
 document.addEventListener('DOMContentLoaded', function() {
     const welcomeMessage = document.getElementById('welcomeMessage');
@@ -73,11 +73,13 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function loadCategories() {
+    DEFAULT_CATEGORIES = ['Hotel', 'Kirana', 'Dairy', 'Snacks']; 
+    cloudCategoryMap = {};
+    renderCategoryElements(); 
+
     fetch(`${DB_URL}/categories.json`)
     .then(res => res.json())
     .then(data => {
-        DEFAULT_CATEGORIES = ['Hotel', 'Kirana', 'Dairy', 'Snacks']; 
-        cloudCategoryMap = {};
         if(data) {
             Object.keys(data).forEach(key => {
                 if (data[key] && data[key].name) {
@@ -224,7 +226,7 @@ function selectCategory(categoryName) {
 }
 
 // ==========================================
-// 3. IMAGE COMPRESSION ENGINE
+// 3. IMAGE HANDLER
 // ==========================================
 function compressAndGetBase64(fileOrUrl, maxWidth = 800, quality = 0.7) {
     return new Promise((resolve, reject) => {
@@ -356,7 +358,7 @@ function setupImageUploadListeners() {
 }
 
 // ==========================================
-// 4. LIVE PRODUCT ADD SYSTEM
+// 4. ADD PRODUCT SYSTEM
 // ==========================================
 const addProductForm = document.getElementById('addProductForm');
 if (addProductForm) {
@@ -368,7 +370,7 @@ if (addProductForm) {
         const barcode = document.getElementById('prodBarcode').value.trim();
 
         if(!category) {
-            alert('Please select or create a Category first!');
+            alert('Please select a Category Group first!');
             return;
         }
 
@@ -413,10 +415,15 @@ if (addProductForm) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(productObject)
         })
+        .then(res => {
+            if (!res.ok) throw new Error("Network Response was not OK");
+            return res.json();
+        })
         .then(() => {
             addProductForm.reset();
             document.getElementById('imagePreview').style.display = 'none';
             document.getElementById('dropdownSelectedValue').innerText = '-- Choose --';
+            document.getElementById('prodCategory').value = '';
             document.getElementById('priceContainer').innerHTML = `
                 <label style="font-size: 12px; color: #0ef; font-weight: bold; display: block; margin-bottom: 8px;">4. Prices (Add Multiple Rates):</label>
                 <div class="price-row">
@@ -426,10 +433,10 @@ if (addProductForm) {
             `;
             selectedAddImageBase64 = null;
             filterProducts(); 
-            alert('Product Published Successfully to Cloud!');
+            alert('✅ Product Published Successfully!');
         })
-        .catch(() => {
-            alert('Error updating database! Please check Firebase Rules.');
+        .catch((err) => {
+            alert('❌ Error: ' + err.message + '\nCheck Firebase Realtime Database Rules (.read/.write = true)');
         })
         .finally(() => {
             submitBtn.innerText = 'Publish Product Globally';
@@ -439,7 +446,7 @@ if (addProductForm) {
 }
 
 // ==========================================
-// 5. RENDER PRODUCTS FROM DATABASE
+// 5. RENDER PRODUCTS
 // ==========================================
 function filterProducts() {
     const productsGrid = document.getElementById('productsGrid');
