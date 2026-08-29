@@ -1,8 +1,7 @@
 // ==========================================
-// 1. GLOBAL CONFIGURATION & INSTANT SESSION CONTROL
+// 1. GLOBAL CONFIGURATION & SESSION CONTROL
 // ==========================================
-// ✅ सही Firebase Database URL (aancalculator)
-const DB_URL = "https://aancalculator-default-rtdb.firebaseio.com";
+const DB_URL = "https://sahu-hotel-22ad4-default-rtdb.firebaseio.com";
 
 let currentCategory = 'All';
 let DEFAULT_CATEGORIES = ['Hotel', 'Kirana', 'Dairy', 'Snacks']; 
@@ -26,117 +25,26 @@ function checkPageSession() {
         window.location.replace("home.html");
     }
 }
-checkPageSession(); 
+checkPageSession();[cite: 5]
 
 function logout() {
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('userEmail');
     localStorage.removeItem('userRole');
     window.location.replace("index.html");
 }
 
 // ==========================================
-// 2. LIVE LOGIN & REGISTER SYSTEM
-// ==========================================
-const loginForm = document.getElementById('loginForm');
-
-if (loginForm) {
-    const usernameInput = document.getElementById('username');
-    const passwordInput = document.getElementById('password');
-    const errorMsg = document.getElementById('errorMessage');
-
-    usernameInput.addEventListener('input', clearErrors);
-    passwordInput.addEventListener('input', clearErrors);
-
-    function clearErrors() {
-        usernameInput.classList.remove('error-border');
-        passwordInput.classList.remove('error-border');
-        if (errorMsg) errorMsg.style.display = 'none';
-    }
-
-    loginForm.addEventListener('submit', function(event) {
-        event.preventDefault(); 
-        clearErrors();
-
-        const originalUsername = usernameInput.value.trim();
-        const uValue = originalUsername.toLowerCase(); 
-        const pValue = passwordInput.value;
-
-        if (uValue.includes(" ")) {
-            showRedError("⚠️ Spaces are not allowed in username!");
-            usernameInput.classList.add('error-border');
-            return;
-        }
-
-        if (pValue.length < 4) {
-            showRedError("⚠️ Password must be at least 4 characters long!");
-            passwordInput.classList.add('error-border');
-            return;
-        }
-
-        const submitBtn = loginForm.querySelector('button[type="submit"]');
-        submitBtn.innerText = "Checking...";
-        submitBtn.disabled = true;
-
-        fetch(`${DB_URL}/users/${uValue}.json`)
-        .then(res => res.json())
-        .then(registeredUser => {
-            if (!registeredUser) {
-                // नया यूजर पहली बार बना रहे हैं
-                const newUserData = { username: originalUsername, password: pValue, role: 'admin' };
-                
-                fetch(`${DB_URL}/users/${uValue}.json`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newUserData)
-                })
-                .then(() => {
-                    localStorage.setItem('currentUser', originalUsername);
-                    localStorage.setItem('userRole', 'admin');
-                    alert('New Account Created & Logged in!');
-                    window.location.replace("home.html");
-                })
-                .catch(() => showRedError("⚠️ Firebase Network Error!"));
-            } 
-            else {
-                if (registeredUser.password === pValue) {
-                    localStorage.setItem('currentUser', registeredUser.username);
-                    localStorage.setItem('userRole', registeredUser.role || 'admin');
-                    alert(`Welcome Back, ${registeredUser.username}!`);
-                    window.location.replace("home.html");
-                } else {
-                    showRedError("⚠️ Incorrect Password! Please check your password.");
-                    passwordInput.classList.add('error-border');
-                }
-            }
-        })
-        .catch(() => {
-            showRedError("⚠️ Cloud Connection Error! Check Firebase Rules.");
-        })
-        .finally(() => {
-            submitBtn.innerText = "Login / Register";
-            submitBtn.disabled = false;
-        });
-    });
-
-    function showRedError(message) {
-        if (errorMsg) {
-            errorMsg.style.display = 'block';
-            errorMsg.innerText = message;
-        }
-    }
-}
-
-// ==========================================
-// 3. HOME DASHBOARD INITIAL LOAD
+// 2. HOME DASHBOARD INITIAL LOAD
 // ==========================================
 document.addEventListener('DOMContentLoaded', function() {
     const welcomeMessage = document.getElementById('welcomeMessage');
 
     if (welcomeMessage) {
-        const currentUser = localStorage.getItem('currentUser') || 'Admin';
-        const userRole = localStorage.getItem('userRole') || 'admin';
+        const currentUser = localStorage.getItem('currentUser') || 'Guest';
+        const userRole = localStorage.getItem('userRole') || 'customer';
         
-        welcomeMessage.innerText = 'Welcome, ' + currentUser;
+        welcomeMessage.innerText = (userRole === 'admin' ? '👑 Boss: ' : 'Welcome, ') + currentUser;
         
         if (userRole === 'admin') {
             const adminSection = document.getElementById('adminSection');
@@ -210,7 +118,7 @@ function renderCategoryElements() {
             opt.innerHTML = `<span>${cat}</span>`;
             
             let cloudKey = Object.keys(cloudCategoryMap).find(key => cloudCategoryMap[key] === cat);
-            if (cloudKey) {
+            if (cloudKey && localStorage.getItem('userRole') === 'admin') {
                 const cutBtn = document.createElement('span');
                 cutBtn.className = 'opt-cut-btn';
                 cutBtn.innerHTML = '×';
@@ -303,7 +211,7 @@ function selectCategory(categoryName) {
 }
 
 // ==========================================
-// 4. IMAGE COMPRESSION ENGINE
+// 3. IMAGE COMPRESSION ENGINE
 // ==========================================
 function compressAndGetBase64(fileOrUrl, maxWidth = 800, quality = 0.7) {
     return new Promise((resolve, reject) => {
@@ -435,7 +343,7 @@ function setupImageUploadListeners() {
 }
 
 // ==========================================
-// 5. LIVE GLOBAL PRODUCT ADD SYSTEM
+// 4. LIVE PRODUCT ADD SYSTEM
 // ==========================================
 const addProductForm = document.getElementById('addProductForm');
 if (addProductForm) {
@@ -447,7 +355,7 @@ if (addProductForm) {
         const barcode = document.getElementById('prodBarcode').value.trim();
 
         if(!category) {
-            alert('Please select or create a Category Group first!');
+            alert('Please select or create a Category first!');
             return;
         }
 
@@ -518,7 +426,7 @@ if (addProductForm) {
 }
 
 // ==========================================
-// 6. RENDER LIVE ITEMS FROM CLOUD
+// 5. RENDER PRODUCTS FROM DATABASE
 // ==========================================
 function filterProducts() {
     const productsGrid = document.getElementById('productsGrid');
@@ -533,7 +441,7 @@ function filterProducts() {
         productsGrid.innerHTML = ''; 
 
         if (!data) {
-            productsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#999; padding: 20px;">No products found in shop. Add products above!</p>';
+            productsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#999; padding: 20px;">No products found. Add items above!</p>';
             return;
         }
 
@@ -567,7 +475,7 @@ function filterProducts() {
             let actionHtml = '';
             let wholesaleHtml = '';
             let barcodeTagHtml = '';
-            const userRole = localStorage.getItem('userRole') || 'admin';
+            const userRole = localStorage.getItem('userRole') || 'customer';
             
             if (userRole === 'admin') {
                 if (product.barcode) {
@@ -606,7 +514,7 @@ function filterProducts() {
         });
     })
     .catch(() => {
-        productsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#999; padding: 20px;">Failed to load live items. Check Firebase connection.</p>';
+        productsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#999; padding: 20px;">Failed to load live items.</p>';
     });
 }
 
