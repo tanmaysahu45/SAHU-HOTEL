@@ -1,7 +1,8 @@
 // ==========================================
 // 1. GLOBAL CONFIGURATION & INSTANT SESSION CONTROL
 // ==========================================
-const DB_URL = "https://sahu-hotel-app-default-rtdb.firebaseio.com";
+// ✅ सही Firebase Database URL (aancalculator)
+const DB_URL = "https://aancalculator-default-rtdb.firebaseio.com";
 
 let currentCategory = 'All';
 let DEFAULT_CATEGORIES = ['Hotel', 'Kirana', 'Dairy', 'Snacks']; 
@@ -16,7 +17,6 @@ function checkPageSession() {
     const isLoggedIn = localStorage.getItem('currentUser');
     const path = window.location.pathname.toLowerCase();
 
-    // agar calc.html par hai to login check na roke
     if (path.includes('calc.html')) return;
 
     if (path.includes('home.html') && !isLoggedIn) {
@@ -73,11 +73,16 @@ if (loginForm) {
             return;
         }
 
+        const submitBtn = loginForm.querySelector('button[type="submit"]');
+        submitBtn.innerText = "Checking...";
+        submitBtn.disabled = true;
+
         fetch(`${DB_URL}/users/${uValue}.json`)
         .then(res => res.json())
         .then(registeredUser => {
             if (!registeredUser) {
-                const newUserData = { username: originalUsername, password: pValue, role: 'customer' };
+                // नया यूजर पहली बार बना रहे हैं
+                const newUserData = { username: originalUsername, password: pValue, role: 'admin' };
                 
                 fetch(`${DB_URL}/users/${uValue}.json`, {
                     method: 'PUT',
@@ -86,25 +91,30 @@ if (loginForm) {
                 })
                 .then(() => {
                     localStorage.setItem('currentUser', originalUsername);
-                    localStorage.setItem('userRole', 'customer');
-                    alert('New Account Created & Saved on Cloud Network!');
+                    localStorage.setItem('userRole', 'admin');
+                    alert('New Account Created & Logged in!');
                     window.location.replace("home.html");
-                });
+                })
+                .catch(() => showRedError("⚠️ Firebase Network Error!"));
             } 
             else {
                 if (registeredUser.password === pValue) {
                     localStorage.setItem('currentUser', registeredUser.username);
-                    localStorage.setItem('userRole', registeredUser.role);
-                    alert(`Welcome Back, ${registeredUser.role === 'admin' ? 'Boss!' : registeredUser.username}`);
+                    localStorage.setItem('userRole', registeredUser.role || 'admin');
+                    alert(`Welcome Back, ${registeredUser.username}!`);
                     window.location.replace("home.html");
                 } else {
-                    showRedError("⚠️ Incorrect Password! Access Denied.");
+                    showRedError("⚠️ Incorrect Password! Please check your password.");
                     passwordInput.classList.add('error-border');
                 }
             }
         })
         .catch(() => {
-            showRedError("⚠️ Cloud Connection Error!");
+            showRedError("⚠️ Cloud Connection Error! Check Firebase Rules.");
+        })
+        .finally(() => {
+            submitBtn.innerText = "Login / Register";
+            submitBtn.disabled = false;
         });
     });
 
@@ -123,8 +133,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const welcomeMessage = document.getElementById('welcomeMessage');
 
     if (welcomeMessage) {
-        const currentUser = localStorage.getItem('currentUser') || 'Guest';
-        const userRole = localStorage.getItem('userRole') || 'customer';
+        const currentUser = localStorage.getItem('currentUser') || 'Admin';
+        const userRole = localStorage.getItem('userRole') || 'admin';
         
         welcomeMessage.innerText = 'Welcome, ' + currentUser;
         
@@ -200,7 +210,7 @@ function renderCategoryElements() {
             opt.innerHTML = `<span>${cat}</span>`;
             
             let cloudKey = Object.keys(cloudCategoryMap).find(key => cloudCategoryMap[key] === cat);
-            if (cloudKey && localStorage.getItem('userRole') === 'admin') {
+            if (cloudKey) {
                 const cutBtn = document.createElement('span');
                 cutBtn.className = 'opt-cut-btn';
                 cutBtn.innerHTML = '×';
@@ -249,7 +259,7 @@ function renderCategoryElements() {
 }
 
 function executeDirectDropdownDeletion(catId, catName) {
-    if (confirm(`Are you sure you want to permanently delete the category "${catName}"?`)) {
+    if (confirm(`Are you sure you want to permanently delete "${catName}"?`)) {
         fetch(`${DB_URL}/categories/${catId}.json`, { method: 'DELETE' })
         .then(() => {
             alert(`Category "${catName}" deleted!`);
@@ -265,7 +275,7 @@ function createNewCategory() {
     const newCat = catInput.value.trim();
 
     if (newCat === '') {
-        alert('Please enter a valid category name!');
+        alert('Please enter a category name!');
         return;
     }
 
@@ -282,7 +292,7 @@ function createNewCategory() {
     .then(() => {
         catInput.value = '';
         loadCategories(); 
-        alert(`Category "${newCat}" added successfully!`);
+        alert(`Category "${newCat}" added!`);
     });
 }
 
@@ -293,7 +303,7 @@ function selectCategory(categoryName) {
 }
 
 // ==========================================
-// 5. IMAGE COMPRESSION ENGINE
+// 4. IMAGE COMPRESSION ENGINE
 // ==========================================
 function compressAndGetBase64(fileOrUrl, maxWidth = 800, quality = 0.7) {
     return new Promise((resolve, reject) => {
@@ -425,7 +435,7 @@ function setupImageUploadListeners() {
 }
 
 // ==========================================
-// 6. LIVE GLOBAL PRODUCT ADD SYSTEM (MULTIPLE PRICES)
+// 5. LIVE GLOBAL PRODUCT ADD SYSTEM
 // ==========================================
 const addProductForm = document.getElementById('addProductForm');
 if (addProductForm) {
@@ -495,7 +505,7 @@ if (addProductForm) {
             `;
             selectedAddImageBase64 = null;
             filterProducts(); 
-            alert('Product Published Globally with Barcode & Prices!');
+            alert('Product Published Globally!');
         })
         .catch(() => {
             alert('Error updating database!');
@@ -508,7 +518,7 @@ if (addProductForm) {
 }
 
 // ==========================================
-// 7. RENDER LIVE ITEMS FROM CLOUD
+// 6. RENDER LIVE ITEMS FROM CLOUD
 // ==========================================
 function filterProducts() {
     const productsGrid = document.getElementById('productsGrid');
@@ -516,13 +526,6 @@ function filterProducts() {
 
     const searchBar = document.getElementById('searchBar');
     const searchText = searchBar ? searchBar.value.toLowerCase().trim() : '';
-    
-    productsGrid.innerHTML = `
-        <div class="spinner-container">
-            <div class="loading-spinner"></div>
-            <p class="spinner-text" style="color:white; margin-top:10px;">Loading live items, please wait...</p>
-        </div>
-    `;
 
     fetch(`${DB_URL}/products.json`)
     .then(res => res.json())
@@ -530,7 +533,7 @@ function filterProducts() {
         productsGrid.innerHTML = ''; 
 
         if (!data) {
-            productsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#999;">No products found.</p>';
+            productsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#999; padding: 20px;">No products found in shop. Add products above!</p>';
             return;
         }
 
@@ -541,14 +544,14 @@ function filterProducts() {
         const filteredList = productsList.filter(product => {
             const matchesCategory = (currentCategory === 'All' || product.category === currentCategory);
             const productBarcode = product.barcode ? product.barcode.toLowerCase() : '';
-            const matchesSearch = product.name.toLowerCase().includes(searchText) || 
-                                  product.category.toLowerCase().includes(searchText) ||
+            const matchesSearch = (product.name || '').toLowerCase().includes(searchText) || 
+                                  (product.category || '').toLowerCase().includes(searchText) ||
                                   productBarcode.includes(searchText);
             return matchesCategory && matchesSearch;
         });
 
         if (filteredList.length === 0) {
-            productsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#999;">No products found.</p>';
+            productsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#999; padding: 20px;">No matching items found.</p>';
             return;
         }
 
@@ -556,7 +559,7 @@ function filterProducts() {
             const card = document.createElement('div');
             card.className = 'product-card';
             
-            const safeName = product.name.replace(/'/g, "\\'").replace(/"/g, '"');
+            const safeName = (product.name || '').replace(/'/g, "\\'").replace(/"/g, '"');
             const safeWholesale = product.wholesalePrice ? product.wholesalePrice.replace(/'/g, "\\'") : '';
             const safeBarcode = product.barcode ? product.barcode.replace(/'/g, "\\'") : '';
             const pricesJson = encodeURIComponent(JSON.stringify(product.prices || []));
@@ -564,7 +567,7 @@ function filterProducts() {
             let actionHtml = '';
             let wholesaleHtml = '';
             let barcodeTagHtml = '';
-            const userRole = localStorage.getItem('userRole') || 'customer';
+            const userRole = localStorage.getItem('userRole') || 'admin';
             
             if (userRole === 'admin') {
                 if (product.barcode) {
@@ -591,7 +594,7 @@ function filterProducts() {
 
             card.innerHTML = `
                 <div onclick="openProductModal('${safeName}', '${pricesJson}')" style="width:100%; cursor:pointer;">
-                    <img src="${product.image}" alt="${product.name}" onerror="this.onerror=null; this.src='${NO_IMAGE_URL}';">
+                    <img src="${product.image || NO_IMAGE_URL}" alt="${product.name}" onerror="this.onerror=null; this.src='${NO_IMAGE_URL}';">
                     <h4>${product.name}</h4>
                     <div class="price">${displayPrice}</div>
                     ${barcodeTagHtml}
@@ -603,7 +606,7 @@ function filterProducts() {
         });
     })
     .catch(() => {
-        productsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#999;">Failed to load live items.</p>';
+        productsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#999; padding: 20px;">Failed to load live items. Check Firebase connection.</p>';
     });
 }
 
@@ -622,7 +625,6 @@ function openProductModal(name, pricesJson) {
         priceHtml = `<div>Price On Call</div>`;
     }
     document.getElementById('modalPrices').innerHTML = priceHtml;
-
     document.getElementById('productModal').style.display = 'flex';
 }
 
