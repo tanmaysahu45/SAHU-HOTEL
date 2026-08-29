@@ -14,7 +14,10 @@ let selectedEditImageBase64 = null;
 
 function checkPageSession() {
     const isLoggedIn = localStorage.getItem('currentUser');
-    const path = window.location.pathname;
+    const path = window.location.pathname.toLowerCase();
+
+    // agar calc.html par hai to login check na roke
+    if (path.includes('calc.html')) return;
 
     if (path.includes('home.html') && !isLoggedIn) {
         window.location.replace("index.html");
@@ -438,7 +441,6 @@ if (addProductForm) {
             return;
         }
 
-        // PRICE ARRAY CAPTURE KAREN
         let priceArray = [];
         document.querySelectorAll('#priceContainer .price-row').forEach(row => {
             let val = row.querySelector('.price-val').value;
@@ -484,7 +486,6 @@ if (addProductForm) {
             addProductForm.reset();
             document.getElementById('imagePreview').style.display = 'none';
             document.getElementById('dropdownSelectedValue').innerText = '-- Choose --';
-            // Price rows ko wapas reset karo 1 row par
             document.getElementById('priceContainer').innerHTML = `
                 <label style="font-size: 12px; color: #0ef; font-weight: bold; display: block; margin-bottom: 8px;">4. Prices (Add Multiple Rates):</label>
                 <div class="price-row">
@@ -580,13 +581,12 @@ function filterProducts() {
                 `;
             }
 
-            // SHOW FIRST PRICE ON CARD
             let displayPrice = "Price On Call";
             if (product.prices && product.prices.length > 0) {
                 displayPrice = `₹${product.prices[0].rate} / ${product.prices[0].qty}`;
                 if (product.prices.length > 1) displayPrice += ` <span style="font-size:10px; color:#aaa;">(+${product.prices.length - 1} options)</span>`;
             } else if (product.price) {
-                displayPrice = product.price; // fallback for older data without array
+                displayPrice = product.price;
             }
 
             card.innerHTML = `
@@ -641,7 +641,6 @@ function openEditModal(id, name, wholesaleWithSymbol, category, image, barcode, 
         document.getElementById('editProdWholesalePrice').value = '';
     }
     
-    // LOAD PRICES DYNAMICALLY
     document.getElementById('editPriceContainer').innerHTML = '';
     let prices = [];
     try { prices = JSON.parse(decodeURIComponent(pricesJson)); } catch(e){}
@@ -649,7 +648,7 @@ function openEditModal(id, name, wholesaleWithSymbol, category, image, barcode, 
     if(prices && prices.length > 0) {
         prices.forEach(p => addEditPriceField(p.rate, p.qty));
     } else {
-        addEditPriceField('', ''); // Empty row if old product
+        addEditPriceField('', '');
     }
     
     document.getElementById('editProdCategory').value = category;
@@ -677,7 +676,6 @@ function submitProductEdit() {
         return;
     }
 
-    // GRAB PRICES FROM EDIT MODAL
     let priceArray = [];
     document.querySelectorAll('#editPriceContainer .edit-price-row').forEach(row => {
         let val = row.querySelector('.edit-price-val').value;
@@ -735,7 +733,7 @@ function deleteProduct(id) {
     }
 }
 
-// Hooks registration
+// Global scope registration
 window.logout = logout;
 window.createNewCategory = createNewCategory;
 window.selectCategory = selectCategory;

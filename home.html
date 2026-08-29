@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sahu Kirana & Restaurant</title>
     
-    <link rel="manifest" href="/SAHU-HOTEL/manifest.json">
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#007bff">
     <link rel="icon" type="image/png" href="4c788179-bf9a-4776-8165-35933ee9efd5 (1) (1).png"> 
     <link rel="stylesheet" href="Home.css">
@@ -27,6 +27,7 @@
         
         .admin-scanner-wrapper { background: #2c3341; border: 1px dashed #0ef; border-radius: 6px; padding: 5px; margin-bottom: 10px; display: none; text-align: center; }
         #adminBarcodeReader { width: 100%; max-width: 300px; margin: 0 auto; background: #1f242d; border-radius: 4px; overflow: hidden; }
+        .top-calc-btn { background: #0ef; color: #1f242d; padding: 5px 10px; border-radius: 4px; font-weight: bold; text-decoration: none; font-size: 11px; margin-right: 8px; }
     </style>
 </head>
 <body>
@@ -36,7 +37,8 @@
             <div class="logo">Sahu Kirana & Restaurant</div>
             <div id="shopStatusBanner" class="status-banner">Checking status...</div>
         </div>
-        <div class="nav-right">
+        <div class="nav-right" style="display:flex; align-items:center;">
+            <a href="calc.html" class="top-calc-btn">⚡ Rate Calc</a>
             <div class="three-line-toggle" onclick="toggleSideMenu()">
                 <span></span><span></span><span></span>
             </div>
@@ -49,6 +51,10 @@
             <span class="drawer-close" onclick="toggleSideMenu()">×</span>
         </div>
         <div class="drawer-body">
+            <div class="info-card-block" style="border-color: #0ef;">
+                <h4 style="color: #0ef;">⚡ Gram & Rate Calculator</h4>
+                <a href="calc.html" class="drawer-maps-btn" style="background: #0ef; color: #1f242d; width: 100%;">⚖️ Open Rate Calculator</a>
+            </div>
             <div id="posBillingDrawerBlock" class="info-card-block" style="border-color: #ffc107; display: none;">
                 <h4 style="color: #ffc107;">🛒 Smart POS Billing</h4>
                 <a href="billing.html" class="drawer-maps-btn" style="background: #ffc107; color: #1f242d; width: 100%;">🧾 Open POS Counter</a>
@@ -76,7 +82,10 @@
             
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; margin-bottom: 15px;">
                 <h3 style="margin: 0; font-size: 15px; color: #0ef;">Add New Product</h3>
-                <a href="billing.html" style="background: #0ef; color: #1f242d; padding: 6px 12px; border-radius: 4px; font-weight: bold; text-decoration: none; font-size: 12px;">🧾 POS Billing</a>
+                <div style="display:flex; gap:6px;">
+                    <a href="calc.html" style="background: #ffc107; color: #1f242d; padding: 6px 12px; border-radius: 4px; font-weight: bold; text-decoration: none; font-size: 12px;">⚡ Rate Calc</a>
+                    <a href="billing.html" style="background: #0ef; color: #1f242d; padding: 6px 12px; border-radius: 4px; font-weight: bold; text-decoration: none; font-size: 12px;">🧾 POS Billing</a>
+                </div>
             </div>
             
             <form id="addProductForm">
@@ -245,15 +254,13 @@
                     { fps: 20, qrbox: { width: 250, height: 100 } },
                     (decodedText) => {
                         document.getElementById('prodBarcode').value = decodedText;
-                        toggleAdminBarcodeScanner(); // AUTOMATIC STOP AUR FILL HOGA
+                        toggleAdminBarcodeScanner();
                     },
                     (errorMessage) => { }
                 ).catch(err => console.log("Camera Error", err));
             }
         }
     </script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
