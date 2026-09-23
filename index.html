@@ -5,10 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sahu Hotel — Jhurre, Chhindwara</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-<!-- Firebase SDK (compat version - real-time ke liye) -->
+
+<!-- PWA Setup -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4A7C59">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Sahu Hotel">
+<link rel="apple-touch-icon" href="4c788179-bf9a-4776-8165-35933ee9efd5 (1) (1).png">
+<link rel="icon" type="image/png" href="4c788179-bf9a-4776-8165-35933ee9efd5 (1) (1).png">
+
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
 html { scroll-behavior: smooth; }
@@ -196,14 +207,12 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 .modal.show { display: flex; }
 .modal img { max-width: 100%; max-height: 85vh; border-radius: 12px; }
 
-/* TOAST NOTIFICATION */
 .toast-container { position: fixed; top: 80px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
 .toast { background: #FFFFFF; border-left: 4px solid #F39C12; padding: 14px 18px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); min-width: 280px; max-width: 340px; pointer-events: auto; animation: slideIn 0.4s ease; }
 @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 .toast-title { font-size: 13px; font-weight: 700; color: #2C3E50; margin-bottom: 4px; }
 .toast-msg { font-size: 12px; color: #7B8B99; line-height: 1.4; }
 
-/* Notification permission banner */
 .notif-banner { display: none; background: linear-gradient(135deg, #F39C12, #E67E22); color: #FFF; padding: 14px 18px; border-radius: 14px; margin-bottom: 16px; align-items: center; gap: 12px; font-size: 13px; font-weight: 500; }
 .notif-banner.show { display: flex; }
 .notif-banner button { background: #FFF; color: #E67E22; border: none; padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; flex-shrink: 0; }
@@ -457,11 +466,10 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
     <img id="modalImg" src="">
 </div>
 
-<!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
-// ============ FIREBASE INIT (compat) ============
+// ============ FIREBASE INIT ============
 const firebaseConfig = {
     apiKey: "AIzaSyAr9wY7_SbxrHjOYlvZwmuzwp-QIXGaq-k",
     authDomain: "sahu-hotel-22ad4.firebaseapp.com",
@@ -486,7 +494,6 @@ let notifRef = null;
 let customerRef = null;
 let lastNotifiedIds = new Set();
 
-// ============ DRAWER ============
 function toggleDrawer() {
     document.getElementById('drawer').classList.toggle('open');
     document.getElementById('overlay').classList.toggle('show');
@@ -509,11 +516,7 @@ async function requestNotifPermission() {
         showToast('✅ Notifications ON', 'Ab aapko updates milenge');
         document.getElementById('notifBanner').classList.remove('show');
         document.getElementById('adminNotifBanner').classList.remove('show');
-        // Test notification
-        new Notification('Sahu Hotel', {
-            body: 'Notifications successfully ON ho gayi!',
-            icon: 'https://sahu-hotel-22ad4.web.app/favicon.ico'
-        });
+        new Notification('Sahu Hotel', { body: 'Notifications successfully ON ho gayi!' });
     } else {
         alert('Notifications allow nahi hui. Browser settings se manually ON karein.');
     }
@@ -523,14 +526,7 @@ function showBrowserNotification(title, body) {
     if (!('Notification' in window)) return;
     if (Notification.permission !== 'granted') return;
     try {
-        const n = new Notification(title, {
-            body: body,
-            icon: 'https://sahu-hotel-22ad4.web.app/favicon.ico',
-            badge: 'https://sahu-hotel-22ad4.web.app/favicon.ico',
-            tag: 'sahu-notif-' + Date.now(),
-            vibrate: [200, 100, 200]
-        });
-        // Auto close after 8 sec
+        const n = new Notification(title, { body: body, tag: 'sahu-' + Date.now(), vibrate: [200,100,200] });
         setTimeout(() => n.close(), 8000);
     } catch(e) {}
 }
@@ -567,11 +563,9 @@ function loginWithGoogle() {
         const email = (user.email || '').toLowerCase().trim();
         const name = user.displayName || 'User';
         const photo = user.photoURL || '';
-        
         localStorage.setItem('sahuUser', JSON.stringify({ name, email, photo }));
         currentUser = { name, email, photo };
         currentRole = (email === ADMIN_EMAIL) ? 'admin' : 'customer';
-        
         updateUI();
         setTimeout(() => {
             document.getElementById('rewards').scrollIntoView({ behavior: 'smooth' });
@@ -620,79 +614,56 @@ function updateUI() {
     } else if (currentRole === 'admin') {
         adminPanel.style.display = 'block';
         adminPanelLink.style.display = 'flex';
-        
         const aAvatar = document.getElementById('aAvatar');
         if (currentUser.photo) aAvatar.innerHTML = `<img src="${currentUser.photo}" alt="">`;
         else aAvatar.innerText = (currentUser.name || 'A').charAt(0).toUpperCase();
         document.getElementById('aName').innerText = currentUser.name;
         document.getElementById('aEmail').innerText = currentUser.email;
-
         if (currentUser.photo) dAvatar.innerHTML = `<img src="${currentUser.photo}" alt="">`;
         else dAvatar.innerText = (currentUser.name || 'A').charAt(0).toUpperCase();
         dName.innerText = '👑 ' + currentUser.name;
         dSub.innerText = 'Admin Panel';
-
-        // Notification banner
         if ('Notification' in window && Notification.permission !== 'granted') {
             document.getElementById('adminNotifBanner').classList.add('show');
         }
-
-        // Real-time listener for admin
         startAdminListener();
     } else {
         customerRewards.style.display = 'block';
-        
         const cAvatar = document.getElementById('cAvatar');
         if (currentUser.photo) cAvatar.innerHTML = `<img src="${currentUser.photo}" alt="">`;
         else cAvatar.innerText = (currentUser.name || 'U').charAt(0).toUpperCase();
         document.getElementById('cName').innerText = currentUser.name;
         document.getElementById('cEmail').innerText = currentUser.email;
-
         if (currentUser.photo) dAvatar.innerHTML = `<img src="${currentUser.photo}" alt="">`;
         else dAvatar.innerText = (currentUser.name || 'U').charAt(0).toUpperCase();
         dName.innerText = currentUser.name;
         dSub.innerText = '🎁 Rewards member';
-
         if ('Notification' in window && Notification.permission !== 'granted') {
             document.getElementById('notifBanner').classList.add('show');
         }
-
-        // Real-time listener for customer
         startCustomerListener();
     }
 }
 
-// ============ ADMIN REAL-TIME LISTENER ============
+// ============ ADMIN LISTENER ============
 function startAdminListener() {
     notifRef = db.ref('reward_requests');
-    
     notifRef.on('value', (snapshot) => {
         const data = snapshot.val();
         allReqs = data ? Object.keys(data).map(k => ({ id: k, ...data[k] })).sort((a,b) => b.timestamp - a.timestamp) : [];
-        
-        // Check for NEW pending claims
         const pendingNow = allReqs.filter(r => r.status === 'pending');
-        let newClaims = 0;
         pendingNow.forEach(r => {
             if (!lastNotifiedIds.has(r.id)) {
                 lastNotifiedIds.add(r.id);
-                newClaims++;
-                // Show browser notification
-                showBrowserNotification(
-                    '🎁 Naya Rewards Claim!',
-                    `${r.name}: ${r.item_name} — ₹${r.price}`
-                );
+                showBrowserNotification('🎁 Naya Rewards Claim!', `${r.name}: ${r.item_name} — ₹${r.price}`);
                 showToast('🎁 Naya Claim Aaya!', `${r.name} ne ${r.item_name} claim kiya (₹${r.price})`);
                 playNotifSound();
-                // Highlight new card
                 setTimeout(() => {
                     const el = document.getElementById('card_' + r.id);
                     if (el) el.classList.add('new-claim');
                 }, 100);
             }
         });
-        
-        // Update title with pending count
         if (pendingNow.length > 0) {
             document.title = `(${pendingNow.length}) Naye Claims — Sahu Hotel`;
             document.getElementById('notifDot').style.display = 'block';
@@ -700,14 +671,12 @@ function startAdminListener() {
             document.title = 'Sahu Hotel — Jhurre, Chhindwara';
             document.getElementById('notifDot').style.display = 'none';
         }
-        
         renderAdminList();
     });
 }
 
-// ============ CUSTOMER REAL-TIME LISTENER ============
+// ============ CUSTOMER LISTENER ============
 function startCustomerListener() {
-    // Listen to own requests
     notifRef = db.ref('reward_requests');
     notifRef.on('value', (snapshot) => {
         const data = snapshot.val();
@@ -715,22 +684,15 @@ function startCustomerListener() {
             document.getElementById('myHistory').innerHTML = '<div class="empty-msg" style="padding:20px;">Abhi koi claim nahi</div>';
             return;
         }
-        const mine = Object.values(data)
-            .filter(r => r.email === currentUser.email)
-            .sort((a,b) => b.timestamp - a.timestamp)
-            .slice(0, 10);
-        
-        // Check for status changes
+        const mine = Object.values(data).filter(r => r.email === currentUser.email).sort((a,b) => b.timestamp - a.timestamp).slice(0, 10);
         const savedStatuses = JSON.parse(localStorage.getItem('myClaimStatuses') || '{}');
         mine.forEach(r => {
             const prevStatus = savedStatuses[r.id];
             if (prevStatus && prevStatus !== r.status) {
-                // Status changed!
                 if (r.status === 'approved') {
                     showBrowserNotification('✅ Claim Approved!', `${r.item_name} (₹${r.price}) — +${r.points_approved} points mile`);
                     showToast('✅ Approved!', `${r.item_name} ke ${r.points_approved} points mil gaye`);
                     playNotifSound();
-                    // Flash points box
                     const pb = document.getElementById('pointsBox');
                     pb.classList.add('updated');
                     setTimeout(() => pb.classList.remove('updated'), 1500);
@@ -742,11 +704,9 @@ function startCustomerListener() {
             savedStatuses[r.id] = r.status;
         });
         localStorage.setItem('myClaimStatuses', JSON.stringify(savedStatuses));
-        
         renderCustomerHistory(mine);
     });
-    
-    // Listen to own points
+
     const key = currentUser.email.replace(/\./g, '_').replace(/@/g, '_at_');
     customerRef = db.ref('customers/' + key);
     let firstLoad = true;
@@ -755,7 +715,6 @@ function startCustomerListener() {
         const points = data?.total_points || 0;
         document.getElementById('myPoints').innerText = points;
         document.getElementById('myPointsValue').innerText = Math.floor(points * 10);
-        
         if (!firstLoad) {
             const pb = document.getElementById('pointsBox');
             pb.classList.add('updated');
@@ -793,15 +752,12 @@ document.getElementById('photoInput').addEventListener('change', function(e) {
 function submitReward() {
     const itemName = document.getElementById('itemName').value.trim();
     const price = parseFloat(document.getElementById('itemPrice').value);
-
     if (!itemName) { showMsg('❌ Item ka naam likhein', 'error'); return; }
     if (!photoBase64) { showMsg('❌ Photo kheencho', 'error'); return; }
     if (isNaN(price) || price <= 0) { showMsg('❌ Sahi price daalein', 'error'); return; }
-
     const btn = document.getElementById('submitBtn');
     btn.disabled = true;
     btn.innerText = 'Bhej raha hoon...';
-
     const req = {
         phone: currentUser.email,
         email: currentUser.email,
@@ -814,7 +770,6 @@ function submitReward() {
         date_str: new Date().toLocaleString('en-IN'),
         status: 'pending'
     };
-
     db.ref('reward_requests').push(req).then(() => {
         showMsg('✅ Claim bhej diya! Admin approve karega, phir points milenge.', 'success');
         document.getElementById('itemName').value = '';
@@ -840,7 +795,7 @@ function showMsg(text, type) {
     setTimeout(() => { m.style.display = 'none'; }, 5000);
 }
 
-// ============ CUSTOMER HISTORY RENDER ============
+// ============ CUSTOMER HISTORY ============
 function renderCustomerHistory(mine) {
     const container = document.getElementById('myHistory');
     if (mine.length === 0) {
@@ -866,7 +821,7 @@ function renderCustomerHistory(mine) {
     container.innerHTML = html;
 }
 
-// ============ ADMIN LIST RENDER ============
+// ============ ADMIN LIST ============
 function setAdminTab(tab, el) {
     adminTab = tab;
     document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
@@ -878,24 +833,19 @@ function renderAdminList() {
     const pending = allReqs.filter(r => r.status === 'pending');
     const approved = allReqs.filter(r => r.status === 'approved');
     const rejected = allReqs.filter(r => r.status === 'rejected');
-
     document.getElementById('pendingCount').innerText = pending.length;
     const today = new Date().toDateString();
     document.getElementById('todayApproved').innerText = approved.filter(r => new Date(r.timestamp).toDateString() === today).length;
-
     let list = adminTab === 'pending' ? pending : (adminTab === 'approved' ? approved : rejected);
     const container = document.getElementById('adminList');
-    
     if (list.length === 0) {
         container.innerHTML = '<div class="empty-msg"><div class="icon">📭</div>Yahan kuch nahi hai</div>';
         return;
     }
-
     let html = '';
     list.forEach(r => {
         const badge = r.status === 'pending' ? '⏳ Pending' : (r.status === 'approved' ? '✅ Approved' : '❌ Rejected');
         const cp = Math.floor((r.price || 0) * POINTS_PER_RUPEE);
-
         let editBlock = '';
         if (r.status === 'pending') {
             editBlock = `
@@ -921,13 +871,8 @@ function renderAdminList() {
                 </div>
             `;
         } else {
-            editBlock = `
-                <div style="text-align:center; font-size:12px; font-weight:600; padding:8px; ${r.status === 'approved' ? 'color:#A8D5B5;' : 'color:#FFB3AE;'}">
-                    ${r.status === 'approved' ? `✅ Approved · +${r.points_approved || cp} points` : '❌ Rejected'}
-                </div>
-            `;
+            editBlock = `<div style="text-align:center; font-size:12px; font-weight:600; padding:8px; ${r.status === 'approved' ? 'color:#A8D5B5;' : 'color:#FFB3AE;'}">${r.status === 'approved' ? `✅ Approved · +${r.points_approved || cp} points` : '❌ Rejected'}</div>`;
         }
-
         html += `
             <div class="admin-req-card" id="card_${r.id}">
                 <div class="admin-req-top">
@@ -948,7 +893,6 @@ function renderAdminList() {
 }
 
 function escapeHtml(t) { return String(t).replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
-
 function updatePointsPreview(id) {
     const price = parseFloat(document.getElementById('price_' + id).value) || 0;
     document.getElementById('points_' + id).value = Math.floor(price * POINTS_PER_RUPEE);
@@ -957,52 +901,33 @@ function updatePointsPreview(id) {
 async function approveReq(id) {
     const req = allReqs.find(r => r.id === id);
     if (!req) return;
-    
     const finalItem = document.getElementById('item_' + id).value.trim();
     const finalPrice = parseFloat(document.getElementById('price_' + id).value) || 0;
     const finalPoints = parseInt(document.getElementById('points_' + id).value) || 0;
-
     if (!finalItem || finalPrice <= 0) { alert('Item aur price sahi karein'); return; }
     if (!confirm(`Approve karein?\n\nCustomer: ${req.name}\nItem: ${finalItem}\nPrice: ₹${finalPrice}\nPoints: ${finalPoints}`)) return;
-
     try {
-        // Update request
         await db.ref('reward_requests/' + id).update({
-            item_name: finalItem,
-            price: finalPrice,
-            points_approved: finalPoints,
-            status: 'approved',
-            approved_at: Date.now()
+            item_name: finalItem, price: finalPrice, points_approved: finalPoints,
+            status: 'approved', approved_at: Date.now()
         });
-        
-        // Update customer points
         const key = req.email.replace(/\./g, '_').replace(/@/g, '_at_');
         const custSnap = await db.ref('customers/' + key).once('value');
         const custData = custSnap.val() || {};
         const newTotal = (custData.total_points || 0) + finalPoints;
         const newSpent = (custData.total_spent || 0) + finalPrice;
-        
         await db.ref('customers/' + key).update({
-            name: req.name,
-            email: req.email,
-            total_points: newTotal,
-            total_spent: newSpent,
-            last_visit: Date.now()
+            name: req.name, email: req.email,
+            total_points: newTotal, total_spent: newSpent, last_visit: Date.now()
         });
-        
         showToast('✅ Approved!', `${req.name} ko ${finalPoints} points diye`);
-    } catch(e) {
-        alert('Error: ' + e.message);
-    }
+    } catch(e) { alert('Error: ' + e.message); }
 }
 
 async function rejectReq(id) {
     if (!confirm('Pakka reject karna hai?')) return;
     try {
-        await db.ref('reward_requests/' + id).update({
-            status: 'rejected',
-            rejected_at: Date.now()
-        });
+        await db.ref('reward_requests/' + id).update({ status: 'rejected', rejected_at: Date.now() });
         showToast('❌ Rejected', 'Claim reject kar diya');
     } catch(e) { alert('Error: ' + e.message); }
 }
@@ -1020,15 +945,20 @@ function init() {
             currentUser = JSON.parse(saved);
             const email = (currentUser.email || '').toLowerCase().trim();
             currentRole = (email === ADMIN_EMAIL) ? 'admin' : 'customer';
-        } catch(e) {
-            currentUser = null;
-            currentRole = 'guest';
-        }
+        } catch(e) { currentUser = null; currentRole = 'guest'; }
     }
     updateUI();
 }
-
 init();
+
+// ============ PWA SERVICE WORKER ============
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js', { scope: './' })
+            .then((reg) => { console.log('✅ SW registered:', reg.scope); })
+            .catch((err) => { console.log('❌ SW failed:', err); });
+    });
+}
 </script>
 </body>
 </html>

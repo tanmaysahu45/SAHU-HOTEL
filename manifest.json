@@ -1,18 +1,25 @@
 {
-  "short_name": "SahuKirana",
-  "name": "Sahu Kirana & Restaurant",
+  "name": "Sahu Hotel - Kirana & Restaurant",
+  "short_name": "Sahu Hotel",
+  "description": "Sahu Kirana & General Evam Hotel, Jhurre, Chhindwara",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FDFBF7",
+  "theme_color": "#4A7C59",
   "icons": [
     {
       "src": "4c788179-bf9a-4776-8165-35933ee9efd5 (1) (1).png",
+      "sizes": "192x192",
       "type": "image/png",
-      "sizes": "512x512"
+      "purpose": "any"
+    },
+    {
+      "src": "4c788179-bf9a-4776-8165-35933ee9efd5 (1) (1).png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
-  ],
-  "start_url": "/SAHU-HOTEL/",
-  "background_color": "#f8f9fa",
-  "display": "standalone",
-  "theme_color": "#007bff",
-  "orientation": "portrait"
+  ]
 }
-
-
