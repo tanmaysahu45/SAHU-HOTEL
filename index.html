@@ -117,8 +117,6 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 
 .history-title { font-family: 'Playfair Display', serif; font-size: 16px; color: #FFF; margin-top: 24px; margin-bottom: 12px; }
 .req-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; margin-bottom: 10px; display: flex; gap: 12px; align-items: center; transition: 0.5s; }
-.req-card.new-update { animation: flashCard 1.5s ease; }
-@keyframes flashCard { 0%, 100% { background: rgba(255,255,255,0.05); } 50% { background: rgba(74,124,89,0.3); } }
 .req-card img { width: 55px; height: 55px; border-radius: 10px; object-fit: cover; background: rgba(255,255,255,0.1); flex-shrink: 0; }
 .req-info { flex: 1; min-width: 0; }
 .req-info h5 { font-size: 13px; font-weight: 700; color: #FFF; }
@@ -181,25 +179,71 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 
 .overlay { position: fixed; inset: 0; background: rgba(44, 62, 80, 0.4); backdrop-filter: blur(4px); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 1000; }
 .overlay.show { opacity: 1; visibility: visible; }
-.drawer { position: fixed; top: 0; right: -340px; width: 340px; max-width: 88vw; height: 100%; background: #FDFBF7; z-index: 1100; transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; box-shadow: -20px 0 60px rgba(0,0,0,0.15); }
+.drawer { position: fixed; top: 0; right: -360px; width: 360px; max-width: 90vw; height: 100%; background: #FDFBF7; z-index: 1100; transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; box-shadow: -20px 0 60px rgba(0,0,0,0.15); }
 .drawer.open { right: 0; }
 .drawer-header { padding: 22px; border-bottom: 1px solid #EFEAE0; display: flex; justify-content: space-between; align-items: center; }
 .drawer-header h4 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: #2C3E50; }
 .drawer-close { width: 36px; height: 36px; border-radius: 10px; background: #FFFFFF; border: 1.5px solid #EFEAE0; font-size: 20px; color: #95A5A6; cursor: pointer; }
 .drawer-body { flex: 1; overflow-y: auto; padding: 18px 22px 30px; }
+
 .user-card { background: #FFFFFF; border: 1.5px solid #EFEAE0; border-radius: 18px; padding: 18px; margin-bottom: 18px; text-align: center; }
 .user-card .avatar { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #4A7C59, #E67E22); margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; color: #FFF; font-size: 24px; font-weight: 700; overflow: hidden; }
 .user-card .avatar img { width: 100%; height: 100%; object-fit: cover; }
 .user-card h5 { font-size: 15px; font-weight: 700; color: #2C3E50; margin-bottom: 3px; }
 .user-card p { font-size: 12px; color: #95A5A6; margin-bottom: 14px; }
+
 .drawer-nav { display: flex; flex-direction: column; gap: 4px; margin-bottom: 18px; }
 .drawer-link { padding: 14px 16px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #2C3E50; text-decoration: none; display: flex; align-items: center; gap: 12px; cursor: pointer; background: transparent; border: none; width: 100%; text-align: left; font-family: 'Poppins', sans-serif; }
 .drawer-link:hover { background: #F5F1EA; }
-.drawer-link .ico { width: 32px; height: 32px; background: #E8F0E9; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.drawer-link .ico { width: 32px; height: 32px; background: #E8F0E9; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
 .drawer-link.reward-link { background: linear-gradient(135deg, #E67E22, #F39C12); color: #FFF; margin-top: 4px; }
 .drawer-link.reward-link .ico { background: rgba(255,255,255,0.2); }
 .drawer-link.admin-panel-link { background: linear-gradient(135deg, #2C3E50, #4A5568); color: #FFF; display: none; }
 .drawer-link.admin-panel-link .ico { background: rgba(255,255,255,0.15); }
+
+/* ============ SETTINGS SECTION ============ */
+.settings-toggle { padding: 14px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; color: #FFF; display: flex; align-items: center; gap: 12px; cursor: pointer; background: linear-gradient(135deg, #4A7C59, #7BA888); border: none; width: 100%; text-align: left; font-family: 'Poppins', sans-serif; margin-top: 8px; }
+.settings-toggle .ico { width: 32px; height: 32px; background: rgba(255,255,255,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.settings-toggle .arrow { margin-left: auto; transition: 0.3s; font-size: 14px; }
+.settings-toggle.open .arrow { transform: rotate(180deg); }
+
+.settings-panel { display: none; background: #FFFFFF; border: 1.5px solid #EFEAE0; border-radius: 14px; padding: 6px; margin-top: 8px; }
+.settings-panel.show { display: block; }
+
+.setting-item { display: flex; align-items: center; gap: 12px; padding: 14px 12px; border-bottom: 1px solid #F5F1EA; }
+.setting-item:last-child { border-bottom: none; }
+.setting-info { flex: 1; min-width: 0; }
+.setting-info h6 { font-size: 13px; font-weight: 700; color: #2C3E50; margin-bottom: 2px; }
+.setting-info p { font-size: 11px; color: #95A5A6; line-height: 1.4; }
+
+.switch { position: relative; width: 46px; height: 26px; flex-shrink: 0; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider-sw { position: absolute; cursor: pointer; inset: 0; background: #D9D2C5; border-radius: 26px; transition: 0.3s; }
+.slider-sw:before { content: ''; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background: #FFF; border-radius: 50%; transition: 0.3s; }
+.switch input:checked + .slider-sw { background: #4A7C59; }
+.switch input:checked + .slider-sw:before { transform: translateX(20px); }
+
+.setting-btn { padding: 8px 14px; border-radius: 10px; border: none; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Poppins', sans-serif; flex-shrink: 0; }
+.setting-btn.danger { background: #FFEBEE; color: #E74C3C; }
+.setting-btn.primary { background: #E8F0E9; color: #4A7C59; }
+.setting-btn.warning { background: #FFF3CD; color: #856404; }
+
+/* ============ NOTIFICATION HISTORY PAGE ============ */
+.notif-history-page { display: none; padding: 16px; }
+.notif-history-page.show { display: block; }
+.notif-back-btn { background: #FFF; border: 1.5px solid #EFEAE0; padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 600; color: #2C3E50; cursor: pointer; margin-bottom: 14px; font-family: 'Poppins', sans-serif; }
+.notif-history-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: #2C3E50; margin-bottom: 4px; }
+.notif-history-sub { font-size: 12px; color: #95A5A6; margin-bottom: 18px; }
+.notif-item { background: #FFF; border: 1.5px solid #EFEAE0; border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; display: flex; gap: 12px; align-items: flex-start; }
+.notif-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; background: #E8F0E9; }
+.notif-icon.new { background: #FDF0E2; }
+.notif-icon.approved { background: #E8F0E9; }
+.notif-icon.rejected { background: #FFEBEE; }
+.notif-content { flex: 1; min-width: 0; }
+.notif-content h6 { font-size: 13px; font-weight: 700; color: #2C3E50; margin-bottom: 2px; }
+.notif-content p { font-size: 11px; color: #7B8B99; line-height: 1.4; }
+.notif-content .time { font-size: 10px; color: #B0BEC5; margin-top: 4px; }
+
 .drawer-footer { padding: 18px 22px 24px; border-top: 1px solid #EFEAE0; font-size: 11px; color: #95A5A6; text-align: center; }
 .drawer-footer strong { color: #4A7C59; }
 
@@ -308,7 +352,7 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 
         <div id="customerRewards" class="rewards-form">
             <div class="notif-banner" id="notifBanner">
-                <span style="flex:1;">🔔 Update notifications on karein — status turant pata chale</span>
+                <span style="flex:1;">🔔 Update notifications on karein</span>
                 <button onclick="requestNotifPermission()">ON karo</button>
             </div>
 
@@ -428,7 +472,7 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
         <h4>Menu</h4>
         <button class="drawer-close" onclick="toggleDrawer()">×</button>
     </div>
-    <div class="drawer-body">
+    <div class="drawer-body" id="drawerMain">
         <div class="user-card">
             <div class="avatar" id="dAvatar">?</div>
             <h5 id="dName">Mehmaan</h5>
@@ -455,7 +499,87 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
                 <span class="ico">👑</span> Admin Panel
             </a>
         </nav>
+
+        <!-- ============ SETTINGS SECTION ============ -->
+        <button class="settings-toggle" id="settingsToggle" onclick="toggleSettings()">
+            <span class="ico">⚙️</span> Settings
+            <span class="arrow">▼</span>
+        </button>
+
+        <div class="settings-panel" id="settingsPanel">
+            <!-- Notification Toggle -->
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h6>🔔 Notifications</h6>
+                    <p>Naye claim aur updates ki notification</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="settingNotif" onchange="toggleSetting('notif', this.checked)">
+                    <span class="slider-sw"></span>
+                </label>
+            </div>
+
+            <!-- Sound Toggle -->
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h6>🔊 Sound</h6>
+                    <p>Notification ke saath beep sound</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="settingSound" onchange="toggleSetting('sound', this.checked)">
+                    <span class="slider-sw"></span>
+                </label>
+            </div>
+
+            <!-- Vibration Toggle -->
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h6>📳 Vibration</h6>
+                    <p>Notification par phone vibrate ho</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="settingVibrate" onchange="toggleSetting('vibrate', this.checked)">
+                    <span class="slider-sw"></span>
+                </label>
+            </div>
+
+            <!-- Notification History -->
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h6>📜 Notification History</h6>
+                    <p>Pichli saari notifications dekho</p>
+                </div>
+                <button class="setting-btn primary" onclick="showNotifHistory()">Dekho</button>
+            </div>
+
+            <!-- Test Notification -->
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h6>🧪 Test Notification</h6>
+                    <p>Notification kaam kar rahi hai ya nahi</p>
+                </div>
+                <button class="setting-btn warning" onclick="testNotification()">Test</button>
+            </div>
+
+            <!-- Clear History -->
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h6>🗑️ Clear History</h6>
+                    <p>Saari notification history mitado</p>
+                </div>
+                <button class="setting-btn danger" onclick="clearNotifHistory()">Clear</button>
+            </div>
+        </div>
     </div>
+
+    <!-- NOTIFICATION HISTORY PAGE -->
+    <div class="drawer-body notif-history-page" id="notifHistoryPage">
+        <button class="notif-back-btn" onclick="hideNotifHistory()">← Back</button>
+        <h4 class="notif-history-title">📜 Notification History</h4>
+        <p class="notif-history-sub">Pichli saari notifications yahan dikhengi</p>
+        <div id="notifHistoryList"></div>
+    </div>
+
     <div class="drawer-footer">
         <strong>Sahu Hotel</strong> · Jhurre<br>
         Banaya gaya pyaar se, 2026.
@@ -469,7 +593,7 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
-// ============ FIREBASE INIT ============
+// ============ FIREBASE ============
 const firebaseConfig = {
     apiKey: "AIzaSyAr9wY7_SbxrHjOYlvZwmuzwp-QIXGaq-k",
     authDomain: "sahu-hotel-22ad4.firebaseapp.com",
@@ -494,6 +618,117 @@ let notifRef = null;
 let customerRef = null;
 let lastNotifiedIds = new Set();
 
+// ============ SETTINGS ============
+let userSettings = JSON.parse(localStorage.getItem('sahuSettings') || '{"notif":true,"sound":true,"vibrate":true}');
+let notifHistory = JSON.parse(localStorage.getItem('sahuNotifHistory') || '[]');
+
+function saveSettings() {
+    localStorage.setItem('sahuSettings', JSON.stringify(userSettings));
+}
+function saveNotifHistory() {
+    // Last 100 notifications rakho
+    if (notifHistory.length > 100) notifHistory = notifHistory.slice(0, 100);
+    localStorage.setItem('sahuNotifHistory', JSON.stringify(notifHistory));
+}
+
+function loadSettingsUI() {
+    document.getElementById('settingNotif').checked = userSettings.notif;
+    document.getElementById('settingSound').checked = userSettings.sound;
+    document.getElementById('settingVibrate').checked = userSettings.vibrate;
+}
+
+function toggleSetting(key, val) {
+    userSettings[key] = val;
+    saveSettings();
+    if (key === 'notif') {
+        if (val && Notification.permission !== 'granted') {
+            requestNotifPermission();
+        } else if (!val) {
+            showToast('🔕 Notifications OFF', 'Ab notification nahi aayegi');
+        } else {
+            showToast('🔔 Notifications ON', 'Ab updates milenge');
+        }
+    } else if (key === 'sound') {
+        showToast(val ? '🔊 Sound ON' : '🔇 Sound OFF', '');
+    } else if (key === 'vibrate') {
+        showToast(val ? '📳 Vibration ON' : '📴 Vibration OFF', '');
+    }
+}
+
+function toggleSettings() {
+    const panel = document.getElementById('settingsPanel');
+    const btn = document.getElementById('settingsToggle');
+    panel.classList.toggle('show');
+    btn.classList.toggle('open');
+}
+
+function showNotifHistory() {
+    document.getElementById('drawerMain').style.display = 'none';
+    document.getElementById('notifHistoryPage').classList.add('show');
+    renderNotifHistory();
+}
+
+function hideNotifHistory() {
+    document.getElementById('drawerMain').style.display = 'block';
+    document.getElementById('notifHistoryPage').classList.remove('show');
+}
+
+function renderNotifHistory() {
+    const container = document.getElementById('notifHistoryList');
+    if (notifHistory.length === 0) {
+        container.innerHTML = '<div class="empty-msg"><div class="icon">📭</div>Abhi koi notification nahi</div>';
+        return;
+    }
+    let html = '';
+    notifHistory.forEach(n => {
+        let iconClass = 'new';
+        let iconEmoji = '🔔';
+        if (n.type === 'approved') { iconClass = 'approved'; iconEmoji = '✅'; }
+        else if (n.type === 'rejected') { iconClass = 'rejected'; iconEmoji = '❌'; }
+        else if (n.type === 'claim') { iconClass = 'new'; iconEmoji = '🎁'; }
+        
+        html += `
+            <div class="notif-item">
+                <div class="notif-icon ${iconClass}">${iconEmoji}</div>
+                <div class="notif-content">
+                    <h6>${n.title}</h6>
+                    <p>${n.body}</p>
+                    <div class="time">${n.time}</div>
+                </div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+function addToNotifHistory(title, body, type) {
+    notifHistory.unshift({
+        title: title,
+        body: body,
+        type: type || 'general',
+        time: new Date().toLocaleString('en-IN')
+    });
+    saveNotifHistory();
+}
+
+function clearNotifHistory() {
+    if (!confirm('Saari notification history mitado?')) return;
+    notifHistory = [];
+    saveNotifHistory();
+    showToast('🗑️ Clear!', 'History mita di gayi');
+    renderNotifHistory();
+}
+
+function testNotification() {
+    if (Notification.permission !== 'granted') {
+        requestNotifPermission();
+        return;
+    }
+    showBrowserNotification('🧪 Test Notification', 'Ye ek test hai — sab sahi chal raha hai!');
+    showToast('🧪 Test Bheja', 'Notification bhej di');
+}
+
+// ============ DRAWER ============
 function toggleDrawer() {
     document.getElementById('drawer').classList.toggle('open');
     document.getElementById('overlay').classList.toggle('show');
@@ -513,34 +748,45 @@ async function requestNotifPermission() {
     }
     const perm = await Notification.requestPermission();
     if (perm === 'granted') {
+        userSettings.notif = true;
+        saveSettings();
+        loadSettingsUI();
         showToast('✅ Notifications ON', 'Ab aapko updates milenge');
         document.getElementById('notifBanner').classList.remove('show');
         document.getElementById('adminNotifBanner').classList.remove('show');
         new Notification('Sahu Hotel', { body: 'Notifications successfully ON ho gayi!' });
     } else {
+        userSettings.notif = false;
+        saveSettings();
+        loadSettingsUI();
         alert('Notifications allow nahi hui. Browser settings se manually ON karein.');
     }
 }
 
-function showBrowserNotification(title, body) {
+function showBrowserNotification(title, body, type) {
+    if (!userSettings.notif) return;
     if (!('Notification' in window)) return;
     if (Notification.permission !== 'granted') return;
     try {
-        const n = new Notification(title, { body: body, tag: 'sahu-' + Date.now(), vibrate: [200,100,200] });
+        const opts = { body: body, tag: 'sahu-' + Date.now() };
+        if (userSettings.vibrate) opts.vibrate = [200,100,200];
+        const n = new Notification(title, opts);
         setTimeout(() => n.close(), 8000);
     } catch(e) {}
+    addToNotifHistory(title, body, type);
 }
 
 function showToast(title, msg) {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
     toast.className = 'toast';
-    toast.innerHTML = `<div class="toast-title">${title}</div><div class="toast-msg">${msg}</div>`;
+    toast.innerHTML = `<div class="toast-title">${title}</div>${msg ? `<div class="toast-msg">${msg}</div>` : ''}`;
     container.appendChild(toast);
     setTimeout(() => toast.remove(), 5000);
 }
 
 function playNotifSound() {
+    if (!userSettings.sound) return;
     try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
         const osc = ctx.createOscillator();
@@ -553,6 +799,11 @@ function playNotifSound() {
         osc.connect(gain); gain.connect(ctx.destination);
         osc.start(); osc.stop(ctx.currentTime + 0.5);
     } catch(e) {}
+}
+
+function vibratePhone() {
+    if (!userSettings.vibrate) return;
+    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
 }
 
 // ============ LOGIN ============
@@ -655,9 +906,10 @@ function startAdminListener() {
         pendingNow.forEach(r => {
             if (!lastNotifiedIds.has(r.id)) {
                 lastNotifiedIds.add(r.id);
-                showBrowserNotification('🎁 Naya Rewards Claim!', `${r.name}: ${r.item_name} — ₹${r.price}`);
+                showBrowserNotification('🎁 Naya Rewards Claim!', `${r.name}: ${r.item_name} — ₹${r.price}`, 'claim');
                 showToast('🎁 Naya Claim Aaya!', `${r.name} ne ${r.item_name} claim kiya (₹${r.price})`);
                 playNotifSound();
+                vibratePhone();
                 setTimeout(() => {
                     const el = document.getElementById('card_' + r.id);
                     if (el) el.classList.add('new-claim');
@@ -690,14 +942,15 @@ function startCustomerListener() {
             const prevStatus = savedStatuses[r.id];
             if (prevStatus && prevStatus !== r.status) {
                 if (r.status === 'approved') {
-                    showBrowserNotification('✅ Claim Approved!', `${r.item_name} (₹${r.price}) — +${r.points_approved} points mile`);
+                    showBrowserNotification('✅ Claim Approved!', `${r.item_name} (₹${r.price}) — +${r.points_approved} points mile`, 'approved');
                     showToast('✅ Approved!', `${r.item_name} ke ${r.points_approved} points mil gaye`);
                     playNotifSound();
+                    vibratePhone();
                     const pb = document.getElementById('pointsBox');
                     pb.classList.add('updated');
                     setTimeout(() => pb.classList.remove('updated'), 1500);
                 } else if (r.status === 'rejected') {
-                    showBrowserNotification('❌ Claim Rejected', `${r.item_name} (₹${r.price}) reject ho gaya`);
+                    showBrowserNotification('❌ Claim Rejected', `${r.item_name} (₹${r.price}) reject ho gaya`, 'rejected');
                     showToast('❌ Rejected', `${r.item_name} ka claim reject hua`);
                 }
             }
@@ -939,6 +1192,7 @@ function openPhoto(src) {
 
 // ============ INIT ============
 function init() {
+    loadSettingsUI();
     const saved = localStorage.getItem('sahuUser');
     if (saved) {
         try {
