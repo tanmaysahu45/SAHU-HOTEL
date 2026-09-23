@@ -62,10 +62,8 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 .rewards-section h3 { color: #FFF; }
 .rewards-section .section-desc { color: #95A5A6; }
 
-/* REWARDS BOX (inside dark section) */
 .rewards-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 24px; backdrop-filter: blur(10px); }
 
-/* Login prompt */
 .login-prompt { text-align: center; padding: 30px 20px; }
 .login-prompt .lock-icon { font-size: 48px; margin-bottom: 14px; }
 .login-prompt h4 { font-family: 'Playfair Display', serif; font-size: 22px; color: #FFF; margin-bottom: 8px; }
@@ -73,14 +71,13 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 .google-login-btn { width: 100%; max-width: 300px; margin: 0 auto; padding: 14px 20px; background: #FFF; color: #2C3E50; border: none; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; font-family: 'Poppins', sans-serif; }
 .google-login-btn svg { width: 20px; height: 20px; }
 
-/* Customer rewards form */
 .rewards-form { display: none; }
 .user-bar { display: flex; align-items: center; gap: 12px; padding-bottom: 16px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
 .user-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #4A7C59, #E67E22); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; overflow: hidden; flex-shrink: 0; }
 .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .user-info { flex: 1; min-width: 0; }
 .user-info h5 { font-size: 14px; font-weight: 700; color: #FFF; }
-.user-info p { font-size: 11px; color: #95A5A6; margin-top: 2px; }
+.user-info p { font-size: 11px; color: #95A5A6; margin-top: 2px; word-break: break-all; }
 .logout-btn { background: rgba(255,255,255,0.1); color: #FFF; border: none; padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; }
 
 .form-label { display: block; font-size: 12px; font-weight: 600; color: #F39C12; margin-bottom: 6px; margin-top: 14px; }
@@ -101,17 +98,15 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 .msg-box.success { background: rgba(74,124,89,0.3); color: #A8D5B5; }
 .msg-box.error { background: rgba(231,76,60,0.3); color: #FFB3AE; }
 
-/* Points display */
 .points-box { background: linear-gradient(135deg, #4A7C59, #7BA888); padding: 20px; border-radius: 16px; text-align: center; margin-top: 20px; }
 .points-box .label { font-size: 11px; opacity: 0.9; letter-spacing: 1px; color: #FFF; }
 .points-box .value { font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 700; color: #FFF; line-height: 1; margin: 6px 0; }
 .points-box .sub { font-size: 11px; opacity: 0.9; color: #FFF; }
 
-/* History */
 .history-title { font-family: 'Playfair Display', serif; font-size: 16px; color: #FFF; margin-top: 24px; margin-bottom: 12px; }
 .req-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; margin-bottom: 10px; display: flex; gap: 12px; align-items: center; }
 .req-card img { width: 55px; height: 55px; border-radius: 10px; object-fit: cover; background: rgba(255,255,255,0.1); flex-shrink: 0; }
-.req-info { flex: 1; }
+.req-info { flex: 1; min-width: 0; }
 .req-info h5 { font-size: 13px; font-weight: 700; color: #FFF; }
 .req-info p { font-size: 10px; color: #95A5A6; margin-top: 2px; }
 .req-price { font-size: 15px; font-weight: 700; color: #F39C12; }
@@ -134,15 +129,16 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 .admin-req-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
 .admin-req-top { display: flex; gap: 12px; margin-bottom: 12px; }
 .admin-req-photo { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; background: rgba(255,255,255,0.1); flex-shrink: 0; cursor: pointer; }
+.admin-req-meta { flex: 1; min-width: 0; }
 .admin-req-meta .phone { font-size: 13px; font-weight: 700; color: #FFF; }
-.admin-req-meta .date { font-size: 10px; color: #95A5A6; margin-top: 2px; }
+.admin-req-meta .date { font-size: 10px; color: #95A5A6; margin-top: 2px; word-break: break-all; }
 .admin-req-meta .status-badge { font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 700; display: inline-block; margin-top: 6px; }
 .admin-req-meta .status-badge.pending { background: rgba(243,156,18,0.25); color: #F39C12; }
 .admin-req-meta .status-badge.approved { background: rgba(74,124,89,0.3); color: #A8D5B5; }
 .admin-req-meta .status-badge.rejected { background: rgba(231,76,60,0.25); color: #FFB3AE; }
 
 .edit-row { display: flex; gap: 8px; margin-bottom: 8px; }
-.edit-row > div { flex: 1; }
+.edit-row > div { flex: 1; min-width: 0; }
 .edit-lbl { font-size: 10px; color: #95A5A6; font-weight: 600; display: block; margin-bottom: 3px; text-transform: uppercase; }
 .edit-input { width: 100%; padding: 9px 11px; border: 1.5px solid rgba(255,255,255,0.15); border-radius: 10px; font-size: 13px; background: rgba(0,0,0,0.25); color: #FFF; outline: none; font-family: 'Poppins', sans-serif; font-weight: 500; }
 .edit-input:focus { border-color: #F39C12; }
@@ -275,7 +271,7 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
     </div>
 </section>
 
-<!-- REWARDS SECTION (Login required) -->
+<!-- REWARDS SECTION -->
 <section class="rewards-section" id="rewards">
     <div class="section-tag">Sahu Rewards</div>
     <h3>Aapke liye,<br>kuch khaas.</h3>
@@ -283,7 +279,6 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 
     <div class="rewards-box" id="rewardsBox">
 
-        <!-- CASE 1: NOT LOGGED IN -->
         <div id="loginPrompt" class="login-prompt">
             <div class="lock-icon">🔐</div>
             <h4>Login zaroori hai</h4>
@@ -294,7 +289,6 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
             </button>
         </div>
 
-        <!-- CASE 2: CUSTOMER LOGGED IN -->
         <div id="customerRewards" class="rewards-form">
             <div class="user-bar">
                 <div class="user-avatar" id="cAvatar">?</div>
@@ -335,7 +329,6 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
             </div>
         </div>
 
-        <!-- CASE 3: ADMIN LOGGED IN -->
         <div id="adminPanel" class="admin-panel">
             <div class="user-bar">
                 <div class="user-avatar" id="aAvatar">A</div>
@@ -450,7 +443,8 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 </div>
 
 <script>
-const DB_URL = "https://sahu-hotel-app-default-rtdb.firebaseio.com";
+// ✅ SAHI DATABASE URL
+const DB_URL = "https://sahu-hotel-22ad4-default-rtdb.firebaseio.com";
 const ADMIN_EMAIL = "tarendrasahu652@gmail.com";
 const POINTS_PER_RUPEE = 0.1; // ₹10 = 1 point
 
@@ -461,7 +455,6 @@ let adminTab = 'pending';
 let allReqs = [];
 let notifInterval = null;
 
-// ============ DRAWER ============
 function toggleDrawer() {
     document.getElementById('drawer').classList.toggle('open');
     document.getElementById('overlay').classList.toggle('show');
@@ -469,18 +462,16 @@ function toggleDrawer() {
 
 function goToRewards() {
     document.getElementById('rewards').scrollIntoView({ behavior: 'smooth' });
-    // Agar login nahi hai to prompt dikhega (already)
 }
 
 window.addEventListener('scroll', () => {
     document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
 });
 
-// ============ LOGIN (Google) ============
+// ============ LOGIN ============
 function loginWithGoogle() {
-    // Firebase modular import karna padega, isliye dynamic import
     import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js').then(({ initializeApp }) => {
-        import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js').then(({ getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged }) => {
+        import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js').then(({ getAuth, signInWithPopup, GoogleAuthProvider }) => {
             const firebaseConfig = {
                 apiKey: "AIzaSyAr9wY7_SbxrHjOYlvZwmuzwp-QIXGaq-k",
                 authDomain: "sahu-hotel-22ad4.firebaseapp.com",
@@ -505,7 +496,6 @@ function loginWithGoogle() {
                 currentRole = (email === ADMIN_EMAIL) ? 'admin' : 'customer';
                 
                 updateUI();
-                // Auto scroll to rewards
                 setTimeout(() => {
                     document.getElementById('rewards').scrollIntoView({ behavior: 'smooth' });
                 }, 200);
@@ -522,9 +512,6 @@ function logoutUser() {
     currentRole = 'guest';
     if (notifInterval) { clearInterval(notifInterval); notifInterval = null; }
     updateUI();
-    if (window._firebaseAuth) {
-        try { window._firebaseAuth.signOut(); } catch(e) {}
-    }
     location.reload();
 }
 
@@ -539,7 +526,6 @@ function updateUI() {
     const dName = document.getElementById('dName');
     const dSub = document.getElementById('dSub');
 
-    // Reset all
     loginPrompt.style.display = 'none';
     customerRewards.style.display = 'none';
     adminPanel.style.display = 'none';
@@ -547,17 +533,14 @@ function updateUI() {
     notifDot.style.display = 'none';
 
     if (!currentUser) {
-        // Not logged in
         loginPrompt.style.display = 'block';
         dAvatar.innerText = '?';
         dName.innerText = 'Mehmaan';
         dSub.innerText = 'Login karein apne rewards ke liye';
     } else if (currentRole === 'admin') {
-        // Admin
         adminPanel.style.display = 'block';
         adminPanelLink.style.display = 'flex';
         
-        // Set admin avatar + name
         const aAvatar = document.getElementById('aAvatar');
         if (currentUser.photo) {
             aAvatar.innerHTML = `<img src="${currentUser.photo}" alt="">`;
@@ -567,7 +550,6 @@ function updateUI() {
         document.getElementById('aName').innerText = currentUser.name;
         document.getElementById('aEmail').innerText = currentUser.email;
 
-        // Drawer info
         if (currentUser.photo) {
             dAvatar.innerHTML = `<img src="${currentUser.photo}" alt="">`;
         } else {
@@ -576,12 +558,10 @@ function updateUI() {
         dName.innerText = '👑 ' + currentUser.name;
         dSub.innerText = 'Admin Panel';
 
-        // Load admin data
         loadAdminRequests();
         if (!notifInterval) notifInterval = setInterval(checkPendingCount, 10000);
         checkPendingCount();
     } else {
-        // Customer
         customerRewards.style.display = 'block';
         
         const cAvatar = document.getElementById('cAvatar');
@@ -593,7 +573,6 @@ function updateUI() {
         document.getElementById('cName').innerText = currentUser.name;
         document.getElementById('cEmail').innerText = currentUser.email;
 
-        // Drawer info
         if (currentUser.photo) {
             dAvatar.innerHTML = `<img src="${currentUser.photo}" alt="">`;
         } else {
@@ -602,7 +581,6 @@ function updateUI() {
         dName.innerText = currentUser.name;
         dSub.innerText = '🎁 Rewards member';
 
-        // Load customer points + history
         loadCustomerPoints();
         loadMyHistory();
     }
@@ -664,7 +642,7 @@ async function submitReward() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(req)
         });
-        if (!res.ok) throw new Error('Network error');
+        if (!res.ok) throw new Error('Server ne reject kiya (Firebase Rules check karo)');
         
         showMsg('✅ Claim bhej diya! Admin approve karega, phir points milenge.', 'success');
         
@@ -678,7 +656,7 @@ async function submitReward() {
         
         loadMyHistory();
     } catch(e) {
-        showMsg('❌ Error: ' + e.message, 'error');
+        showMsg('❌ ' + e.message, 'error');
     } finally {
         btn.disabled = false;
         btn.innerText = '🎁 Rewards Claim Submit karein';
@@ -690,13 +668,13 @@ function showMsg(text, type) {
     m.className = 'msg-box ' + type;
     m.innerText = text;
     m.style.display = 'block';
-    setTimeout(() => { m.style.display = 'none'; }, 4000);
+    setTimeout(() => { m.style.display = 'none'; }, 5000);
 }
 
-// ============ LOAD CUSTOMER POINTS ============
+// ============ CUSTOMER POINTS ============
 async function loadCustomerPoints() {
     try {
-        const key = currentUser.email.replace(/\./g, '_');
+        const key = currentUser.email.replace(/\./g, '_').replace(/@/g, '_at_');
         const res = await fetch(`${DB_URL}/customers/${key}.json`);
         const data = await res.json();
         const points = data?.total_points || 0;
@@ -708,7 +686,7 @@ async function loadCustomerPoints() {
     }
 }
 
-// ============ LOAD CUSTOMER HISTORY ============
+// ============ CUSTOMER HISTORY ============
 async function loadMyHistory() {
     try {
         const res = await fetch(`${DB_URL}/reward_requests.json`);
@@ -751,7 +729,7 @@ async function loadMyHistory() {
     }
 }
 
-// ============ ADMIN: LOAD REQUESTS ============
+// ============ ADMIN ============
 async function loadAdminRequests() {
     try {
         const res = await fetch(`${DB_URL}/reward_requests.json`);
@@ -874,8 +852,7 @@ async function approveReq(id) {
             })
         });
 
-        // Customer ke points update karo
-        const key = req.email.replace(/\./g, '_');
+        const key = req.email.replace(/\./g, '_').replace(/@/g, '_at_');
         const custRes = await fetch(`${DB_URL}/customers/${key}.json`);
         const custData = await custRes.json();
         const newTotal = (custData?.total_points || 0) + finalPoints;
