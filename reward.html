@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rewards Claim - Sahu Hotel</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+body { background: #FDFBF7; color: #2C3E50; padding: 16px; padding-bottom: 60px; min-height: 100vh; }
+
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+.header h1 { font-family: 'Playfair Display', serif; font-size: 22px; color: #2C3E50; font-weight: 700; }
+.header h1 span { color: #E67E22; font-style: italic; }
+.back-btn { background: #FFF; color: #E67E22; border: 2px solid #E67E22; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; text-decoration: none; }
+
+.hero-mini { background: linear-gradient(135deg, #4A7C59, #7BA888); color: #FFF; padding: 20px; border-radius: 18px; margin-bottom: 20px; }
+.hero-mini h3 { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 4px; }
+.hero-mini p { font-size: 12px; opacity: 0.9; line-height: 1.5; }
+
+.card { background: #FFF; border-radius: 16px; padding: 18px; margin-bottom: 14px; box-shadow: 0 4px 20px rgba(74,124,89,0.06); border: 1px solid #F0EBE2; }
+.card label { font-size: 12px; font-weight: 600; color: #4A7C59; display: block; margin-bottom: 8px; }
+.card input { width: 100%; padding: 14px 16px; border: 2px solid #E8E4DC; border-radius: 12px; font-size: 15px; background: #FDFBF7; outline: none; color: #2C3E50; font-weight: 500; font-family: 'Poppins', sans-serif; }
+.card input:focus { border-color: #4A7C59; background: #FFF; }
+
+.photo-box { border: 2px dashed #E67E22; border-radius: 14px; padding: 24px; text-align: center; background: #FDF0E2; cursor: pointer; }
+.photo-box .icon { font-size: 36px; margin-bottom: 8px; }
+.photo-box p { font-size: 13px; color: #E67E22; font-weight: 600; }
+.photo-preview { width: 100%; max-height: 240px; object-fit: cover; border-radius: 14px; display: none; margin-top: 10px; }
+.photo-wrap { position: relative; }
+.change-photo { position: absolute; top: 18px; right: 8px; background: rgba(0,0,0,0.6); color: #FFF; border: none; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer; display: none; }
+
+.submit-btn { width: 100%; padding: 18px; background: #E67E22; color: #FFF; border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 20px rgba(230,126,34,0.3); margin-top: 8px; }
+.submit-btn:active { transform: scale(0.98); }
+.submit-btn:disabled { opacity: 0.6; }
+
+.msg { padding: 14px; border-radius: 12px; font-size: 13px; font-weight: 600; text-align: center; margin-bottom: 14px; display: none; }
+.msg.success { background: #E8F0E9; color: #4A7C59; }
+.msg.error { background: #FFEBEE; color: #E74C3C; }
+
+.section-title { font-family: 'Playfair Display', serif; font-size: 18px; color: #2C3E50; font-weight: 700; margin: 24px 0 12px; }
+
+.req-card { background: #FFF; border-radius: 14px; padding: 12px; margin-bottom: 10px; border: 1px solid #F0EBE2; display: flex; gap: 12px; align-items: center; }
+.req-card img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; background: #F0EBE2; flex-shrink: 0; }
+.req-info { flex: 1; }
+.req-info h5 { font-size: 13px; font-weight: 700; color: #2C3E50; }
+.req-info p { font-size: 11px; color: #95A5A6; margin-top: 2px; }
+.req-price { font-size: 15px; font-weight: 700; color: #4A7C59; }
+.req-status { font-size: 10px; padding: 3px 8px; border-radius: 10px; font-weight: 700; display: inline-block; margin-top: 4px; }
+.req-status.pending { background: #FFF3CD; color: #856404; }
+.req-status.approved { background: #E8F0E9; color: #4A7C59; }
+.req-status.rejected { background: #FFEBEE; color: #E74C3C; }
+
+.phone-gate { background: #FFF; border-radius: 16px; padding: 24px; text-align: center; margin-top: 40px; border: 1px solid #F0EBE2; }
+.phone-gate h3 { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 10px; color: #2C3E50; }
+.phone-gate p { font-size: 13px; color: #95A5A6; margin-bottom: 20px; line-height: 1.6; }
+.phone-gate input { width:100%; padding:14px 16px; border:2px solid #E8E4DC; border-radius:12px; font-size:16px; text-align:center; outline:none; margin-bottom:12px; font-weight:600; font-family: 'Poppins', sans-serif;}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Sahu <span>Rewards</span></h1>
+    <a href="index.html" class="back-btn">← Home</a>
+</div>
+
+<div class="phone-gate" id="phoneGate">
+    <h3>Apna number daalein</h3>
+    <p>Rewards claim karne ke liye humein aapka mobile number chahiye. Isi number par aapke saare points jama honge.</p>
+    <input type="tel" id="gatePhone" placeholder="10 digit mobile number" maxlength="10" inputmode="numeric">
+    <button class="submit-btn" onclick="saveGatePhone()">Aage badhein →</button>
+</div>
+
+<div id="mainContent" style="display:none;">
+
+    <div class="msg" id="msgBox"></div>
+
+    <div class="hero-mini">
+        <h3>Aaj kya kharida?</h3>
+        <p>Item ka naam, photo, aur price daalein. Admin verify karke aapke points add kar dega.</p>
+    </div>
+
+    <div class="card">
+        <label>🛒 Item ka Naam</label>
+        <input type="text" id="itemName" placeholder="Jaise: Chai, Samosa, 1kg Atta..." autocomplete="off">
+    </div>
+
+    <div class="card">
+        <label>📸 Item ki Photo</label>
+        <div class="photo-wrap">
+            <div class="photo-box" id="photoBox" onclick="document.getElementById('photoInput').click()">
+                <div class="icon">📷</div>
+                <p>Photo kheencho / chuno</p>
+            </div>
+            <img id="photoPreview" class="photo-preview">
+            <button class="change-photo" id="changePhoto" onclick="document.getElementById('photoInput').click()">Badlein</button>
+        </div>
+        <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none;">
+    </div>
+
+    <div class="card">
+        <label>💰 Price (₹)</label>
+        <input type="number" id="itemPrice" placeholder="Jaise: 50" inputmode="numeric">
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitReward()">🎁 Rewards Claim Submit karein</button>
+
+    <div class="section-title">📜 Mere Claims</div>
+    <div id="myHistory">
+        <div style="text-align:center; color:#95A5A6; font-size:13px; padding:20px;">Loading...</div>
+    </div>
+
+</div>
+
+<script>
+const DB_URL = "https://sahu-hotel-app-default-rtdb.firebaseio.com";
+let photoBase64 = null;
+let myPhone = localStorage.getItem('sahuPhone') || '';
+
+if (myPhone && myPhone.length === 10) {
+    document.getElementById('phoneGate').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+    loadMyHistory();
+}
+
+window.saveGatePhone = function() {
+    const p = document.getElementById('gatePhone').value.trim();
+    if (p.length !== 10 || !/^[0-9]+$/.test(p)) { alert('10 digit sahi number daalein'); return; }
+    localStorage.setItem('sahuPhone', p);
+    myPhone = p;
+    document.getElementById('phoneGate').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+    loadMyHistory();
+};
+
+document.getElementById('photoInput').addEventListener('change', async function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let w = img.width, h = img.height;
+            const maxW = 600;
+            if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            photoBase64 = canvas.toDataURL('image/jpeg', 0.6);
+            document.getElementById('photoPreview').src = photoBase64;
+            document.getElementById('photoPreview').style.display = 'block';
+            document.getElementById('photoBox').style.display = 'none';
+            document.getElementById('changePhoto').style.display = 'block';
+        };
+        img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+});
+
+window.submitReward = async function() {
+    const itemName = document.getElementById('itemName').value.trim();
+    const price = parseFloat(document.getElementById('itemPrice').value);
+
+    if (!itemName) { showMsg('❌ Item ka naam likhein', 'error'); return; }
+    if (!photoBase64) { showMsg('❌ Item ki photo kheencho', 'error'); return; }
+    if (isNaN(price) || price <= 0) { showMsg('❌ Sahi price daalein', 'error'); return; }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerText = 'Bhej raha hoon...';
+
+    const req = {
+        phone: myPhone,
+        item_name: itemName,
+        price: price,
+        photo: photoBase64,
+        points_requested: Math.floor(price / 10),
+        timestamp: Date.now(),
+        date_str: new Date().toLocaleString('en-IN'),
+        status: 'pending'
+    };
+
+    try {
+        const res = await fetch(`${DB_URL}/reward_requests.json`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(req)
+        });
+        if (!res.ok) throw new Error('Network error');
+        showMsg('✅ Claim bhej diya! Admin approve karega, phir points milenge.', 'success');
+        
+        document.getElementById('itemName').value = '';
+        document.getElementById('itemPrice').value = '';
+        photoBase64 = null;
+        document.getElementById('photoPreview').style.display = 'none';
+        document.getElementById('photoPreview').src = '';
+        document.getElementById('photoBox').style.display = 'block';
+        document.getElementById('changePhoto').style.display = 'none';
+        document.getElementById('photoInput').value = '';
+        loadMyHistory();
+    } catch(e) {
+        showMsg('❌ Error: ' + e.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerText = '🎁 Rewards Claim Submit karein';
+    }
+};
+
+function showMsg(text, type) {
+    const m = document.getElementById('msgBox');
+    m.className = 'msg ' + type;
+    m.innerText = text;
+    m.style.display = 'block';
+    setTimeout(() => { m.style.display = 'none'; }, 4000);
+}
+
+async function loadMyHistory() {
+    try {
+        const res = await fetch(`${DB_URL}/reward_requests.json`);
+        const data = await res.json();
+        const container = document.getElementById('myHistory');
+        if (!data) {
+            container.innerHTML = '<div style="text-align:center; color:#95A5A6; font-size:13px; padding:20px;">Abhi koi claim nahi</div>';
+            return;
+        }
+        const mine = Object.values(data).filter(r => r.phone === myPhone).sort((a,b) => b.timestamp - a.timestamp).slice(0, 10);
+        if (mine.length === 0) {
+            container.innerHTML = '<div style="text-align:center; color:#95A5A6; font-size:13px; padding:20px;">Abhi koi claim nahi</div>';
+            return;
+        }
+        let html = '';
+        mine.forEach(r => {
+            const statusClass = r.status || 'pending';
+            const statusText = statusClass === 'pending' ? '⏳ Pending' : (statusClass === 'approved' ? '✅ Approved' : '❌ Rejected');
+            html += `
+                <div class="req-card">
+                    <img src="${r.photo || ''}" alt="">
+                    <div class="req-info">
+                        <h5>${r.item_name}</h5>
+                        <p>${r.date_str || ''}</p>
+                        <div class="req-status ${statusClass}">${statusText}</div>
+                    </div>
+                    <div class="req-price">₹${r.price}</div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    } catch(e) {
+        document.getElementById('myHistory').innerHTML = '<div style="text-align:center; color:#95A5A6; font-size:13px; padding:20px;">Load nahi hua</div>';
+    }
+}
+</script>
+</body>
+</html>

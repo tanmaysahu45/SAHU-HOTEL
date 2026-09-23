@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Approvals - Sahu Hotel</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+body { background: #FDFBF7; color: #2C3E50; padding: 16px; padding-bottom: 40px; min-height: 100vh; }
+
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.header h1 { font-family: 'Playfair Display', serif; font-size: 22px; color: #2C3E50; font-weight: 700; }
+.header h1 span { color: #E67E22; font-style: italic; }
+.back-btn { background: #FFF; color: #E67E22; border: 2px solid #E67E22; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; text-decoration: none; }
+.logout-btn { background: #FFEBEE; color: #E74C3C; border: 2px solid #E74C3C; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; text-decoration: none; cursor: pointer; margin-left: 6px; }
+
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+.stat { background: #FFF; padding: 16px; border-radius: 14px; border: 1px solid #F0EBE2; text-align: center; }
+.stat .num { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: #4A7C59; line-height: 1; }
+.stat .lbl { font-size: 11px; color: #95A5A6; font-weight: 500; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+.stat.orange .num { color: #E67E22; }
+
+.tabs { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; }
+.tab { padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1.5px solid #E8E4DC; background: #FFF; color: #7B8B99; cursor: pointer; white-space: nowrap; }
+.tab.active { background: #4A7C59; border-color: #4A7C59; color: #FFF; }
+
+.req-card { background: #FFF; border-radius: 16px; padding: 14px; margin-bottom: 14px; box-shadow: 0 4px 20px rgba(74,124,89,0.06); border: 1px solid #F0EBE2; }
+.req-top { display: flex; gap: 12px; margin-bottom: 12px; }
+.req-photo { width: 90px; height: 90px; border-radius: 12px; object-fit: cover; background: #F0EBE2; flex-shrink: 0; cursor: pointer; }
+.req-meta { flex: 1; min-width: 0; }
+.req-meta .phone { font-size: 14px; font-weight: 700; color: #2C3E50; }
+.req-meta .date { font-size: 11px; color: #95A5A6; margin-top: 2px; }
+.req-meta .status-badge { font-size: 10px; padding: 3px 8px; border-radius: 10px; font-weight: 700; display: inline-block; margin-top: 6px; }
+.req-meta .status-badge.pending { background: #FFF3CD; color: #856404; }
+.req-meta .status-badge.approved { background: #E8F0E9; color: #4A7C59; }
+.req-meta .status-badge.rejected { background: #FFEBEE; color: #E74C3C; }
+
+.edit-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.edit-row > div { flex: 1; }
+.edit-row input { width: 100%; padding: 10px 12px; border: 1.5px solid #E8E4DC; border-radius: 10px; font-size: 13px; background: #FDFBF7; outline: none; color: #2C3E50; font-weight: 500; font-family: 'Poppins', sans-serif; }
+.edit-row input:focus { border-color: #4A7C59; background: #FFF; }
+.lbl { font-size: 10px; color: #95A5A6; font-weight: 600; display: block; margin-bottom: 2px; text-transform: uppercase; }
+
+.points-preview { background: #FDF0E2; color: #E67E22; padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 600; margin-bottom: 10px; display: inline-block; }
+
+.actions { display: flex; gap: 8px; margin-top: 4px; }
+.btn { flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; }
+.btn-approve { background: #4A7C59; color: #FFF; }
+.btn-reject { background: #FFEBEE; color: #E74C3C; }
+
+.empty { text-align: center; padding: 60px 20px; color: #95A5A6; font-size: 14px; }
+.empty .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
+
+.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px; }
+.modal.show { display: flex; }
+.modal img { max-width: 100%; max-height: 85vh; border-radius: 12px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Admin <span>Approvals</span></h1>
+    <div>
+        <a href="index.html" class="back-btn">← Website</a>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+</div>
+
+<div class="stats">
+    <div class="stat"><div class="num" id="pendingCount">0</div><div class="lbl">PENDING</div></div>
+    <div class="stat orange"><div class="num" id="todayApproved">0</div><div class="lbl">AAJ APPROVED</div></div>
+</div>
+
+<div class="tabs">
+    <div class="tab active" onclick="setTab('pending', this)">⏳ Pending</div>
+    <div class="tab" onclick="setTab('approved', this)">✅ Approved</div>
+    <div class="tab" onclick="setTab('rejected', this)">❌ Rejected</div>
+</div>
+
+<div id="listContainer">
+    <div class="empty"><div class="icon">⏳</div>Loading...</div>
+</div>
+
+<div class="modal" id="photoModal" onclick="this.classList.remove('show')">
+    <img id="modalImg" src="">
+</div>
+
+<script>
+const DB_URL = "https://sahu-hotel-app-default-rtdb.firebaseio.com";
+const ADMIN_EMAIL = "tarendrasahu652@gmail.com";
+let currentTab = 'pending';
+let allReqs = [];
+
+// LOGIN CHECK
+const userEmail = (localStorage.getItem('userEmail') || '').toLowerCase().trim();
+if (userEmail !== ADMIN_EMAIL) {
+    alert('Sirf Admin hi ye page khol sakta hai');
+    window.location.replace("login.html");
+}
+
+function logout() {
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userRole');
+    window.location.replace("login.html");
+}
+
+async function loadRequests() {
+    try {
+        const res = await fetch(`${DB_URL}/reward_requests.json`);
+        const data = await res.json();
+        allReqs = data ? Object.keys(data).map(k => ({ id: k, ...data[k] })).sort((a,b) => b.timestamp - a.timestamp) : [];
+        render();
+    } catch(e) {
+        document.getElementById('listContainer').innerHTML = '<div class="empty"><div class="icon">❌</div>Data load nahi hua</div>';
+    }
+}
+
+function setTab(tab, el) {
+    currentTab = tab;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    render();
+}
+
+function render() {
+    const pending = allReqs.filter(r => r.status === 'pending');
+    const approved = allReqs.filter(r => r.status === 'approved');
+    const rejected = allReqs.filter(r => r.status === 'rejected');
+
+    document.getElementById('pendingCount').innerText = pending.length;
+    const today = new Date().toDateString();
+    document.getElementById('todayApproved').innerText = approved.filter(r => new Date(r.timestamp).toDateString() === today).length;
+
+    let list = currentTab === 'pending' ? pending : (currentTab === 'approved' ? approved : rejected);
+
+    const container = document.getElementById('listContainer');
+    if (list.length === 0) {
+        container.innerHTML = '<div class="empty"><div class="icon">📭</div>Yahan kuch nahi hai</div>';
+        return;
+    }
+
+    let html = '';
+    list.forEach(r => {
+        const statusBadge = r.status === 'pending' ? '⏳ Pending' : (r.status === 'approved' ? '✅ Approved' : '❌ Rejected');
+        const computedPoints = Math.floor((r.price || 0) / 10);
+
+        let editBlock = '';
+        if (r.status === 'pending') {
+            editBlock = `
+                <div class="edit-row">
+                    <div>
+                        <span class="lbl">Item</span>
+                        <input type="text" id="item_${r.id}" value="${escapeHtml(r.item_name || '')}">
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <div>
+                        <span class="lbl">Price (₹)</span>
+                        <input type="number" id="price_${r.id}" value="${r.price || 0}" oninput="updatePointsPreview('${r.id}')">
+                    </div>
+                    <div>
+                        <span class="lbl">Points</span>
+                        <input type="number" id="points_${r.id}" value="${computedPoints}" readonly style="background:#E8F0E9; font-weight:700; color:#4A7C59;">
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="btn btn-approve" onclick="approveReq('${r.id}')">✅ Approve</button>
+                    <button class="btn btn-reject" onclick="rejectReq('${r.id}')">❌ Reject</button>
+                </div>
+            `;
+        } else {
+            editBlock = `
+                <div style="text-align:center; font-size:12px; font-weight:600; padding:8px; ${r.status === 'approved' ? 'color:#4A7C59;' : 'color:#E74C3C;'}">
+                    ${r.status === 'approved' ? `✅ Approved · +${r.points_approved || computedPoints} points` : '❌ Rejected'}
+                </div>
+            `;
+        }
+
+        html += `
+            <div class="req-card">
+                <div class="req-top">
+                    <img class="req-photo" src="${r.photo || ''}" onclick="openPhoto('${r.photo || ''}')">
+                    <div class="req-meta">
+                        <div class="phone">📱 ${r.phone}</div>
+                        <div class="date">${r.date_str || ''}</div>
+                        <div class="status-badge ${r.status}">${statusBadge}</div>
+                    </div>
+                </div>
+                <div class="points-preview">🎁 ${computedPoints} points milenge (₹10 = 1pt)</div>
+                ${editBlock}
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+function escapeHtml(t) { return String(t).replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+
+window.updatePointsPreview = function(id) {
+    const price = parseFloat(document.getElementById('price_' + id).value) || 0;
+    document.getElementById('points_' + id).value = Math.floor(price / 10);
+};
+
+window.approveReq = async function(id) {
+    const req = allReqs.find(r => r.id === id);
+    if (!req) return;
+
+    const finalItem = document.getElementById('item_' + id).value.trim();
+    const finalPrice = parseFloat(document.getElementById('price_' + id).value) || 0;
+    const finalPoints = parseInt(document.getElementById('points_' + id).value) || 0;
+
+    if (!finalItem || finalPrice <= 0) { alert('Item aur price sahi karein'); return; }
+    if (!confirm(`Approve karein?\n\nItem: ${finalItem}\nPrice: ₹${finalPrice}\nPoints: ${finalPoints}`)) return;
+
+    try {
+        await fetch(`${DB_URL}/reward_requests/${id}.json`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                item_name: finalItem,
+                price: finalPrice,
+                points_approved: finalPoints,
+                status: 'approved',
+                approved_at: Date.now()
+            })
+        });
+
+        const custRes = await fetch(`${DB_URL}/customers/${req.phone}.json`);
+        const custData = await custRes.json();
+        const newTotal = (custData?.total_points || 0) + finalPoints;
+        const newSpent = (custData?.total_spent || 0) + finalPrice;
+
+        await fetch(`${DB_URL}/customers/${req.phone}.json`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                phone: req.phone,
+                total_points: newTotal,
+                total_spent: newSpent,
+                last_visit: Date.now()
+            })
+        });
+
+        loadRequests();
+    } catch(e) {
+        alert('Error: ' + e.message);
+    }
+};
+
+window.rejectReq = async function(id) {
+    if (!confirm('Pakka reject karna hai?')) return;
+    try {
+        await fetch(`${DB_URL}/reward_requests/${id}.json`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'rejected', rejected_at: Date.now() })
+        });
+        loadRequests();
+    } catch(e) { alert('Error: ' + e.message); }
+};
+
+window.openPhoto = function(src) {
+    document.getElementById('modalImg').src = src;
+    document.getElementById('photoModal').classList.add('show');
+};
+
+loadRequests();
+setInterval(loadRequests, 15000);
+</script>
+</body>
+</html>

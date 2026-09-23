@@ -1,76 +1,959 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Sahu Hotel</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-        body { 
-            background: linear-gradient(125deg, #ff2a54, #9000ff, #0072ff, #00eccd, #ff7300);
-            background-size: 400% 400%; animation: multiColorWave 15s ease infinite;
-            display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden;
-        }
-        @keyframes multiColorWave { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        .login-box { background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(25px); padding: 40px 30px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.2); width: 90%; max-width: 380px; text-align: center; z-index: 10; }
-        h2 { color: #ffffff; margin-bottom: 10px; font-size: 26px; }
-        p { color: rgba(255, 255, 255, 0.8); font-size: 14px; margin-bottom: 30px; }
-        .google-btn { width: 100%; padding: 14px; background: #ffffff; color: #333333; border: none; border-radius: 12px; font-weight: bold; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2); transition: all 0.3s ease; }
-        .google-btn:hover { transform: scale(1.03); box-shadow: 0 8px 25px rgba(255, 255, 255, 0.4); }
-        .google-icon { width: 22px; height: 22px; }
-        #errorMessage { color: #ff2a54; font-size: 13px; margin-top: 20px; font-weight: bold; display: none; background: rgba(255, 42, 84, 0.15); padding: 10px; border-radius: 8px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sahu Hotel — Jhurre, Chhindwara</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
+
+/* NAV */
+.nav { position: fixed; top: 0; left: 0; right: 0; background: rgba(253, 251, 247, 0.92); backdrop-filter: blur(20px); padding: 14px 22px; display: flex; justify-content: space-between; align-items: center; z-index: 900; }
+.nav.scrolled { box-shadow: 0 4px 20px rgba(74,124,89,0.08); }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-logo { width: 42px; height: 42px; background: linear-gradient(135deg, #4A7C59, #E67E22); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #FFF; font-weight: 800; font-size: 18px; }
+.brand-text h1 { font-size: 16px; font-weight: 700; color: #2C3E50; }
+.brand-text p { font-size: 10px; color: #95A5A6; font-weight: 500; }
+.menu-btn { width: 44px; height: 44px; border-radius: 12px; background: #FFFFFF; border: 1.5px solid #EFEAE0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px; cursor: pointer; position: relative; }
+.menu-btn span { width: 20px; height: 2px; background: #4A7C59; border-radius: 2px; }
+.badge-dot { position: absolute; top: 8px; right: 8px; width: 10px; height: 10px; background: #E74C3C; border-radius: 50%; border: 2px solid #FFF; display: none; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+
+/* HERO */
+.hero { min-height: 100vh; padding: 120px 22px 60px; display: flex; flex-direction: column; justify-content: center; }
+.hero-tag { display: inline-flex; align-items: center; gap: 6px; background: #E8F0E9; color: #4A7C59; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; width: fit-content; margin-bottom: 20px; }
+.hero-tag::before { content: ''; width: 6px; height: 6px; background: #4A7C59; border-radius: 50%; }
+.hero h2 { font-family: 'Playfair Display', serif; font-size: 42px; line-height: 1.05; font-weight: 700; color: #2C3E50; letter-spacing: -1px; margin-bottom: 18px; }
+.hero h2 em { font-style: italic; color: #E67E22; font-weight: 600; }
+.hero p { font-size: 15px; line-height: 1.7; color: #7B8B99; max-width: 480px; margin-bottom: 30px; }
+.hero-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-primary { padding: 15px 26px; background: #4A7C59; color: #FFF; border: none; border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 8px 20px rgba(74,124,89,0.25); }
+.btn-ghost { padding: 15px 26px; background: transparent; color: #2C3E50; border: 1.5px solid #D9D2C5; border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+.hero-stats { display: flex; gap: 30px; margin-top: 50px; padding-top: 30px; border-top: 1px solid #EFEAE0; }
+.stat-item h3 { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: #4A7C59; line-height: 1; }
+.stat-item p { font-size: 11px; color: #95A5A6; margin-top: 4px; font-weight: 500; text-transform: uppercase; }
+
+/* SECTIONS */
+.section { padding: 70px 22px; }
+.section-tag { font-size: 11px; font-weight: 700; color: #E67E22; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
+.section h3 { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: #2C3E50; line-height: 1.15; margin-bottom: 14px; }
+.section-desc { font-size: 14px; color: #7B8B99; line-height: 1.7; max-width: 560px; margin-bottom: 40px; }
+
+/* SERVICES */
+.services { display: grid; grid-template-columns: 1fr; gap: 16px; }
+.service-card { background: #FFFFFF; border-radius: 20px; padding: 26px 22px; border: 1.5px solid #F0EBE2; position: relative; overflow: hidden; }
+.service-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #4A7C59, #7BA888); }
+.service-card.warm::before { background: linear-gradient(90deg, #E67E22, #F39C12); }
+.service-icon { width: 52px; height: 52px; background: #E8F0E9; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 16px; }
+.service-card.warm .service-icon { background: #FDF0E2; }
+.service-card h4 { font-size: 18px; font-weight: 700; color: #2C3E50; margin-bottom: 6px; }
+.service-card p { font-size: 13px; color: #95A5A6; line-height: 1.6; margin-bottom: 16px; }
+.service-list { list-style: none; }
+.service-list li { font-size: 13px; color: #4A5568; padding: 6px 0; display: flex; align-items: center; gap: 8px; font-weight: 500; }
+.service-list li::before { content: '✓'; width: 18px; height: 18px; background: #E8F0E9; color: #4A7C59; border-radius: 50%; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+.service-card.warm .service-list li::before { background: #FDF0E2; color: #E67E22; }
+
+/* REWARDS SECTION */
+.rewards-section { background: linear-gradient(160deg, #2C3E50 0%, #1A252F 100%); color: #FFF; padding: 70px 22px; border-radius: 32px 32px 0 0; margin-top: 30px; }
+.rewards-section .section-tag { color: #F39C12; }
+.rewards-section h3 { color: #FFF; }
+.rewards-section .section-desc { color: #95A5A6; }
+
+/* REWARDS BOX (inside dark section) */
+.rewards-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 24px; backdrop-filter: blur(10px); }
+
+/* Login prompt */
+.login-prompt { text-align: center; padding: 30px 20px; }
+.login-prompt .lock-icon { font-size: 48px; margin-bottom: 14px; }
+.login-prompt h4 { font-family: 'Playfair Display', serif; font-size: 22px; color: #FFF; margin-bottom: 8px; }
+.login-prompt p { font-size: 13px; color: #95A5A6; margin-bottom: 20px; line-height: 1.6; }
+.google-login-btn { width: 100%; max-width: 300px; margin: 0 auto; padding: 14px 20px; background: #FFF; color: #2C3E50; border: none; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; font-family: 'Poppins', sans-serif; }
+.google-login-btn svg { width: 20px; height: 20px; }
+
+/* Customer rewards form */
+.rewards-form { display: none; }
+.user-bar { display: flex; align-items: center; gap: 12px; padding-bottom: 16px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.user-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #4A7C59, #E67E22); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; overflow: hidden; flex-shrink: 0; }
+.user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.user-info { flex: 1; min-width: 0; }
+.user-info h5 { font-size: 14px; font-weight: 700; color: #FFF; }
+.user-info p { font-size: 11px; color: #95A5A6; margin-top: 2px; }
+.logout-btn { background: rgba(255,255,255,0.1); color: #FFF; border: none; padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; }
+
+.form-label { display: block; font-size: 12px; font-weight: 600; color: #F39C12; margin-bottom: 6px; margin-top: 14px; }
+.form-input { width: 100%; padding: 12px 14px; border: 1.5px solid rgba(255,255,255,0.15); border-radius: 12px; font-size: 14px; background: rgba(255,255,255,0.05); color: #FFF; outline: none; font-family: 'Poppins', sans-serif; font-weight: 500; }
+.form-input:focus { border-color: #F39C12; background: rgba(255,255,255,0.08); }
+.form-input::placeholder { color: #7B8B99; }
+
+.photo-upload { border: 2px dashed #F39C12; border-radius: 14px; padding: 20px; text-align: center; background: rgba(243,156,18,0.08); cursor: pointer; margin-top: 6px; }
+.photo-upload .icon { font-size: 32px; margin-bottom: 6px; }
+.photo-upload p { font-size: 12px; color: #F39C12; font-weight: 600; }
+.photo-preview { width: 100%; max-height: 200px; object-fit: cover; border-radius: 12px; display: none; margin-top: 10px; }
+
+.submit-reward-btn { width: 100%; padding: 15px; background: #E67E22; color: #FFF; border: none; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 20px; }
+.submit-reward-btn:active { transform: scale(0.98); }
+.submit-reward-btn:disabled { opacity: 0.6; }
+
+.msg-box { padding: 12px; border-radius: 10px; font-size: 12px; font-weight: 600; text-align: center; margin-top: 14px; display: none; }
+.msg-box.success { background: rgba(74,124,89,0.3); color: #A8D5B5; }
+.msg-box.error { background: rgba(231,76,60,0.3); color: #FFB3AE; }
+
+/* Points display */
+.points-box { background: linear-gradient(135deg, #4A7C59, #7BA888); padding: 20px; border-radius: 16px; text-align: center; margin-top: 20px; }
+.points-box .label { font-size: 11px; opacity: 0.9; letter-spacing: 1px; color: #FFF; }
+.points-box .value { font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 700; color: #FFF; line-height: 1; margin: 6px 0; }
+.points-box .sub { font-size: 11px; opacity: 0.9; color: #FFF; }
+
+/* History */
+.history-title { font-family: 'Playfair Display', serif; font-size: 16px; color: #FFF; margin-top: 24px; margin-bottom: 12px; }
+.req-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; margin-bottom: 10px; display: flex; gap: 12px; align-items: center; }
+.req-card img { width: 55px; height: 55px; border-radius: 10px; object-fit: cover; background: rgba(255,255,255,0.1); flex-shrink: 0; }
+.req-info { flex: 1; }
+.req-info h5 { font-size: 13px; font-weight: 700; color: #FFF; }
+.req-info p { font-size: 10px; color: #95A5A6; margin-top: 2px; }
+.req-price { font-size: 15px; font-weight: 700; color: #F39C12; }
+.req-status { font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 700; display: inline-block; margin-top: 4px; }
+.req-status.pending { background: rgba(243,156,18,0.2); color: #F39C12; }
+.req-status.approved { background: rgba(74,124,89,0.3); color: #A8D5B5; }
+.req-status.rejected { background: rgba(231,76,60,0.25); color: #FFB3AE; }
+
+/* ADMIN PANEL */
+.admin-panel { display: none; }
+.admin-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+.admin-stat { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 14px; text-align: center; }
+.admin-stat .num { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: #F39C12; line-height: 1; }
+.admin-stat .lbl { font-size: 10px; color: #95A5A6; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.admin-tabs { display: flex; gap: 6px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 4px; }
+.admin-tab { padding: 8px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; border: 1.5px solid rgba(255,255,255,0.15); background: transparent; color: #95A5A6; cursor: pointer; white-space: nowrap; }
+.admin-tab.active { background: #F39C12; border-color: #F39C12; color: #1A252F; }
+
+.admin-req-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+.admin-req-top { display: flex; gap: 12px; margin-bottom: 12px; }
+.admin-req-photo { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; background: rgba(255,255,255,0.1); flex-shrink: 0; cursor: pointer; }
+.admin-req-meta .phone { font-size: 13px; font-weight: 700; color: #FFF; }
+.admin-req-meta .date { font-size: 10px; color: #95A5A6; margin-top: 2px; }
+.admin-req-meta .status-badge { font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 700; display: inline-block; margin-top: 6px; }
+.admin-req-meta .status-badge.pending { background: rgba(243,156,18,0.25); color: #F39C12; }
+.admin-req-meta .status-badge.approved { background: rgba(74,124,89,0.3); color: #A8D5B5; }
+.admin-req-meta .status-badge.rejected { background: rgba(231,76,60,0.25); color: #FFB3AE; }
+
+.edit-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.edit-row > div { flex: 1; }
+.edit-lbl { font-size: 10px; color: #95A5A6; font-weight: 600; display: block; margin-bottom: 3px; text-transform: uppercase; }
+.edit-input { width: 100%; padding: 9px 11px; border: 1.5px solid rgba(255,255,255,0.15); border-radius: 10px; font-size: 13px; background: rgba(0,0,0,0.25); color: #FFF; outline: none; font-family: 'Poppins', sans-serif; font-weight: 500; }
+.edit-input:focus { border-color: #F39C12; }
+
+.points-preview { background: rgba(243,156,18,0.15); color: #F39C12; padding: 7px 12px; border-radius: 10px; font-size: 11px; font-weight: 600; margin-bottom: 10px; display: inline-block; }
+
+.admin-actions { display: flex; gap: 8px; }
+.admin-btn { flex: 1; padding: 11px; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Poppins', sans-serif; }
+.btn-approve { background: #4A7C59; color: #FFF; }
+.btn-reject { background: #E74C3C; color: #FFF; }
+
+.empty-msg { text-align: center; padding: 40px 20px; color: #95A5A6; font-size: 13px; }
+.empty-msg .icon { font-size: 40px; margin-bottom: 10px; opacity: 0.5; }
+
+/* VISIT */
+.visit-card { background: #FFFFFF; border-radius: 24px; padding: 26px 22px; border: 1.5px solid #F0EBE2; margin-top: 20px; }
+.visit-row { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid #F5F1EA; }
+.visit-row:last-child { border-bottom: none; }
+.visit-icon { width: 42px; height: 42px; background: #FDFBF7; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.visit-info h6 { font-size: 13px; font-weight: 700; color: #2C3E50; margin-bottom: 3px; }
+.visit-info p { font-size: 13px; color: #7B8B99; line-height: 1.5; }
+.visit-info a { color: #4A7C59; text-decoration: none; font-weight: 600; }
+
+/* FOOTER */
+.footer { background: #2C3E50; color: #95A5A6; text-align: center; padding: 40px 22px 100px; font-size: 12px; line-height: 1.8; }
+.footer strong { color: #FFF; }
+
+/* DRAWER */
+.overlay { position: fixed; inset: 0; background: rgba(44, 62, 80, 0.4); backdrop-filter: blur(4px); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 1000; }
+.overlay.show { opacity: 1; visibility: visible; }
+.drawer { position: fixed; top: 0; right: -340px; width: 340px; max-width: 88vw; height: 100%; background: #FDFBF7; z-index: 1100; transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; box-shadow: -20px 0 60px rgba(0,0,0,0.15); }
+.drawer.open { right: 0; }
+.drawer-header { padding: 22px; border-bottom: 1px solid #EFEAE0; display: flex; justify-content: space-between; align-items: center; }
+.drawer-header h4 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: #2C3E50; }
+.drawer-close { width: 36px; height: 36px; border-radius: 10px; background: #FFFFFF; border: 1.5px solid #EFEAE0; font-size: 20px; color: #95A5A6; cursor: pointer; }
+.drawer-body { flex: 1; overflow-y: auto; padding: 18px 22px 30px; }
+.user-card { background: #FFFFFF; border: 1.5px solid #EFEAE0; border-radius: 18px; padding: 18px; margin-bottom: 18px; text-align: center; }
+.user-card .avatar { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #4A7C59, #E67E22); margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; color: #FFF; font-size: 24px; font-weight: 700; overflow: hidden; }
+.user-card .avatar img { width: 100%; height: 100%; object-fit: cover; }
+.user-card h5 { font-size: 15px; font-weight: 700; color: #2C3E50; margin-bottom: 3px; }
+.user-card p { font-size: 12px; color: #95A5A6; margin-bottom: 14px; }
+.drawer-nav { display: flex; flex-direction: column; gap: 4px; margin-bottom: 18px; }
+.drawer-link { padding: 14px 16px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #2C3E50; text-decoration: none; display: flex; align-items: center; gap: 12px; cursor: pointer; background: transparent; border: none; width: 100%; text-align: left; font-family: 'Poppins', sans-serif; }
+.drawer-link:hover { background: #F5F1EA; }
+.drawer-link .ico { width: 32px; height: 32px; background: #E8F0E9; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.drawer-link.reward-link { background: linear-gradient(135deg, #E67E22, #F39C12); color: #FFF; margin-top: 4px; }
+.drawer-link.reward-link .ico { background: rgba(255,255,255,0.2); }
+.drawer-link.admin-panel-link { background: linear-gradient(135deg, #2C3E50, #4A5568); color: #FFF; display: none; }
+.drawer-link.admin-panel-link .ico { background: rgba(255,255,255,0.15); }
+.drawer-footer { padding: 18px 22px 24px; border-top: 1px solid #EFEAE0; font-size: 11px; color: #95A5A6; text-align: center; }
+.drawer-footer strong { color: #4A7C59; }
+
+/* MODAL */
+.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; justify-content: center; align-items: center; padding: 20px; }
+.modal.show { display: flex; }
+.modal img { max-width: 100%; max-height: 85vh; border-radius: 12px; }
+
+@media (min-width: 768px) {
+    .hero h2 { font-size: 64px; }
+    .section h3 { font-size: 42px; }
+    .services { grid-template-columns: 1fr 1fr; gap: 20px; }
+    .section { padding: 100px 60px; }
+    .hero { padding: 140px 60px 80px; }
+    .rewards-section { padding: 100px 60px; }
+    .footer { padding: 60px; }
+}
+</style>
 </head>
 <body>
-    <div class="login-box">
-        <h2>🏪 Sahu Hotel</h2>
-        <p>Sign in to access store & rate calculator</p>
-        <button id="googleSignInBtn" class="google-btn">
-            <svg class="google-icon" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-            Sign in with Google
-        </button>
-        <div id="errorMessage"></div>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+    <div class="brand">
+        <div class="brand-logo">सा</div>
+        <div class="brand-text">
+            <h1>Sahu Hotel</h1>
+            <p>EST. JHURRE, CHHINDWARA</p>
+        </div>
     </div>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    <div class="menu-btn" onclick="toggleDrawer()">
+        <span></span><span></span><span></span>
+        <div class="badge-dot" id="notifDot"></div>
+    </div>
+</nav>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAr9wY7_SbxrHjOYlvZwmuzwp-QIXGaq-k",
-            authDomain: "sahu-hotel-22ad4.firebaseapp.com",
-            projectId: "sahu-hotel-22ad4",
-            storageBucket: "sahu-hotel-22ad4.firebasestorage.app",
-            messagingSenderId: "289705794339",
-            appId: "1:289705794339:web:77d89c9a259428add08a96",
-            measurementId: "G-M2C64ZTB8D"
-        };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
-        const btn = document.getElementById('googleSignInBtn');
-        const errorDiv = document.getElementById('errorMessage');
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-tag">Neharia Road · Jhurre, Chhindwara</div>
+    <h2>Ek chhoti si<br>dukaan, <em>par apnapan.</em></h2>
+    <p>Kirana se lekar chai-nashte tak — sab kuch ek hi jagah. Vahi purana bharosa, vahi purana swaad. Aaiye, ek baar baithiye.</p>
+    <div class="hero-btns">
+        <a href="tel:7697267258" class="btn-primary">📞 Call karein</a>
+        <a href="#visit" class="btn-ghost">📍 Location dekhein</a>
+    </div>
+    <div class="hero-stats">
+        <div class="stat-item"><h3>50+</h3><p>Saal ka bharosa</p></div>
+        <div class="stat-item"><h3>2</h3><p>Ek hi chhat</p></div>
+        <div class="stat-item"><h3>∞</h3><p>Apnapan</p></div>
+    </div>
+</section>
 
-        if (localStorage.getItem('currentUser')) { window.location.replace("home.html"); }
+<!-- SERVICES -->
+<section class="section" id="services">
+    <div class="section-tag">Hum Kya Dete Hain</div>
+    <h3>Roj ka saaman,<br>aur garam garam chai.</h3>
+    <p class="section-desc">Ek taraf kiraana ka pura saaman, dusri taraf hotel ki taazi mithaai aur chai-nashta.</p>
+    <div class="services">
+        <div class="service-card">
+            <div class="service-icon">🛒</div>
+            <h4>Kirana & General</h4>
+            <p>Ghar chalane ki har cheez, ek chhat ke neeche.</p>
+            <ul class="service-list">
+                <li>Tel, masale, atta, chawal</li>
+                <li>Chocolate, cold drinks, ice cream</li>
+                <li>Sabun, surf, ghar ka saaman</li>
+                <li>Biscuit, namkeen, bachhon ka saaman</li>
+            </ul>
+        </div>
+        <div class="service-card warm">
+            <div class="service-icon">☕</div>
+            <h4>Hotel & Bhatti</h4>
+            <p>Subah se raat tak, garam aur taaza.</p>
+            <ul class="service-list">
+                <li>Garam chai aur coffee</li>
+                <li>Samosa, kachori, poha</li>
+                <li>Taazi mithaai aur namkeen</li>
+                <li>Local swadisht vyajan</li>
+            </ul>
+        </div>
+    </div>
+</section>
 
-        btn.addEventListener('click', () => {
-            btn.innerText = "Connecting Google..."; btn.disabled = true;
+<!-- REWARDS SECTION (Login required) -->
+<section class="rewards-section" id="rewards">
+    <div class="section-tag">Sahu Rewards</div>
+    <h3>Aapke liye,<br>kuch khaas.</h3>
+    <p class="section-desc">Aapki har kharidari ka hisaab. Points kamayein, aur agle bill mein discount payein. ₹10 = 1 point.</p>
+
+    <div class="rewards-box" id="rewardsBox">
+
+        <!-- CASE 1: NOT LOGGED IN -->
+        <div id="loginPrompt" class="login-prompt">
+            <div class="lock-icon">🔐</div>
+            <h4>Login zaroori hai</h4>
+            <p>Rewards dekhne aur claim karne ke liye<br>pehle Google se login karein. Aapka naam<br>automatic aa jayega.</p>
+            <button class="google-login-btn" onclick="loginWithGoogle()">
+                <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                Google se Login karein
+            </button>
+        </div>
+
+        <!-- CASE 2: CUSTOMER LOGGED IN -->
+        <div id="customerRewards" class="rewards-form">
+            <div class="user-bar">
+                <div class="user-avatar" id="cAvatar">?</div>
+                <div class="user-info">
+                    <h5 id="cName">Customer</h5>
+                    <p id="cEmail">email</p>
+                </div>
+                <button class="logout-btn" onclick="logoutUser()">Logout</button>
+            </div>
+
+            <div class="points-box">
+                <div class="label">AAPKE POINTS</div>
+                <div class="value" id="myPoints">0</div>
+                <div class="sub">= ₹<span id="myPointsValue">0</span> ka discount</div>
+            </div>
+
+            <div class="msg-box" id="msgBox"></div>
+
+            <label class="form-label">🛒 Item ka Naam</label>
+            <input type="text" id="itemName" class="form-input" placeholder="Jaise: Chai, Samosa, 1kg Atta..." autocomplete="off">
+
+            <label class="form-label">📸 Item ki Photo</label>
+            <div class="photo-upload" id="photoUpload" onclick="document.getElementById('photoInput').click()">
+                <div class="icon">📷</div>
+                <p>Photo kheencho / chuno</p>
+            </div>
+            <img id="photoPreview" class="photo-preview">
+            <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none;">
+
+            <label class="form-label">💰 Price (₹)</label>
+            <input type="number" id="itemPrice" class="form-input" placeholder="Jaise: 50" inputmode="numeric">
+
+            <button class="submit-reward-btn" id="submitBtn" onclick="submitReward()">🎁 Rewards Claim Submit karein</button>
+
+            <div class="history-title">📜 Mere Claims</div>
+            <div id="myHistory">
+                <div class="empty-msg" style="padding:20px;">Loading...</div>
+            </div>
+        </div>
+
+        <!-- CASE 3: ADMIN LOGGED IN -->
+        <div id="adminPanel" class="admin-panel">
+            <div class="user-bar">
+                <div class="user-avatar" id="aAvatar">A</div>
+                <div class="user-info">
+                    <h5 id="aName">Admin</h5>
+                    <p id="aEmail">email</p>
+                </div>
+                <button class="logout-btn" onclick="logoutUser()">Logout</button>
+            </div>
+
+            <div class="admin-stats">
+                <div class="admin-stat">
+                    <div class="num" id="pendingCount">0</div>
+                    <div class="lbl">PENDING</div>
+                </div>
+                <div class="admin-stat">
+                    <div class="num" id="todayApproved">0</div>
+                    <div class="lbl">AAJ APPROVED</div>
+                </div>
+            </div>
+
+            <div class="admin-tabs">
+                <div class="admin-tab active" onclick="setAdminTab('pending', this)">⏳ Pending</div>
+                <div class="admin-tab" onclick="setAdminTab('approved', this)">✅ Approved</div>
+                <div class="admin-tab" onclick="setAdminTab('rejected', this)">❌ Rejected</div>
+            </div>
+
+            <div id="adminList">
+                <div class="empty-msg"><div class="icon">⏳</div>Loading...</div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- VISIT -->
+<section class="section" id="visit">
+    <div class="section-tag">Aaiye Milte Hain</div>
+    <h3>Rasta, phone,<br>aur samay.</h3>
+    <p class="section-desc">Jhurre colony mein Neharia Road par. Chhindwara se bas paas.</p>
+    <div class="visit-card">
+        <div class="visit-row">
+            <div class="visit-icon">📍</div>
+            <div class="visit-info"><h6>Address</h6><p>Sahu Kirana & General Evam Hotel,<br>Neharia Road, Jhurre,<br>Chhindwara, MP</p></div>
+        </div>
+        <div class="visit-row">
+            <div class="visit-icon">📞</div>
+            <div class="visit-info"><h6>Phone</h6><p><a href="tel:7697267258">+91 76972 67258</a></p></div>
+        </div>
+        <div class="visit-row">
+            <div class="visit-icon">⏰</div>
+            <div class="visit-info"><h6>Samay</h6><p>Subah 7:00 se raat 9:00 tak<br>(Roj)</p></div>
+        </div>
+        <div class="visit-row">
+            <div class="visit-icon">🗺️</div>
+            <div class="visit-info"><h6>Google Maps</h6><p><a href="https://maps.google.com/?q=Sahu+Kirana+Jhurre+Chhindwara" target="_blank">Naksha mein kholo →</a></p></div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <p><strong>Sahu Kirana & General Evam Hotel</strong></p>
+    <p>Neharia Road, Jhurre, Chhindwara (M.P.)</p>
+    <p style="margin-top: 16px; opacity: 0.6;">© 2026 — Bhai ke haathon bana, pyaar se.</p>
+</footer>
+
+<!-- OVERLAY + DRAWER -->
+<div class="overlay" id="overlay" onclick="toggleDrawer()"></div>
+
+<aside class="drawer" id="drawer">
+    <div class="drawer-header">
+        <h4>Menu</h4>
+        <button class="drawer-close" onclick="toggleDrawer()">×</button>
+    </div>
+    <div class="drawer-body">
+        <div class="user-card">
+            <div class="avatar" id="dAvatar">?</div>
+            <h5 id="dName">Mehmaan</h5>
+            <p id="dSub">Login karein apne rewards ke liye</p>
+        </div>
+
+        <nav class="drawer-nav">
+            <a href="#services" class="drawer-link" onclick="toggleDrawer()">
+                <span class="ico">🛒</span> Humari Services
+            </a>
+            <a onclick="goToRewards(); toggleDrawer();" class="drawer-link reward-link">
+                <span class="ico">🎁</span> Rewards Claim karein
+            </a>
+            <a href="#visit" class="drawer-link" onclick="toggleDrawer()">
+                <span class="ico">📍</span> Address & Contact
+            </a>
+            <a href="tel:7697267258" class="drawer-link">
+                <span class="ico">📞</span> Call karein
+            </a>
+            <a href="https://maps.google.com/?q=Sahu+Kirana+Jhurre+Chhindwara" target="_blank" class="drawer-link">
+                <span class="ico">🗺️</span> Google Maps
+            </a>
+            <a onclick="goToRewards(); toggleDrawer();" class="drawer-link admin-panel-link" id="adminPanelLink">
+                <span class="ico">👑</span> Admin Panel
+            </a>
+        </nav>
+    </div>
+    <div class="drawer-footer">
+        <strong>Sahu Hotel</strong> · Jhurre<br>
+        Banaya gaya pyaar se, 2026.
+    </div>
+</aside>
+
+<!-- PHOTO MODAL -->
+<div class="modal" id="photoModal" onclick="this.classList.remove('show')">
+    <img id="modalImg" src="">
+</div>
+
+<script>
+const DB_URL = "https://sahu-hotel-app-default-rtdb.firebaseio.com";
+const ADMIN_EMAIL = "tarendrasahu652@gmail.com";
+const POINTS_PER_RUPEE = 0.1; // ₹10 = 1 point
+
+let currentUser = null;
+let currentRole = 'guest';
+let photoBase64 = null;
+let adminTab = 'pending';
+let allReqs = [];
+let notifInterval = null;
+
+// ============ DRAWER ============
+function toggleDrawer() {
+    document.getElementById('drawer').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('show');
+}
+
+function goToRewards() {
+    document.getElementById('rewards').scrollIntoView({ behavior: 'smooth' });
+    // Agar login nahi hai to prompt dikhega (already)
+}
+
+window.addEventListener('scroll', () => {
+    document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+// ============ LOGIN (Google) ============
+function loginWithGoogle() {
+    // Firebase modular import karna padega, isliye dynamic import
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js').then(({ initializeApp }) => {
+        import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js').then(({ getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged }) => {
+            const firebaseConfig = {
+                apiKey: "AIzaSyAr9wY7_SbxrHjOYlvZwmuzwp-QIXGaq-k",
+                authDomain: "sahu-hotel-22ad4.firebaseapp.com",
+                projectId: "sahu-hotel-22ad4",
+                storageBucket: "sahu-hotel-22ad4.firebasestorage.app",
+                messagingSenderId: "289705794339",
+                appId: "1:289705794339:web:77d89c9a259428add08a96"
+            };
+            const app = initializeApp(firebaseConfig, "sahuApp" + Date.now());
+            const auth = getAuth(app);
+            const provider = new GoogleAuthProvider();
+            
             signInWithPopup(auth, provider).then((result) => {
                 const user = result.user;
                 const email = (user.email || '').toLowerCase().trim();
-                const name = user.displayName || 'Sahu User';
-                localStorage.setItem('currentUser', name);
-                localStorage.setItem('userEmail', email);
-                if (email.includes("tanmaysahu652") || email.includes("tanmay") || email.includes("sahu")) {
-                    localStorage.setItem('userRole', 'admin');
-                } else {
-                    localStorage.setItem('userRole', 'customer');
-                }
-                window.location.replace("home.html");
-            }).catch((error) => {
-                btn.innerHTML = `Sign in with Google`; btn.disabled = false;
-                errorDiv.style.display = 'block'; errorDiv.innerText = "Login Error: " + error.message;
+                const name = user.displayName || 'User';
+                const photo = user.photoURL || '';
+                
+                localStorage.setItem('sahuUser', JSON.stringify({ name, email, photo }));
+                
+                currentUser = { name, email, photo };
+                currentRole = (email === ADMIN_EMAIL) ? 'admin' : 'customer';
+                
+                updateUI();
+                // Auto scroll to rewards
+                setTimeout(() => {
+                    document.getElementById('rewards').scrollIntoView({ behavior: 'smooth' });
+                }, 200);
+            }).catch((err) => {
+                alert('Login nahi hua: ' + err.message);
             });
         });
-    </script>
+    });
+}
+
+function logoutUser() {
+    localStorage.removeItem('sahuUser');
+    currentUser = null;
+    currentRole = 'guest';
+    if (notifInterval) { clearInterval(notifInterval); notifInterval = null; }
+    updateUI();
+    if (window._firebaseAuth) {
+        try { window._firebaseAuth.signOut(); } catch(e) {}
+    }
+    location.reload();
+}
+
+// ============ UI UPDATE ============
+function updateUI() {
+    const loginPrompt = document.getElementById('loginPrompt');
+    const customerRewards = document.getElementById('customerRewards');
+    const adminPanel = document.getElementById('adminPanel');
+    const notifDot = document.getElementById('notifDot');
+    const adminPanelLink = document.getElementById('adminPanelLink');
+    const dAvatar = document.getElementById('dAvatar');
+    const dName = document.getElementById('dName');
+    const dSub = document.getElementById('dSub');
+
+    // Reset all
+    loginPrompt.style.display = 'none';
+    customerRewards.style.display = 'none';
+    adminPanel.style.display = 'none';
+    adminPanelLink.style.display = 'none';
+    notifDot.style.display = 'none';
+
+    if (!currentUser) {
+        // Not logged in
+        loginPrompt.style.display = 'block';
+        dAvatar.innerText = '?';
+        dName.innerText = 'Mehmaan';
+        dSub.innerText = 'Login karein apne rewards ke liye';
+    } else if (currentRole === 'admin') {
+        // Admin
+        adminPanel.style.display = 'block';
+        adminPanelLink.style.display = 'flex';
+        
+        // Set admin avatar + name
+        const aAvatar = document.getElementById('aAvatar');
+        if (currentUser.photo) {
+            aAvatar.innerHTML = `<img src="${currentUser.photo}" alt="">`;
+        } else {
+            aAvatar.innerText = (currentUser.name || 'A').charAt(0).toUpperCase();
+        }
+        document.getElementById('aName').innerText = currentUser.name;
+        document.getElementById('aEmail').innerText = currentUser.email;
+
+        // Drawer info
+        if (currentUser.photo) {
+            dAvatar.innerHTML = `<img src="${currentUser.photo}" alt="">`;
+        } else {
+            dAvatar.innerText = (currentUser.name || 'A').charAt(0).toUpperCase();
+        }
+        dName.innerText = '👑 ' + currentUser.name;
+        dSub.innerText = 'Admin Panel';
+
+        // Load admin data
+        loadAdminRequests();
+        if (!notifInterval) notifInterval = setInterval(checkPendingCount, 10000);
+        checkPendingCount();
+    } else {
+        // Customer
+        customerRewards.style.display = 'block';
+        
+        const cAvatar = document.getElementById('cAvatar');
+        if (currentUser.photo) {
+            cAvatar.innerHTML = `<img src="${currentUser.photo}" alt="">`;
+        } else {
+            cAvatar.innerText = (currentUser.name || 'U').charAt(0).toUpperCase();
+        }
+        document.getElementById('cName').innerText = currentUser.name;
+        document.getElementById('cEmail').innerText = currentUser.email;
+
+        // Drawer info
+        if (currentUser.photo) {
+            dAvatar.innerHTML = `<img src="${currentUser.photo}" alt="">`;
+        } else {
+            dAvatar.innerText = (currentUser.name || 'U').charAt(0).toUpperCase();
+        }
+        dName.innerText = currentUser.name;
+        dSub.innerText = '🎁 Rewards member';
+
+        // Load customer points + history
+        loadCustomerPoints();
+        loadMyHistory();
+    }
+}
+
+// ============ PHOTO UPLOAD ============
+document.getElementById('photoInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let w = img.width, h = img.height;
+            const maxW = 600;
+            if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            photoBase64 = canvas.toDataURL('image/jpeg', 0.6);
+            document.getElementById('photoPreview').src = photoBase64;
+            document.getElementById('photoPreview').style.display = 'block';
+            document.getElementById('photoUpload').style.display = 'none';
+        };
+        img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+});
+
+// ============ SUBMIT REWARD ============
+async function submitReward() {
+    const itemName = document.getElementById('itemName').value.trim();
+    const price = parseFloat(document.getElementById('itemPrice').value);
+
+    if (!itemName) { showMsg('❌ Item ka naam likhein', 'error'); return; }
+    if (!photoBase64) { showMsg('❌ Photo kheencho', 'error'); return; }
+    if (isNaN(price) || price <= 0) { showMsg('❌ Sahi price daalein', 'error'); return; }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerText = 'Bhej raha hoon...';
+
+    const req = {
+        phone: currentUser.email,
+        email: currentUser.email,
+        name: currentUser.name,
+        item_name: itemName,
+        price: price,
+        photo: photoBase64,
+        points_requested: Math.floor(price * POINTS_PER_RUPEE),
+        timestamp: Date.now(),
+        date_str: new Date().toLocaleString('en-IN'),
+        status: 'pending'
+    };
+
+    try {
+        const res = await fetch(`${DB_URL}/reward_requests.json`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(req)
+        });
+        if (!res.ok) throw new Error('Network error');
+        
+        showMsg('✅ Claim bhej diya! Admin approve karega, phir points milenge.', 'success');
+        
+        document.getElementById('itemName').value = '';
+        document.getElementById('itemPrice').value = '';
+        photoBase64 = null;
+        document.getElementById('photoPreview').style.display = 'none';
+        document.getElementById('photoPreview').src = '';
+        document.getElementById('photoUpload').style.display = 'block';
+        document.getElementById('photoInput').value = '';
+        
+        loadMyHistory();
+    } catch(e) {
+        showMsg('❌ Error: ' + e.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerText = '🎁 Rewards Claim Submit karein';
+    }
+}
+
+function showMsg(text, type) {
+    const m = document.getElementById('msgBox');
+    m.className = 'msg-box ' + type;
+    m.innerText = text;
+    m.style.display = 'block';
+    setTimeout(() => { m.style.display = 'none'; }, 4000);
+}
+
+// ============ LOAD CUSTOMER POINTS ============
+async function loadCustomerPoints() {
+    try {
+        const key = currentUser.email.replace(/\./g, '_');
+        const res = await fetch(`${DB_URL}/customers/${key}.json`);
+        const data = await res.json();
+        const points = data?.total_points || 0;
+        document.getElementById('myPoints').innerText = points;
+        document.getElementById('myPointsValue').innerText = Math.floor(points * 10);
+    } catch(e) {
+        document.getElementById('myPoints').innerText = '0';
+        document.getElementById('myPointsValue').innerText = '0';
+    }
+}
+
+// ============ LOAD CUSTOMER HISTORY ============
+async function loadMyHistory() {
+    try {
+        const res = await fetch(`${DB_URL}/reward_requests.json`);
+        const data = await res.json();
+        const container = document.getElementById('myHistory');
+        
+        if (!data) {
+            container.innerHTML = '<div class="empty-msg" style="padding:20px;">Abhi koi claim nahi</div>';
+            return;
+        }
+        const mine = Object.values(data)
+            .filter(r => r.email === currentUser.email)
+            .sort((a,b) => b.timestamp - a.timestamp)
+            .slice(0, 10);
+        
+        if (mine.length === 0) {
+            container.innerHTML = '<div class="empty-msg" style="padding:20px;">Abhi koi claim nahi</div>';
+            return;
+        }
+        
+        let html = '';
+        mine.forEach(r => {
+            const sc = r.status || 'pending';
+            const st = sc === 'pending' ? '⏳ Pending' : (sc === 'approved' ? '✅ Approved' : '❌ Rejected');
+            html += `
+                <div class="req-card">
+                    <img src="${r.photo || ''}" alt="">
+                    <div class="req-info">
+                        <h5>${r.item_name}</h5>
+                        <p>${r.date_str || ''}</p>
+                        <div class="req-status ${sc}">${st}</div>
+                    </div>
+                    <div class="req-price">₹${r.price}</div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    } catch(e) {
+        document.getElementById('myHistory').innerHTML = '<div class="empty-msg" style="padding:20px;">Load nahi hua</div>';
+    }
+}
+
+// ============ ADMIN: LOAD REQUESTS ============
+async function loadAdminRequests() {
+    try {
+        const res = await fetch(`${DB_URL}/reward_requests.json`);
+        const data = await res.json();
+        allReqs = data ? Object.keys(data).map(k => ({ id: k, ...data[k] })).sort((a,b) => b.timestamp - a.timestamp) : [];
+        renderAdminList();
+    } catch(e) {
+        document.getElementById('adminList').innerHTML = '<div class="empty-msg"><div class="icon">❌</div>Data load nahi hua</div>';
+    }
+}
+
+function setAdminTab(tab, el) {
+    adminTab = tab;
+    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    renderAdminList();
+}
+
+function renderAdminList() {
+    const pending = allReqs.filter(r => r.status === 'pending');
+    const approved = allReqs.filter(r => r.status === 'approved');
+    const rejected = allReqs.filter(r => r.status === 'rejected');
+
+    document.getElementById('pendingCount').innerText = pending.length;
+    const today = new Date().toDateString();
+    document.getElementById('todayApproved').innerText = approved.filter(r => new Date(r.timestamp).toDateString() === today).length;
+
+    let list = adminTab === 'pending' ? pending : (adminTab === 'approved' ? approved : rejected);
+    const container = document.getElementById('adminList');
+    
+    if (list.length === 0) {
+        container.innerHTML = '<div class="empty-msg"><div class="icon">📭</div>Yahan kuch nahi hai</div>';
+        return;
+    }
+
+    let html = '';
+    list.forEach(r => {
+        const badge = r.status === 'pending' ? '⏳ Pending' : (r.status === 'approved' ? '✅ Approved' : '❌ Rejected');
+        const cp = Math.floor((r.price || 0) * POINTS_PER_RUPEE);
+
+        let editBlock = '';
+        if (r.status === 'pending') {
+            editBlock = `
+                <div class="edit-row">
+                    <div>
+                        <span class="edit-lbl">Item</span>
+                        <input type="text" class="edit-input" id="item_${r.id}" value="${escapeHtml(r.item_name || '')}">
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <div>
+                        <span class="edit-lbl">Price (₹)</span>
+                        <input type="number" class="edit-input" id="price_${r.id}" value="${r.price || 0}" oninput="updatePointsPreview('${r.id}')">
+                    </div>
+                    <div>
+                        <span class="edit-lbl">Points</span>
+                        <input type="number" class="edit-input" id="points_${r.id}" value="${cp}" readonly style="background:rgba(74,124,89,0.3); color:#A8D5B5; font-weight:700;">
+                    </div>
+                </div>
+                <div class="admin-actions">
+                    <button class="admin-btn btn-approve" onclick="approveReq('${r.id}')">✅ Approve</button>
+                    <button class="admin-btn btn-reject" onclick="rejectReq('${r.id}')">❌ Reject</button>
+                </div>
+            `;
+        } else {
+            editBlock = `
+                <div style="text-align:center; font-size:12px; font-weight:600; padding:8px; ${r.status === 'approved' ? 'color:#A8D5B5;' : 'color:#FFB3AE;'}">
+                    ${r.status === 'approved' ? `✅ Approved · +${r.points_approved || cp} points` : '❌ Rejected'}
+                </div>
+            `;
+        }
+
+        html += `
+            <div class="admin-req-card">
+                <div class="admin-req-top">
+                    <img class="admin-req-photo" src="${r.photo || ''}" onclick="openPhoto('${r.photo || ''}')">
+                    <div class="admin-req-meta">
+                        <div class="phone">👤 ${r.name || 'Customer'}</div>
+                        <div class="date">${r.email || ''}</div>
+                        <div class="date">${r.date_str || ''}</div>
+                        <div class="status-badge ${r.status}">${badge}</div>
+                    </div>
+                </div>
+                <div class="points-preview">🎁 ${cp} points milenge (₹10 = 1pt)</div>
+                ${editBlock}
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+function escapeHtml(t) { return String(t).replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+
+function updatePointsPreview(id) {
+    const price = parseFloat(document.getElementById('price_' + id).value) || 0;
+    document.getElementById('points_' + id).value = Math.floor(price * POINTS_PER_RUPEE);
+}
+
+async function approveReq(id) {
+    const req = allReqs.find(r => r.id === id);
+    if (!req) return;
+    
+    const finalItem = document.getElementById('item_' + id).value.trim();
+    const finalPrice = parseFloat(document.getElementById('price_' + id).value) || 0;
+    const finalPoints = parseInt(document.getElementById('points_' + id).value) || 0;
+
+    if (!finalItem || finalPrice <= 0) { alert('Item aur price sahi karein'); return; }
+    if (!confirm(`Approve karein?\n\nCustomer: ${req.name}\nItem: ${finalItem}\nPrice: ₹${finalPrice}\nPoints: ${finalPoints}`)) return;
+
+    try {
+        await fetch(`${DB_URL}/reward_requests/${id}.json`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                item_name: finalItem,
+                price: finalPrice,
+                points_approved: finalPoints,
+                status: 'approved',
+                approved_at: Date.now()
+            })
+        });
+
+        // Customer ke points update karo
+        const key = req.email.replace(/\./g, '_');
+        const custRes = await fetch(`${DB_URL}/customers/${key}.json`);
+        const custData = await custRes.json();
+        const newTotal = (custData?.total_points || 0) + finalPoints;
+        const newSpent = (custData?.total_spent || 0) + finalPrice;
+
+        await fetch(`${DB_URL}/customers/${key}.json`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: req.name,
+                email: req.email,
+                total_points: newTotal,
+                total_spent: newSpent,
+                last_visit: Date.now()
+            })
+        });
+
+        loadAdminRequests();
+    } catch(e) {
+        alert('Error: ' + e.message);
+    }
+}
+
+async function rejectReq(id) {
+    if (!confirm('Pakka reject karna hai?')) return;
+    try {
+        await fetch(`${DB_URL}/reward_requests/${id}.json`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'rejected', rejected_at: Date.now() })
+        });
+        loadAdminRequests();
+    } catch(e) { alert('Error: ' + e.message); }
+}
+
+function openPhoto(src) {
+    document.getElementById('modalImg').src = src;
+    document.getElementById('photoModal').classList.add('show');
+}
+
+// ============ NOTIFICATION ============
+async function checkPendingCount() {
+    try {
+        const res = await fetch(`${DB_URL}/reward_requests.json`);
+        const data = await res.json();
+        if (!data) { 
+            document.getElementById('notifDot').style.display = 'none';
+            return; 
+        }
+        const pendingCount = Object.values(data).filter(r => r.status === 'pending').length;
+        const dot = document.getElementById('notifDot');
+        if (pendingCount > 0) {
+            dot.style.display = 'block';
+            document.title = `(${pendingCount}) Sahu Hotel — Rewards`;
+        } else {
+            dot.style.display = 'none';
+            document.title = 'Sahu Hotel — Jhurre, Chhindwara';
+        }
+    } catch(e) {}
+}
+
+// ============ INIT ============
+function init() {
+    const saved = localStorage.getItem('sahuUser');
+    if (saved) {
+        try {
+            currentUser = JSON.parse(saved);
+            const email = (currentUser.email || '').toLowerCase().trim();
+            currentRole = (email === ADMIN_EMAIL) ? 'admin' : 'customer';
+        } catch(e) {
+            currentUser = null;
+            currentRole = 'guest';
+        }
+    }
+    updateUI();
+}
+
+init();
+</script>
 </body>
 </html>
