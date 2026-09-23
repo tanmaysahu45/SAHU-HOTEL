@@ -5,12 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sahu Hotel — Jhurre, Chhindwara</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<!-- Firebase SDK (compat version - real-time ke liye) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
 html { scroll-behavior: smooth; }
 body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 
-/* NAV */
 .nav { position: fixed; top: 0; left: 0; right: 0; background: rgba(253, 251, 247, 0.92); backdrop-filter: blur(20px); padding: 14px 22px; display: flex; justify-content: space-between; align-items: center; z-index: 900; }
 .nav.scrolled { box-shadow: 0 4px 20px rgba(74,124,89,0.08); }
 .brand { display: flex; align-items: center; gap: 10px; }
@@ -22,7 +25,6 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 .badge-dot { position: absolute; top: 8px; right: 8px; width: 10px; height: 10px; background: #E74C3C; border-radius: 50%; border: 2px solid #FFF; display: none; animation: pulse 1.5s infinite; }
 @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
 
-/* HERO */
 .hero { min-height: 100vh; padding: 120px 22px 60px; display: flex; flex-direction: column; justify-content: center; }
 .hero-tag { display: inline-flex; align-items: center; gap: 6px; background: #E8F0E9; color: #4A7C59; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; width: fit-content; margin-bottom: 20px; }
 .hero-tag::before { content: ''; width: 6px; height: 6px; background: #4A7C59; border-radius: 50%; }
@@ -36,13 +38,11 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 .stat-item h3 { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: #4A7C59; line-height: 1; }
 .stat-item p { font-size: 11px; color: #95A5A6; margin-top: 4px; font-weight: 500; text-transform: uppercase; }
 
-/* SECTIONS */
 .section { padding: 70px 22px; }
 .section-tag { font-size: 11px; font-weight: 700; color: #E67E22; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
 .section h3 { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: #2C3E50; line-height: 1.15; margin-bottom: 14px; }
 .section-desc { font-size: 14px; color: #7B8B99; line-height: 1.7; max-width: 560px; margin-bottom: 40px; }
 
-/* SERVICES */
 .services { display: grid; grid-template-columns: 1fr; gap: 16px; }
 .service-card { background: #FFFFFF; border-radius: 20px; padding: 26px 22px; border: 1.5px solid #F0EBE2; position: relative; overflow: hidden; }
 .service-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #4A7C59, #7BA888); }
@@ -56,7 +56,6 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 .service-list li::before { content: '✓'; width: 18px; height: 18px; background: #E8F0E9; color: #4A7C59; border-radius: 50%; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
 .service-card.warm .service-list li::before { background: #FDF0E2; color: #E67E22; }
 
-/* REWARDS SECTION */
 .rewards-section { background: linear-gradient(160deg, #2C3E50 0%, #1A252F 100%); color: #FFF; padding: 70px 22px; border-radius: 32px 32px 0 0; margin-top: 30px; }
 .rewards-section .section-tag { color: #F39C12; }
 .rewards-section h3 { color: #FFF; }
@@ -98,13 +97,17 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 .msg-box.success { background: rgba(74,124,89,0.3); color: #A8D5B5; }
 .msg-box.error { background: rgba(231,76,60,0.3); color: #FFB3AE; }
 
-.points-box { background: linear-gradient(135deg, #4A7C59, #7BA888); padding: 20px; border-radius: 16px; text-align: center; margin-top: 20px; }
+.points-box { background: linear-gradient(135deg, #4A7C59, #7BA888); padding: 20px; border-radius: 16px; text-align: center; margin-top: 20px; transition: 0.3s; }
+.points-box.updated { animation: flash 1s ease; }
+@keyframes flash { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(243,156,18,0.6); } }
 .points-box .label { font-size: 11px; opacity: 0.9; letter-spacing: 1px; color: #FFF; }
 .points-box .value { font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 700; color: #FFF; line-height: 1; margin: 6px 0; }
 .points-box .sub { font-size: 11px; opacity: 0.9; color: #FFF; }
 
 .history-title { font-family: 'Playfair Display', serif; font-size: 16px; color: #FFF; margin-top: 24px; margin-bottom: 12px; }
-.req-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; margin-bottom: 10px; display: flex; gap: 12px; align-items: center; }
+.req-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; margin-bottom: 10px; display: flex; gap: 12px; align-items: center; transition: 0.5s; }
+.req-card.new-update { animation: flashCard 1.5s ease; }
+@keyframes flashCard { 0%, 100% { background: rgba(255,255,255,0.05); } 50% { background: rgba(74,124,89,0.3); } }
 .req-card img { width: 55px; height: 55px; border-radius: 10px; object-fit: cover; background: rgba(255,255,255,0.1); flex-shrink: 0; }
 .req-info { flex: 1; min-width: 0; }
 .req-info h5 { font-size: 13px; font-weight: 700; color: #FFF; }
@@ -115,7 +118,6 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 .req-status.approved { background: rgba(74,124,89,0.3); color: #A8D5B5; }
 .req-status.rejected { background: rgba(231,76,60,0.25); color: #FFB3AE; }
 
-/* ADMIN PANEL */
 .admin-panel { display: none; }
 .admin-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
 .admin-stat { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 14px; text-align: center; }
@@ -126,7 +128,9 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 .admin-tab { padding: 8px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; border: 1.5px solid rgba(255,255,255,0.15); background: transparent; color: #95A5A6; cursor: pointer; white-space: nowrap; }
 .admin-tab.active { background: #F39C12; border-color: #F39C12; color: #1A252F; }
 
-.admin-req-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+.admin-req-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 14px; margin-bottom: 12px; transition: 0.5s; }
+.admin-req-card.new-claim { animation: newClaimFlash 2s ease; }
+@keyframes newClaimFlash { 0%, 100% { border-color: rgba(255,255,255,0.1); } 50% { border-color: #F39C12; box-shadow: 0 0 20px rgba(243,156,18,0.4); } }
 .admin-req-top { display: flex; gap: 12px; margin-bottom: 12px; }
 .admin-req-photo { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; background: rgba(255,255,255,0.1); flex-shrink: 0; cursor: pointer; }
 .admin-req-meta { flex: 1; min-width: 0; }
@@ -153,7 +157,6 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 .empty-msg { text-align: center; padding: 40px 20px; color: #95A5A6; font-size: 13px; }
 .empty-msg .icon { font-size: 40px; margin-bottom: 10px; opacity: 0.5; }
 
-/* VISIT */
 .visit-card { background: #FFFFFF; border-radius: 24px; padding: 26px 22px; border: 1.5px solid #F0EBE2; margin-top: 20px; }
 .visit-row { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid #F5F1EA; }
 .visit-row:last-child { border-bottom: none; }
@@ -162,11 +165,9 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 .visit-info p { font-size: 13px; color: #7B8B99; line-height: 1.5; }
 .visit-info a { color: #4A7C59; text-decoration: none; font-weight: 600; }
 
-/* FOOTER */
 .footer { background: #2C3E50; color: #95A5A6; text-align: center; padding: 40px 22px 100px; font-size: 12px; line-height: 1.8; }
 .footer strong { color: #FFF; }
 
-/* DRAWER */
 .overlay { position: fixed; inset: 0; background: rgba(44, 62, 80, 0.4); backdrop-filter: blur(4px); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 1000; }
 .overlay.show { opacity: 1; visibility: visible; }
 .drawer { position: fixed; top: 0; right: -340px; width: 340px; max-width: 88vw; height: 100%; background: #FDFBF7; z-index: 1100; transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; box-shadow: -20px 0 60px rgba(0,0,0,0.15); }
@@ -191,10 +192,21 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 .drawer-footer { padding: 18px 22px 24px; border-top: 1px solid #EFEAE0; font-size: 11px; color: #95A5A6; text-align: center; }
 .drawer-footer strong { color: #4A7C59; }
 
-/* MODAL */
 .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; justify-content: center; align-items: center; padding: 20px; }
 .modal.show { display: flex; }
 .modal img { max-width: 100%; max-height: 85vh; border-radius: 12px; }
+
+/* TOAST NOTIFICATION */
+.toast-container { position: fixed; top: 80px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+.toast { background: #FFFFFF; border-left: 4px solid #F39C12; padding: 14px 18px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); min-width: 280px; max-width: 340px; pointer-events: auto; animation: slideIn 0.4s ease; }
+@keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.toast-title { font-size: 13px; font-weight: 700; color: #2C3E50; margin-bottom: 4px; }
+.toast-msg { font-size: 12px; color: #7B8B99; line-height: 1.4; }
+
+/* Notification permission banner */
+.notif-banner { display: none; background: linear-gradient(135deg, #F39C12, #E67E22); color: #FFF; padding: 14px 18px; border-radius: 14px; margin-bottom: 16px; align-items: center; gap: 12px; font-size: 13px; font-weight: 500; }
+.notif-banner.show { display: flex; }
+.notif-banner button { background: #FFF; color: #E67E22; border: none; padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; flex-shrink: 0; }
 
 @media (min-width: 768px) {
     .hero h2 { font-size: 64px; }
@@ -209,7 +221,6 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
 </head>
 <body>
 
-<!-- NAV -->
 <nav class="nav" id="nav">
     <div class="brand">
         <div class="brand-logo">सा</div>
@@ -224,7 +235,6 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
     </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
     <div class="hero-tag">Neharia Road · Jhurre, Chhindwara</div>
     <h2>Ek chhoti si<br>dukaan, <em>par apnapan.</em></h2>
@@ -240,7 +250,6 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
     </div>
 </section>
 
-<!-- SERVICES -->
 <section class="section" id="services">
     <div class="section-tag">Hum Kya Dete Hain</div>
     <h3>Roj ka saaman,<br>aur garam garam chai.</h3>
@@ -271,7 +280,6 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
     </div>
 </section>
 
-<!-- REWARDS SECTION -->
 <section class="rewards-section" id="rewards">
     <div class="section-tag">Sahu Rewards</div>
     <h3>Aapke liye,<br>kuch khaas.</h3>
@@ -290,6 +298,11 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
         </div>
 
         <div id="customerRewards" class="rewards-form">
+            <div class="notif-banner" id="notifBanner">
+                <span style="flex:1;">🔔 Update notifications on karein — status turant pata chale</span>
+                <button onclick="requestNotifPermission()">ON karo</button>
+            </div>
+
             <div class="user-bar">
                 <div class="user-avatar" id="cAvatar">?</div>
                 <div class="user-info">
@@ -299,7 +312,7 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
                 <button class="logout-btn" onclick="logoutUser()">Logout</button>
             </div>
 
-            <div class="points-box">
+            <div class="points-box" id="pointsBox">
                 <div class="label">AAPKE POINTS</div>
                 <div class="value" id="myPoints">0</div>
                 <div class="sub">= ₹<span id="myPointsValue">0</span> ka discount</div>
@@ -330,6 +343,11 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
         </div>
 
         <div id="adminPanel" class="admin-panel">
+            <div class="notif-banner" id="adminNotifBanner">
+                <span style="flex:1;">🔔 Naye claims ki notification ON karein</span>
+                <button onclick="requestNotifPermission()">ON karo</button>
+            </div>
+
             <div class="user-bar">
                 <div class="user-avatar" id="aAvatar">A</div>
                 <div class="user-info">
@@ -364,7 +382,6 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
     </div>
 </section>
 
-<!-- VISIT -->
 <section class="section" id="visit">
     <div class="section-tag">Aaiye Milte Hain</div>
     <h3>Rasta, phone,<br>aur samay.</h3>
@@ -395,7 +412,6 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
     <p style="margin-top: 16px; opacity: 0.6;">© 2026 — Bhai ke haathon bana, pyaar se.</p>
 </footer>
 
-<!-- OVERLAY + DRAWER -->
 <div class="overlay" id="overlay" onclick="toggleDrawer()"></div>
 
 <aside class="drawer" id="drawer">
@@ -437,80 +453,141 @@ body { background: #FDFBF7; color: #2C3E50; overflow-x: hidden; }
     </div>
 </aside>
 
-<!-- PHOTO MODAL -->
 <div class="modal" id="photoModal" onclick="this.classList.remove('show')">
     <img id="modalImg" src="">
 </div>
 
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
 <script>
-// ✅ SAHI DATABASE URL
-const DB_URL = "https://sahu-hotel-22ad4-default-rtdb.firebaseio.com";
+// ============ FIREBASE INIT (compat) ============
+const firebaseConfig = {
+    apiKey: "AIzaSyAr9wY7_SbxrHjOYlvZwmuzwp-QIXGaq-k",
+    authDomain: "sahu-hotel-22ad4.firebaseapp.com",
+    projectId: "sahu-hotel-22ad4",
+    storageBucket: "sahu-hotel-22ad4.firebasestorage.app",
+    messagingSenderId: "289705794339",
+    appId: "1:289705794339:web:77d89c9a259428add08a96"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const auth = firebase.auth();
+
 const ADMIN_EMAIL = "tarendrasahu652@gmail.com";
-const POINTS_PER_RUPEE = 0.1; // ₹10 = 1 point
+const POINTS_PER_RUPEE = 0.1;
 
 let currentUser = null;
 let currentRole = 'guest';
 let photoBase64 = null;
 let adminTab = 'pending';
 let allReqs = [];
-let notifInterval = null;
+let notifRef = null;
+let customerRef = null;
+let lastNotifiedIds = new Set();
 
+// ============ DRAWER ============
 function toggleDrawer() {
     document.getElementById('drawer').classList.toggle('open');
     document.getElementById('overlay').classList.toggle('show');
 }
-
 function goToRewards() {
     document.getElementById('rewards').scrollIntoView({ behavior: 'smooth' });
 }
-
 window.addEventListener('scroll', () => {
     document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
 });
 
+// ============ NOTIFICATIONS ============
+async function requestNotifPermission() {
+    if (!('Notification' in window)) {
+        alert('Ye browser notification support nahi karta');
+        return;
+    }
+    const perm = await Notification.requestPermission();
+    if (perm === 'granted') {
+        showToast('✅ Notifications ON', 'Ab aapko updates milenge');
+        document.getElementById('notifBanner').classList.remove('show');
+        document.getElementById('adminNotifBanner').classList.remove('show');
+        // Test notification
+        new Notification('Sahu Hotel', {
+            body: 'Notifications successfully ON ho gayi!',
+            icon: 'https://sahu-hotel-22ad4.web.app/favicon.ico'
+        });
+    } else {
+        alert('Notifications allow nahi hui. Browser settings se manually ON karein.');
+    }
+}
+
+function showBrowserNotification(title, body) {
+    if (!('Notification' in window)) return;
+    if (Notification.permission !== 'granted') return;
+    try {
+        const n = new Notification(title, {
+            body: body,
+            icon: 'https://sahu-hotel-22ad4.web.app/favicon.ico',
+            badge: 'https://sahu-hotel-22ad4.web.app/favicon.ico',
+            tag: 'sahu-notif-' + Date.now(),
+            vibrate: [200, 100, 200]
+        });
+        // Auto close after 8 sec
+        setTimeout(() => n.close(), 8000);
+    } catch(e) {}
+}
+
+function showToast(title, msg) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `<div class="toast-title">${title}</div><div class="toast-msg">${msg}</div>`;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 5000);
+}
+
+function playNotifSound() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
+        osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(); osc.stop(ctx.currentTime + 0.5);
+    } catch(e) {}
+}
+
 // ============ LOGIN ============
 function loginWithGoogle() {
-    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js').then(({ initializeApp }) => {
-        import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js').then(({ getAuth, signInWithPopup, GoogleAuthProvider }) => {
-            const firebaseConfig = {
-                apiKey: "AIzaSyAr9wY7_SbxrHjOYlvZwmuzwp-QIXGaq-k",
-                authDomain: "sahu-hotel-22ad4.firebaseapp.com",
-                projectId: "sahu-hotel-22ad4",
-                storageBucket: "sahu-hotel-22ad4.firebasestorage.app",
-                messagingSenderId: "289705794339",
-                appId: "1:289705794339:web:77d89c9a259428add08a96"
-            };
-            const app = initializeApp(firebaseConfig, "sahuApp" + Date.now());
-            const auth = getAuth(app);
-            const provider = new GoogleAuthProvider();
-            
-            signInWithPopup(auth, provider).then((result) => {
-                const user = result.user;
-                const email = (user.email || '').toLowerCase().trim();
-                const name = user.displayName || 'User';
-                const photo = user.photoURL || '';
-                
-                localStorage.setItem('sahuUser', JSON.stringify({ name, email, photo }));
-                
-                currentUser = { name, email, photo };
-                currentRole = (email === ADMIN_EMAIL) ? 'admin' : 'customer';
-                
-                updateUI();
-                setTimeout(() => {
-                    document.getElementById('rewards').scrollIntoView({ behavior: 'smooth' });
-                }, 200);
-            }).catch((err) => {
-                alert('Login nahi hua: ' + err.message);
-            });
-        });
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).then((result) => {
+        const user = result.user;
+        const email = (user.email || '').toLowerCase().trim();
+        const name = user.displayName || 'User';
+        const photo = user.photoURL || '';
+        
+        localStorage.setItem('sahuUser', JSON.stringify({ name, email, photo }));
+        currentUser = { name, email, photo };
+        currentRole = (email === ADMIN_EMAIL) ? 'admin' : 'customer';
+        
+        updateUI();
+        setTimeout(() => {
+            document.getElementById('rewards').scrollIntoView({ behavior: 'smooth' });
+        }, 200);
+    }).catch((err) => {
+        alert('Login nahi hua: ' + err.message);
     });
 }
 
 function logoutUser() {
+    auth.signOut().catch(() => {});
+    if (notifRef) { notifRef.off(); notifRef = null; }
+    if (customerRef) { customerRef.off(); customerRef = null; }
     localStorage.removeItem('sahuUser');
     currentUser = null;
     currentRole = 'guest';
-    if (notifInterval) { clearInterval(notifInterval); notifInterval = null; }
     updateUI();
     location.reload();
 }
@@ -532,6 +609,9 @@ function updateUI() {
     adminPanelLink.style.display = 'none';
     notifDot.style.display = 'none';
 
+    if (notifRef) { notifRef.off(); notifRef = null; }
+    if (customerRef) { customerRef.off(); customerRef = null; }
+
     if (!currentUser) {
         loginPrompt.style.display = 'block';
         dAvatar.innerText = '?';
@@ -542,48 +622,147 @@ function updateUI() {
         adminPanelLink.style.display = 'flex';
         
         const aAvatar = document.getElementById('aAvatar');
-        if (currentUser.photo) {
-            aAvatar.innerHTML = `<img src="${currentUser.photo}" alt="">`;
-        } else {
-            aAvatar.innerText = (currentUser.name || 'A').charAt(0).toUpperCase();
-        }
+        if (currentUser.photo) aAvatar.innerHTML = `<img src="${currentUser.photo}" alt="">`;
+        else aAvatar.innerText = (currentUser.name || 'A').charAt(0).toUpperCase();
         document.getElementById('aName').innerText = currentUser.name;
         document.getElementById('aEmail').innerText = currentUser.email;
 
-        if (currentUser.photo) {
-            dAvatar.innerHTML = `<img src="${currentUser.photo}" alt="">`;
-        } else {
-            dAvatar.innerText = (currentUser.name || 'A').charAt(0).toUpperCase();
-        }
+        if (currentUser.photo) dAvatar.innerHTML = `<img src="${currentUser.photo}" alt="">`;
+        else dAvatar.innerText = (currentUser.name || 'A').charAt(0).toUpperCase();
         dName.innerText = '👑 ' + currentUser.name;
         dSub.innerText = 'Admin Panel';
 
-        loadAdminRequests();
-        if (!notifInterval) notifInterval = setInterval(checkPendingCount, 10000);
-        checkPendingCount();
+        // Notification banner
+        if ('Notification' in window && Notification.permission !== 'granted') {
+            document.getElementById('adminNotifBanner').classList.add('show');
+        }
+
+        // Real-time listener for admin
+        startAdminListener();
     } else {
         customerRewards.style.display = 'block';
         
         const cAvatar = document.getElementById('cAvatar');
-        if (currentUser.photo) {
-            cAvatar.innerHTML = `<img src="${currentUser.photo}" alt="">`;
-        } else {
-            cAvatar.innerText = (currentUser.name || 'U').charAt(0).toUpperCase();
-        }
+        if (currentUser.photo) cAvatar.innerHTML = `<img src="${currentUser.photo}" alt="">`;
+        else cAvatar.innerText = (currentUser.name || 'U').charAt(0).toUpperCase();
         document.getElementById('cName').innerText = currentUser.name;
         document.getElementById('cEmail').innerText = currentUser.email;
 
-        if (currentUser.photo) {
-            dAvatar.innerHTML = `<img src="${currentUser.photo}" alt="">`;
-        } else {
-            dAvatar.innerText = (currentUser.name || 'U').charAt(0).toUpperCase();
-        }
+        if (currentUser.photo) dAvatar.innerHTML = `<img src="${currentUser.photo}" alt="">`;
+        else dAvatar.innerText = (currentUser.name || 'U').charAt(0).toUpperCase();
         dName.innerText = currentUser.name;
         dSub.innerText = '🎁 Rewards member';
 
-        loadCustomerPoints();
-        loadMyHistory();
+        if ('Notification' in window && Notification.permission !== 'granted') {
+            document.getElementById('notifBanner').classList.add('show');
+        }
+
+        // Real-time listener for customer
+        startCustomerListener();
     }
+}
+
+// ============ ADMIN REAL-TIME LISTENER ============
+function startAdminListener() {
+    notifRef = db.ref('reward_requests');
+    
+    notifRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        allReqs = data ? Object.keys(data).map(k => ({ id: k, ...data[k] })).sort((a,b) => b.timestamp - a.timestamp) : [];
+        
+        // Check for NEW pending claims
+        const pendingNow = allReqs.filter(r => r.status === 'pending');
+        let newClaims = 0;
+        pendingNow.forEach(r => {
+            if (!lastNotifiedIds.has(r.id)) {
+                lastNotifiedIds.add(r.id);
+                newClaims++;
+                // Show browser notification
+                showBrowserNotification(
+                    '🎁 Naya Rewards Claim!',
+                    `${r.name}: ${r.item_name} — ₹${r.price}`
+                );
+                showToast('🎁 Naya Claim Aaya!', `${r.name} ne ${r.item_name} claim kiya (₹${r.price})`);
+                playNotifSound();
+                // Highlight new card
+                setTimeout(() => {
+                    const el = document.getElementById('card_' + r.id);
+                    if (el) el.classList.add('new-claim');
+                }, 100);
+            }
+        });
+        
+        // Update title with pending count
+        if (pendingNow.length > 0) {
+            document.title = `(${pendingNow.length}) Naye Claims — Sahu Hotel`;
+            document.getElementById('notifDot').style.display = 'block';
+        } else {
+            document.title = 'Sahu Hotel — Jhurre, Chhindwara';
+            document.getElementById('notifDot').style.display = 'none';
+        }
+        
+        renderAdminList();
+    });
+}
+
+// ============ CUSTOMER REAL-TIME LISTENER ============
+function startCustomerListener() {
+    // Listen to own requests
+    notifRef = db.ref('reward_requests');
+    notifRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (!data) {
+            document.getElementById('myHistory').innerHTML = '<div class="empty-msg" style="padding:20px;">Abhi koi claim nahi</div>';
+            return;
+        }
+        const mine = Object.values(data)
+            .filter(r => r.email === currentUser.email)
+            .sort((a,b) => b.timestamp - a.timestamp)
+            .slice(0, 10);
+        
+        // Check for status changes
+        const savedStatuses = JSON.parse(localStorage.getItem('myClaimStatuses') || '{}');
+        mine.forEach(r => {
+            const prevStatus = savedStatuses[r.id];
+            if (prevStatus && prevStatus !== r.status) {
+                // Status changed!
+                if (r.status === 'approved') {
+                    showBrowserNotification('✅ Claim Approved!', `${r.item_name} (₹${r.price}) — +${r.points_approved} points mile`);
+                    showToast('✅ Approved!', `${r.item_name} ke ${r.points_approved} points mil gaye`);
+                    playNotifSound();
+                    // Flash points box
+                    const pb = document.getElementById('pointsBox');
+                    pb.classList.add('updated');
+                    setTimeout(() => pb.classList.remove('updated'), 1500);
+                } else if (r.status === 'rejected') {
+                    showBrowserNotification('❌ Claim Rejected', `${r.item_name} (₹${r.price}) reject ho gaya`);
+                    showToast('❌ Rejected', `${r.item_name} ka claim reject hua`);
+                }
+            }
+            savedStatuses[r.id] = r.status;
+        });
+        localStorage.setItem('myClaimStatuses', JSON.stringify(savedStatuses));
+        
+        renderCustomerHistory(mine);
+    });
+    
+    // Listen to own points
+    const key = currentUser.email.replace(/\./g, '_').replace(/@/g, '_at_');
+    customerRef = db.ref('customers/' + key);
+    let firstLoad = true;
+    customerRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        const points = data?.total_points || 0;
+        document.getElementById('myPoints').innerText = points;
+        document.getElementById('myPointsValue').innerText = Math.floor(points * 10);
+        
+        if (!firstLoad) {
+            const pb = document.getElementById('pointsBox');
+            pb.classList.add('updated');
+            setTimeout(() => pb.classList.remove('updated'), 1500);
+        }
+        firstLoad = false;
+    });
 }
 
 // ============ PHOTO UPLOAD ============
@@ -611,7 +790,7 @@ document.getElementById('photoInput').addEventListener('change', function(e) {
 });
 
 // ============ SUBMIT REWARD ============
-async function submitReward() {
+function submitReward() {
     const itemName = document.getElementById('itemName').value.trim();
     const price = parseFloat(document.getElementById('itemPrice').value);
 
@@ -636,16 +815,8 @@ async function submitReward() {
         status: 'pending'
     };
 
-    try {
-        const res = await fetch(`${DB_URL}/reward_requests.json`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(req)
-        });
-        if (!res.ok) throw new Error('Server ne reject kiya (Firebase Rules check karo)');
-        
+    db.ref('reward_requests').push(req).then(() => {
         showMsg('✅ Claim bhej diya! Admin approve karega, phir points milenge.', 'success');
-        
         document.getElementById('itemName').value = '';
         document.getElementById('itemPrice').value = '';
         photoBase64 = null;
@@ -653,14 +824,12 @@ async function submitReward() {
         document.getElementById('photoPreview').src = '';
         document.getElementById('photoUpload').style.display = 'block';
         document.getElementById('photoInput').value = '';
-        
-        loadMyHistory();
-    } catch(e) {
-        showMsg('❌ ' + e.message, 'error');
-    } finally {
+    }).catch((err) => {
+        showMsg('❌ ' + err.message, 'error');
+    }).finally(() => {
         btn.disabled = false;
         btn.innerText = '🎁 Rewards Claim Submit karein';
-    }
+    });
 }
 
 function showMsg(text, type) {
@@ -671,76 +840,33 @@ function showMsg(text, type) {
     setTimeout(() => { m.style.display = 'none'; }, 5000);
 }
 
-// ============ CUSTOMER POINTS ============
-async function loadCustomerPoints() {
-    try {
-        const key = currentUser.email.replace(/\./g, '_').replace(/@/g, '_at_');
-        const res = await fetch(`${DB_URL}/customers/${key}.json`);
-        const data = await res.json();
-        const points = data?.total_points || 0;
-        document.getElementById('myPoints').innerText = points;
-        document.getElementById('myPointsValue').innerText = Math.floor(points * 10);
-    } catch(e) {
-        document.getElementById('myPoints').innerText = '0';
-        document.getElementById('myPointsValue').innerText = '0';
+// ============ CUSTOMER HISTORY RENDER ============
+function renderCustomerHistory(mine) {
+    const container = document.getElementById('myHistory');
+    if (mine.length === 0) {
+        container.innerHTML = '<div class="empty-msg" style="padding:20px;">Abhi koi claim nahi</div>';
+        return;
     }
-}
-
-// ============ CUSTOMER HISTORY ============
-async function loadMyHistory() {
-    try {
-        const res = await fetch(`${DB_URL}/reward_requests.json`);
-        const data = await res.json();
-        const container = document.getElementById('myHistory');
-        
-        if (!data) {
-            container.innerHTML = '<div class="empty-msg" style="padding:20px;">Abhi koi claim nahi</div>';
-            return;
-        }
-        const mine = Object.values(data)
-            .filter(r => r.email === currentUser.email)
-            .sort((a,b) => b.timestamp - a.timestamp)
-            .slice(0, 10);
-        
-        if (mine.length === 0) {
-            container.innerHTML = '<div class="empty-msg" style="padding:20px;">Abhi koi claim nahi</div>';
-            return;
-        }
-        
-        let html = '';
-        mine.forEach(r => {
-            const sc = r.status || 'pending';
-            const st = sc === 'pending' ? '⏳ Pending' : (sc === 'approved' ? '✅ Approved' : '❌ Rejected');
-            html += `
-                <div class="req-card">
-                    <img src="${r.photo || ''}" alt="">
-                    <div class="req-info">
-                        <h5>${r.item_name}</h5>
-                        <p>${r.date_str || ''}</p>
-                        <div class="req-status ${sc}">${st}</div>
-                    </div>
-                    <div class="req-price">₹${r.price}</div>
+    let html = '';
+    mine.forEach(r => {
+        const sc = r.status || 'pending';
+        const st = sc === 'pending' ? '⏳ Pending' : (sc === 'approved' ? '✅ Approved' : '❌ Rejected');
+        html += `
+            <div class="req-card" id="mycard_${r.id}">
+                <img src="${r.photo || ''}" alt="">
+                <div class="req-info">
+                    <h5>${r.item_name}</h5>
+                    <p>${r.date_str || ''}</p>
+                    <div class="req-status ${sc}">${st}</div>
                 </div>
-            `;
-        });
-        container.innerHTML = html;
-    } catch(e) {
-        document.getElementById('myHistory').innerHTML = '<div class="empty-msg" style="padding:20px;">Load nahi hua</div>';
-    }
+                <div class="req-price">₹${r.price}</div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
 }
 
-// ============ ADMIN ============
-async function loadAdminRequests() {
-    try {
-        const res = await fetch(`${DB_URL}/reward_requests.json`);
-        const data = await res.json();
-        allReqs = data ? Object.keys(data).map(k => ({ id: k, ...data[k] })).sort((a,b) => b.timestamp - a.timestamp) : [];
-        renderAdminList();
-    } catch(e) {
-        document.getElementById('adminList').innerHTML = '<div class="empty-msg"><div class="icon">❌</div>Data load nahi hua</div>';
-    }
-}
-
+// ============ ADMIN LIST RENDER ============
 function setAdminTab(tab, el) {
     adminTab = tab;
     document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
@@ -803,7 +929,7 @@ function renderAdminList() {
         }
 
         html += `
-            <div class="admin-req-card">
+            <div class="admin-req-card" id="card_${r.id}">
                 <div class="admin-req-top">
                     <img class="admin-req-photo" src="${r.photo || ''}" onclick="openPhoto('${r.photo || ''}')">
                     <div class="admin-req-meta">
@@ -840,37 +966,31 @@ async function approveReq(id) {
     if (!confirm(`Approve karein?\n\nCustomer: ${req.name}\nItem: ${finalItem}\nPrice: ₹${finalPrice}\nPoints: ${finalPoints}`)) return;
 
     try {
-        await fetch(`${DB_URL}/reward_requests/${id}.json`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                item_name: finalItem,
-                price: finalPrice,
-                points_approved: finalPoints,
-                status: 'approved',
-                approved_at: Date.now()
-            })
+        // Update request
+        await db.ref('reward_requests/' + id).update({
+            item_name: finalItem,
+            price: finalPrice,
+            points_approved: finalPoints,
+            status: 'approved',
+            approved_at: Date.now()
         });
-
+        
+        // Update customer points
         const key = req.email.replace(/\./g, '_').replace(/@/g, '_at_');
-        const custRes = await fetch(`${DB_URL}/customers/${key}.json`);
-        const custData = await custRes.json();
-        const newTotal = (custData?.total_points || 0) + finalPoints;
-        const newSpent = (custData?.total_spent || 0) + finalPrice;
-
-        await fetch(`${DB_URL}/customers/${key}.json`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                name: req.name,
-                email: req.email,
-                total_points: newTotal,
-                total_spent: newSpent,
-                last_visit: Date.now()
-            })
+        const custSnap = await db.ref('customers/' + key).once('value');
+        const custData = custSnap.val() || {};
+        const newTotal = (custData.total_points || 0) + finalPoints;
+        const newSpent = (custData.total_spent || 0) + finalPrice;
+        
+        await db.ref('customers/' + key).update({
+            name: req.name,
+            email: req.email,
+            total_points: newTotal,
+            total_spent: newSpent,
+            last_visit: Date.now()
         });
-
-        loadAdminRequests();
+        
+        showToast('✅ Approved!', `${req.name} ko ${finalPoints} points diye`);
     } catch(e) {
         alert('Error: ' + e.message);
     }
@@ -879,39 +999,17 @@ async function approveReq(id) {
 async function rejectReq(id) {
     if (!confirm('Pakka reject karna hai?')) return;
     try {
-        await fetch(`${DB_URL}/reward_requests/${id}.json`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: 'rejected', rejected_at: Date.now() })
+        await db.ref('reward_requests/' + id).update({
+            status: 'rejected',
+            rejected_at: Date.now()
         });
-        loadAdminRequests();
+        showToast('❌ Rejected', 'Claim reject kar diya');
     } catch(e) { alert('Error: ' + e.message); }
 }
 
 function openPhoto(src) {
     document.getElementById('modalImg').src = src;
     document.getElementById('photoModal').classList.add('show');
-}
-
-// ============ NOTIFICATION ============
-async function checkPendingCount() {
-    try {
-        const res = await fetch(`${DB_URL}/reward_requests.json`);
-        const data = await res.json();
-        if (!data) { 
-            document.getElementById('notifDot').style.display = 'none';
-            return; 
-        }
-        const pendingCount = Object.values(data).filter(r => r.status === 'pending').length;
-        const dot = document.getElementById('notifDot');
-        if (pendingCount > 0) {
-            dot.style.display = 'block';
-            document.title = `(${pendingCount}) Sahu Hotel — Rewards`;
-        } else {
-            dot.style.display = 'none';
-            document.title = 'Sahu Hotel — Jhurre, Chhindwara';
-        }
-    } catch(e) {}
 }
 
 // ============ INIT ============
