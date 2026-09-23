@@ -1,88 +1,72 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', Arial, sans-serif; }
-body { background-color: #1f242d; color: #fff; min-height: 100vh; overflow-x: hidden; }
+body { background-color: #f4f6f9; color: #333; min-height: 100vh; overflow-x: hidden; }
 
 /* NAVBAR */
-.navbar { background-color: #2c3341; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0ef; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.5);}
-.logo { font-size: 16px; font-weight: 700; color: #fff; }
-.logo span { color: #0ef; }
-.status-banner { font-size: 10px; font-weight: bold; color: #0ef; }
+.navbar { background-color: #ffffff; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #2E7D32; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05);}
+.logo { font-size: 16px; font-weight: 700; color: #2E7D32; }
+.logo span { color: #E65100; }
+.status-banner { font-size: 10px; font-weight: bold; color: #2E7D32; }
 
 /* THREE LINE & SIDE DRAWER */
 .three-line-toggle { width: 22px; height: 16px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; }
-.three-line-toggle span { display: block; width: 100%; height: 2px; background: #0ef; border-radius: 2px; }
-.side-drawer { position: fixed; top: 0; right: -280px; width: 280px; height: 100%; background: #2c3341; box-shadow: -5px 0 25px rgba(0,0,0,0.6); z-index: 99999; display: flex; flex-direction: column; transition: 0.3s; }
+.three-line-toggle span { display: block; width: 100%; height: 2px; background: #2E7D32; border-radius: 2px; }
+.side-drawer { position: fixed; top: 0; right: -280px; width: 280px; height: 100%; background: #ffffff; box-shadow: -5px 0 25px rgba(0,0,0,0.1); z-index: 99999; display: flex; flex-direction: column; transition: 0.3s; }
 .side-drawer.open { right: 0; }
-.drawer-header { padding: 15px; background: #1f242d; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.drawer-header { padding: 15px; background: #f4f6f9; display: flex; justify-content: space-between; border-bottom: 1px solid #eee; }
 .drawer-close { font-size: 24px; color: #ff4d4d; cursor: pointer; }
 .drawer-body { padding: 15px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-.info-card-block { background: #1f242d; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
+.info-card-block { background: #f4f6f9; padding: 12px; border-radius: 8px; border: 1px solid #eee; }
 .drawer-maps-btn, .drawer-logout-btn { display: block; padding: 10px; text-align: center; border-radius: 6px; font-weight: bold; font-size: 12px; text-decoration: none; margin-top: 8px; }
 .drawer-logout-btn { background: #ff4d4d; color: #fff; border: none; width: 100%; cursor: pointer; }
-.drawer-overlay-backdrop { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:99998; }
+.drawer-overlay-backdrop { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:99998; }
 .drawer-overlay-backdrop.show { display: block; }
 
-/* MAIN DASHBOARD & COMPACT ADMIN BOX */
+/* MAIN DASHBOARD */
 .main-container { padding: 10px; max-width: 1200px; margin: 0 auto; }
-.admin-box { background: #2c3341; padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px solid rgba(0,238,255,0.2); }
-#addProductForm { background: #1f242d; padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); }
-
+.admin-box { background: #ffffff; padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e0e0e0; }
+#addProductForm { background: #f9f9f9; padding: 10px; border-radius: 6px; border: 1px solid #eee; }
 .form-group-block { display: flex; flex-direction: column; gap: 3px; width: 100%; }
-.form-group-block label { font-size: 11px; font-weight: 600; color: #fff; margin-bottom: 2px; }
-.optional-label { color: #0ef !important; }
+.form-group-block label { font-size: 11px; font-weight: 600; color: #333; margin-bottom: 2px; }
+.optional-label { color: #2E7D32 !important; }
 
-input, select { padding: 10px; border: 1px solid #323946; border-radius: 4px; font-size: 12px; color: #fff; background: #2c3341; outline: none; width: 100%; margin-bottom: 2px; box-sizing: border-box;}
-input:focus, select:focus { border-color: #0ef; }
+input, select { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; color: #333; background: #fff; outline: none; width: 100%; margin-bottom: 2px; box-sizing: border-box;}
+input:focus, select:focus { border-color: #2E7D32; }
 
-/* COMPACT LAYOUT FOR MOBILE */
 .systematic-row-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }
 .systematic-row-3col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 8px; }
 .price-row { display: flex; gap: 5px; margin-bottom: 5px; width: 100%; }
 
-/* Camera / Buttons */
-.camera-btn { background: #323946; color: #0ef; padding: 10px; border: 1px solid rgba(0,238,255,0.3); border-radius: 4px; cursor: pointer; text-align: center; font-size: 12px; font-weight: bold; display: block; }
-.publish-submit-btn { width: 100%; padding: 12px; background: #0ef; color: #1f242d; font-weight: bold; font-size: 14px; border-radius: 4px; cursor: pointer; margin-top: 5px; border: none; }
+.camera-btn { background: #eee; color: #333; padding: 10px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; text-align: center; font-size: 12px; font-weight: bold; display: block; }
+.publish-submit-btn { width: 100%; padding: 12px; background: #2E7D32; color: #fff; font-weight: bold; font-size: 14px; border-radius: 4px; cursor: pointer; margin-top: 5px; border: none; }
 
-/* CUSTOM DROPDOWN */
 .boss-only-box { display: flex; align-items: center; gap: 8px; background: rgba(255, 77, 77, 0.1); padding: 8px; border-radius: 4px; border: 1px dashed #ff4d4d; margin-bottom: 8px; }
 .boss-only-box input { width: 16px; height: 16px; }
 .boss-only-box label { color: #ff4d4d !important; font-size: 12px; font-weight: bold; cursor: pointer; }
 
 /* STICKY SEARCH BAR */
-.search-filter-box { 
-    background: #2c3341; 
-    padding: 10px; 
-    border-radius: 8px; 
-    margin-bottom: 12px; 
-    position: sticky;
-    top: 55px; /* NAVBAR KE THEEK NEECHE FIX HOGA */
-    z-index: 99;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.6);
-    border: 1px solid rgba(0,238,255,0.2);
-}
+.search-filter-box { background: #ffffff; padding: 10px; border-radius: 8px; margin-bottom: 12px; position: sticky; top: 55px; z-index: 99; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid #eee; }
 #categoryTabsContainer { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 5px; }
 #categoryTabsContainer::-webkit-scrollbar { display: none; }
-.filter-tab { padding: 6px 12px; background: #1f242d; color: #aaa; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; font-size: 11px; cursor: pointer; white-space: nowrap; }
-.active-tab { background: #0ef; color: #1f242d; font-weight: bold; }
+.filter-tab { padding: 6px 12px; background: #eee; color: #555; border: 1px solid #ddd; border-radius: 12px; font-size: 11px; cursor: pointer; white-space: nowrap; }
+.active-tab { background: #2E7D32; color: #fff; border-color: #2E7D32; }
 
 /* PRODUCT GRID */
 .products-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-.product-card { background: #2c3341; border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; padding: 10px; position: relative; text-align: center; }
-.product-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 4px; background: #1f242d; }
-.product-card h4 { font-size: 13px; margin: 8px 0 4px; color: #fff; }
-.product-card .price { font-size: 12px; font-weight: bold; color: #0ef; margin-top: 4px; }
+.product-card { background: #ffffff; border: 1px solid #eee; border-radius: 8px; padding: 10px; position: relative; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+.product-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 4px; background: #eee; }
+.product-card h4 { font-size: 13px; margin: 8px 0 4px; color: #333; }
+.product-card .price { font-size: 12px; font-weight: bold; color: #E65100; margin-top: 4px; }
 .private-badge { position: absolute; top: 5px; right: 5px; background: #ff4d4d; color: #fff; font-size: 9px; font-weight: bold; padding: 2px 5px; border-radius: 3px; }
-
 .admin-action-btns { display: flex; gap: 6px; margin-top: 10px; }
-.edit-btn { background: #ffc107; color: #1f242d; font-size: 12px; padding: 6px; border-radius: 4px; flex: 1; font-weight: bold; border: none; cursor:pointer;}
+.edit-btn { background: #ffc107; color: #333; font-size: 12px; padding: 6px; border-radius: 4px; flex: 1; font-weight: bold; border: none; cursor:pointer;}
 .delete-btn { background: #ff4d4d; color: #fff; font-size: 12px; padding: 6px; border-radius: 4px; flex: 1; font-weight: bold; border: none; cursor:pointer;}
 
 /* MODALS */
-.modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:99999; justify-content:center; align-items:center; padding: 15px; }
-.modal-box, .edit-modal-box { background: #2c3341; padding: 15px; border-radius: 8px; width: 100%; max-width: 350px; position: relative; border: 1px solid rgba(0,238,255,0.2); max-height: 90vh; overflow-y: auto; }
+.modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:99999; justify-content:center; align-items:center; padding: 15px; }
+.modal-box, .edit-modal-box { background: #ffffff; padding: 15px; border-radius: 8px; width: 100%; max-width: 350px; position: relative; border: 1px solid #eee; max-height: 90vh; overflow-y: auto; }
 .close-modal { position: absolute; top: 8px; right: 12px; font-size: 22px; font-weight: bold; color: #aaa; cursor: pointer; }
 .modal-close-btn { width: 100%; padding: 10px; background: #ff4d4d; color: #fff; font-weight: bold; border: none; border-radius: 4px; margin-top: 10px; cursor: pointer; }
 
-/* DESKTOP */
 @media (min-width: 768px) {
     .products-grid { grid-template-columns: repeat(4, 1fr); gap: 15px; }
     .product-card img { height: 150px; }

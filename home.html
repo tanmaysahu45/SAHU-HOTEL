@@ -4,37 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sahu Kirana & Restaurant</title>
-    
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#007bff">
-    <link rel="icon" type="image/png" href="4c788179-bf9a-4776-8165-35933ee9efd5 (1) (1).png"> 
+    <meta name="theme-color" content="#2E7D32">
     <link rel="stylesheet" href="Home.css">
-    
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-
     <style>
         .custom-dropdown-container { position: relative; width: 100%; }
-        .custom-dropdown-selected { padding: 10px; border: 1px solid #323946; border-radius: 4px; font-size: 12px; color: #fff; background: #2c3341; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .custom-dropdown-menu { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #2c3341; border: 1px solid rgba(0, 238, 255, 0.2); border-radius: 6px; margin-top: 2px; max-height: 200px; overflow-y: auto; z-index: 999; }
+        .custom-dropdown-selected { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; color: #333; background: #fff; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .custom-dropdown-menu { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #fff; border: 1px solid #2E7D32; border-radius: 6px; margin-top: 2px; max-height: 200px; overflow-y: auto; z-index: 999; }
         .custom-dropdown-menu.show { display: block; }
-        .custom-dropdown-option { padding: 10px; font-size: 12px; color: #fff; cursor: pointer; display: flex; justify-content: space-between; }
-        .opt-create-trigger { color: #0ef !important; font-weight: bold; background: rgba(0, 238, 255, 0.05); }
+        .custom-dropdown-option { padding: 10px; font-size: 12px; color: #333; cursor: pointer; display: flex; justify-content: space-between; }
+        .opt-create-trigger { color: #2E7D32 !important; font-weight: bold; background: rgba(46, 125, 50, 0.05); }
         .opt-cut-btn { color: #ff4d4d; font-weight: bold; font-size: 14px; padding: 0 5px; }
-        .inline-create-wrapper { display: flex; gap: 5px; background: #1f242d; padding: 8px; border-radius: 6px; border: 1px solid #0ef; margin-top: 5px; }
+        .inline-create-wrapper { display: flex; gap: 5px; background: #fff; padding: 8px; border-radius: 6px; border: 1px solid #2E7D32; margin-top: 5px; }
         .inline-submit-btn, .inline-cancel-btn { padding: 5px 10px; border-radius: 4px; font-weight: bold; border: none; font-size: 11px;}
-        .inline-submit-btn { background: #0ef; color: #1f242d; }
-        .inline-cancel-btn { background: rgba(255,255,255,0.1); color: #fff; }
-        
-        .admin-scanner-wrapper { background: #2c3341; border: 1px dashed #0ef; border-radius: 6px; padding: 5px; margin-bottom: 10px; display: none; text-align: center; }
-        #adminBarcodeReader { width: 100%; max-width: 300px; margin: 0 auto; background: #1f242d; border-radius: 4px; overflow: hidden; }
-        .top-calc-btn { background: #0ef; color: #1f242d; padding: 5px 10px; border-radius: 4px; font-weight: bold; text-decoration: none; font-size: 11px; margin-right: 8px; }
+        .inline-submit-btn { background: #2E7D32; color: #fff; }
+        .inline-cancel-btn { background: #eee; color: #333; }
+        .admin-scanner-wrapper { background: #f9f9f9; border: 1px dashed #2E7D32; border-radius: 6px; padding: 5px; margin-bottom: 10px; display: none; text-align: center; }
+        #adminBarcodeReader { width: 100%; max-width: 300px; margin: 0 auto; background: #fff; border-radius: 4px; overflow: hidden; }
+        .top-calc-btn { background: #E65100; color: #fff; padding: 5px 10px; border-radius: 4px; font-weight: bold; text-decoration: none; font-size: 11px; margin-right: 8px; }
     </style>
 </head>
 <body>
 
     <header class="navbar">
         <div class="nav-left">
-            <div class="logo">Sahu Kirana & Restaurant</div>
+            <div class="logo">Sahu <span>Hotel</span></div>
             <div id="shopStatusBanner" class="status-banner">Checking status...</div>
         </div>
         <div class="nav-right" style="display:flex; align-items:center;">
@@ -51,24 +46,24 @@
             <span class="drawer-close" onclick="toggleSideMenu()">×</span>
         </div>
         <div class="drawer-body">
-            <div class="info-card-block" style="border-color: #0ef;">
-                <h4 style="color: #0ef;">⚡ Gram & Rate Calculator</h4>
-                <a href="calc.html" class="drawer-maps-btn" style="background: #0ef; color: #1f242d; width: 100%;">⚖️ Open Rate Calculator</a>
+            <div class="info-card-block" style="border-color: #E65100;">
+                <h4 style="color: #E65100;">⚡ Gram & Rate Calculator</h4>
+                <a href="calc.html" class="drawer-maps-btn" style="background: #E65100; color: #fff; width: 100%;">⚖️ Open Rate Calculator</a>
             </div>
             <div id="posBillingDrawerBlock" class="info-card-block" style="border-color: #ffc107; display: none;">
                 <h4 style="color: #ffc107;">🛒 Smart POS Billing</h4>
-                <a href="billing.html" class="drawer-maps-btn" style="background: #ffc107; color: #1f242d; width: 100%;">🧾 Open POS Counter</a>
+                <a href="billing.html" class="drawer-maps-btn" style="background: #ffc107; color: #333; width: 100%;">🧾 Open POS Counter</a>
                 <a href="billing.html?view=history" class="drawer-maps-btn" style="background: transparent; border: 1px solid #ffc107; color: #ffc107; width: 100%;">📜 View Billing History</a>
             </div>
             <div class="info-card-block">
                 <h4>📍 Store Information</h4>
-                <p><strong>Name:</strong> Sahu Hotel</p>
-                <p><strong>Address:</strong> Jhurre Colony, Chhindwara, MP 480441</p>
+                <p><strong>Name:</strong> Sahu Kirana & Restaurant</p>
+                <p><strong>Address:</strong> Neharia Road Jhurre, Chhindwara, MP</p>
                 <a href="https://maps.app.goo.gl/MMSYvsiXWTqtz2bp6" target="_blank" class="drawer-maps-btn">🗺️ Open in Google Maps</a>
             </div>
             <div class="info-card-block">
                 <h4>📞 Quick Contact</h4>
-                <a href="tel:+918319332387" class="drawer-call-link">📱 Call Owner: +91 8319332387</a>
+                <a href="tel:7697267258" class="drawer-call-link">📱 Call: +91 7697267258</a>
             </div>
         </div>
         <div class="drawer-footer">
@@ -79,37 +74,33 @@
 
     <main class="main-container">
         <div id="adminSection" class="admin-box" style="display: none;">
-            
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; margin-bottom: 15px;">
-                <h3 style="margin: 0; font-size: 15px; color: #0ef;">Add New Product</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">
+                <h3 style="margin: 0; font-size: 15px; color: #2E7D32;">Add New Product</h3>
                 <div style="display:flex; gap:6px;">
-                    <a href="calc.html" style="background: #ffc107; color: #1f242d; padding: 6px 12px; border-radius: 4px; font-weight: bold; text-decoration: none; font-size: 12px;">⚡ Rate Calc</a>
-                    <a href="billing.html" style="background: #0ef; color: #1f242d; padding: 6px 12px; border-radius: 4px; font-weight: bold; text-decoration: none; font-size: 12px;">🧾 POS Billing</a>
+                    <a href="calc.html" style="background: #ffc107; color: #333; padding: 6px 12px; border-radius: 4px; font-weight: bold; text-decoration: none; font-size: 12px;">⚡ Rate Calc</a>
+                    <a href="billing.html" style="background: #2E7D32; color: #fff; padding: 6px 12px; border-radius: 4px; font-weight: bold; text-decoration: none; font-size: 12px;">🧾 POS Billing</a>
                 </div>
             </div>
             
             <form id="addProductForm">
-                
-                <div class="systematic-row-2col" style="background: rgba(0,238,255,0.05); padding: 10px; border-radius: 6px; border: 1px dashed #0ef;">
+                <div class="systematic-row-2col" style="background: rgba(46, 125, 50, 0.05); padding: 10px; border-radius: 6px; border: 1px dashed #2E7D32;">
                     <div class="form-group-block">
                         <label class="optional-label" style="font-weight:bold; font-size:12px;">1. Photo:</label>
-                        <label for="prodImageFile" class="camera-btn" style="background:#0ef; color:#1f242d;">📷 Camera</label>
+                        <label for="prodImageFile" class="camera-btn" style="background:#2E7D32; color:#fff;">📷 Camera</label>
                         <input type="file" id="prodImageFile" accept="image/*" capture="environment" style="display:none;">
                         <input type="text" id="prodImage" placeholder="Paste Link" style="margin-top:4px;">
                     </div>
-
                     <div class="form-group-block">
                         <label class="optional-label" style="font-weight:bold; font-size:12px;">2. Barcode:</label>
-                        <button type="button" onclick="toggleAdminBarcodeScanner()" class="camera-btn" style="border-color:#0ef;">📷 Scan Barcode</button>
+                        <button type="button" onclick="toggleAdminBarcodeScanner()" class="camera-btn" style="border-color:#2E7D32;">📷 Scan Barcode</button>
                         <input type="text" id="prodBarcode" placeholder="Scan/Type" style="margin-top:4px;">
                     </div>
                 </div>
                 
                 <div class="image-preview-container" style="margin: 0; text-align: center;"><img id="imagePreview" src="" alt="Preview" style="max-height: 80px; border-radius: 4px; display: none; margin-bottom: 10px;"></div>
-
                 <div id="adminScannerRegion" class="admin-scanner-wrapper">
                     <div id="adminBarcodeReader"></div>
-                    <button type="button" onclick="toggleAdminBarcodeScanner()" class="inline-cancel-btn" style="margin-top: 5px; background: #ff4d4d; width: 100%; padding: 10px;">❌ Stop Camera</button>
+                    <button type="button" onclick="toggleAdminBarcodeScanner()" class="inline-cancel-btn" style="margin-top: 5px; background: #ff4d4d; color: #fff; width: 100%; padding: 10px;">❌ Stop Camera</button>
                 </div>
 
                 <div class="systematic-row-2col">
@@ -132,20 +123,19 @@
                     </div>
                 </div>
                 
-                <div id="priceContainer" style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 6px; margin-bottom: 10px;">
-                    <label style="font-size: 12px; color: #0ef; font-weight: bold; display: block; margin-bottom: 8px;">4. Prices (Add Multiple Rates):</label>
+                <div id="priceContainer" style="background: rgba(0,0,0,0.02); padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+                    <label style="font-size: 12px; color: #2E7D32; font-weight: bold; display: block; margin-bottom: 8px;">4. Prices (Add Multiple Rates):</label>
                     <div class="price-row">
                         <input type="number" class="price-val" placeholder="Price (₹ e.g. 50)" style="flex: 1;" required>
                         <input type="text" class="price-label" placeholder="Weight/Qty (e.g. 1 Kg)" style="flex: 1;" required>
                     </div>
                 </div>
-                <button type="button" onclick="addPriceField()" style="background: none; color: #0ef; border: 1px dashed #0ef; padding: 8px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; margin-bottom: 15px; width: 100%;">+ Add One More Price</button>
+                <button type="button" onclick="addPriceField()" style="background: none; color: #2E7D32; border: 1px dashed #2E7D32; padding: 8px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; margin-bottom: 15px; width: 100%;">+ Add One More Price</button>
 
                 <div class="form-group-block">
                     <label class="optional-label">Wholesale Price (Boss Only):</label>
                     <input type="number" id="prodWholesalePrice" placeholder="Enter Wholesale Rate">
                 </div>
-                
                 <button type="submit" class="publish-submit-btn" style="margin-top: 10px;">Publish Product Globally</button>
             </form>
         </div>
@@ -154,18 +144,17 @@
             <input type="text" id="searchBar" placeholder="🔍 Search product, category or barcode..." oninput="filterProducts()">
             <div id="categoryTabsContainer" style="margin-top: 10px;"></div>
         </div>
-
         <div class="products-grid" id="productsGrid"></div>
     </main>
 
     <div id="productModal" class="modal-overlay">
         <div class="modal-box">
             <span class="close-modal" onclick="closeModal()">×</span>
-            <h3 id="modalProdName" style="color: #fff; margin-bottom: 5px;">Product Details</h3>
-            <div id="modalPrices" style="margin-bottom: 15px; color: #0ef; font-size: 15px; font-weight: bold;"></div>
-            <div class="modal-address-box" style="background: #1f242d; padding: 10px; border-radius: 6px; font-size: 12px;">
-                <strong>📍 Store Address:</strong><br>Sahu Kirana & Restaurant,<br>Jhurre Colony, Chhindwara, MP<br><br>
-                <strong>📞 Contact:</strong><br><a href="tel:+918319332387" style="color: #0ef; text-decoration: none; font-weight: bold;">+91 8319332387</a>
+            <h3 id="modalProdName" style="color: #333; margin-bottom: 5px;">Product Details</h3>
+            <div id="modalPrices" style="margin-bottom: 15px; color: #E65100; font-size: 15px; font-weight: bold;"></div>
+            <div class="modal-address-box" style="background: #f9f9f9; padding: 10px; border-radius: 6px; font-size: 12px; border: 1px solid #eee;">
+                <strong>📍 Store Address:</strong><br>Sahu Kirana & Restaurant,<br>Neharia Road Jhurre, Chhindwara, MP<br><br>
+                <strong>📞 Contact:</strong><br><a href="tel:7697267258" style="color: #2E7D32; text-decoration: none; font-weight: bold;">+91 7697267258</a>
             </div>
             <button onclick="closeModal()" class="modal-close-btn">Close Window</button>
         </div>
@@ -174,31 +163,25 @@
     <div id="editProductModal" class="modal-overlay" style="display:none;">
         <div class="edit-modal-box">
             <span class="close-modal" onclick="closeEditModal()">×</span>
-            <h3 style="font-size: 16px; margin-bottom: 12px; color: #0ef;">Edit Record</h3>
+            <h3 style="font-size: 16px; margin-bottom: 12px; color: #2E7D32;">Edit Record</h3>
             <input type="hidden" id="editProdId">
-            
-            <label style="font-size:12px; color:#fff;">Product Name:</label>
+            <label style="font-size:12px; color:#333;">Product Name:</label>
             <input type="text" id="editProdName" required style="margin-bottom: 10px;">
-            
-            <label style="font-size:12px; color:#0ef; font-weight:bold;">Prices:</label>
+            <label style="font-size:12px; color:#2E7D32; font-weight:bold;">Prices:</label>
             <div id="editPriceContainer"></div>
-            <button type="button" onclick="addEditPriceField()" style="background: none; color: #0ef; border: 1px dashed #0ef; padding: 6px; border-radius: 4px; font-size: 11px; margin-bottom: 10px; cursor: pointer; width: 100%;">+ Add Price Option</button>
-
-            <label style="font-size:12px; color:#0ef;">Barcode String:</label>
+            <button type="button" onclick="addEditPriceField()" style="background: none; color: #2E7D32; border: 1px dashed #2E7D32; padding: 6px; border-radius: 4px; font-size: 11px; margin-bottom: 10px; cursor: pointer; width: 100%;">+ Add Price Option</button>
+            <label style="font-size:12px; color:#2E7D32;">Barcode String:</label>
             <input type="text" id="editProdBarcode" style="margin-bottom: 10px;">
-
-            <label style="font-size:12px; color:#0ef;">Wholesale Price:</label>
+            <label style="font-size:12px; color:#2E7D32;">Wholesale Price:</label>
             <input type="number" id="editProdWholesalePrice" style="margin-bottom: 10px;">
-            
-            <div style="background: #1f242d; padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px;">
+            <div style="background: #f9f9f9; padding: 10px; border-radius: 6px; border: 1px solid #eee; margin-bottom: 10px;">
                 <img id="editImagePreview" src="" alt="Current" style="display: block; margin: 0 auto 5px; max-height:80px; border-radius: 4px;">
                 <input type="text" id="editProdImage" placeholder="Paste New Image URL" style="margin-bottom: 8px;">
-                <label for="editProdImageFile" class="camera-btn" style="background: #0ef; color: #000;">📷 Camera / Gallery</label>
+                <label for="editProdImageFile" class="camera-btn" style="background: #2E7D32; color: #fff;">📷 Camera / Gallery</label>
                 <input type="file" id="editProdImageFile" accept="image/*" capture="environment" style="display:none;">
             </div>
-            
             <select id="editProdCategory" style="margin-bottom: 10px;"></select>
-            <button type="button" onclick="submitProductEdit()" class="publish-submit-btn" style="background: #ffc107; color: #1f242d; margin-top: 10px;">Save Changes</button>
+            <button type="button" onclick="submitProductEdit()" class="publish-submit-btn" style="background: #ffc107; color: #333; margin-top: 10px;">Save Changes</button>
         </div>
     </div>
 
@@ -212,54 +195,10 @@
         function triggerInlineCategoryCreation() { document.getElementById('inlineCreateCategoryWrapper').style.display = 'flex'; document.getElementById('newCategoryName').focus(); toggleCustomDropdown(); }
         function cancelInlineCategory() { document.getElementById('inlineCreateCategoryWrapper').style.display = 'none'; document.getElementById('prodCategory').value = ''; document.getElementById('dropdownSelectedValue').innerText = '-- Choose Category --'; }
         function submitInlineCategory() { const inputVal = document.getElementById('newCategoryName').value.trim(); if(!inputVal) { alert('Enter category name!'); return; } if (typeof createNewCategory === 'function') { createNewCategory(); setTimeout(() => { cancelInlineCategory(); }, 800); } }
-
-        function addPriceField() {
-            const container = document.getElementById('priceContainer');
-            const div = document.createElement('div');
-            div.className = 'price-row';
-            div.innerHTML = `
-                <input type="number" class="price-val" placeholder="Price (₹)" style="flex: 1;" required>
-                <input type="text" class="price-label" placeholder="Qty (e.g. 1 Kg)" style="flex: 1;" required>
-                <button type="button" onclick="this.parentElement.remove()" style="background: #ff4d4d; color: white; border: none; padding: 0 12px; border-radius: 4px; font-weight: bold; cursor: pointer;">X</button>
-            `;
-            container.appendChild(div);
-        }
-
-        function addEditPriceField(rate = '', qty = '') {
-            const container = document.getElementById('editPriceContainer');
-            const div = document.createElement('div');
-            div.className = 'edit-price-row';
-            div.style = "display: flex; gap: 5px; margin-bottom: 8px;";
-            div.innerHTML = `
-                <input type="number" class="edit-price-val" placeholder="Price (₹)" value="${rate}" style="flex: 1;" required>
-                <input type="text" class="edit-price-label" placeholder="Qty (e.g. 1 Kg)" value="${qty}" style="flex: 1;" required>
-                <button type="button" onclick="this.parentElement.remove()" style="background: #ff4d4d; color: white; border: none; padding: 0 12px; border-radius: 4px; font-weight: bold; cursor: pointer;">X</button>
-            `;
-            container.appendChild(div);
-        }
-
+        function addPriceField() { const container = document.getElementById('priceContainer'); const div = document.createElement('div'); div.className = 'price-row'; div.innerHTML = `<input type="number" class="price-val" placeholder="Price (₹)" style="flex: 1;" required><input type="text" class="price-label" placeholder="Qty (e.g. 1 Kg)" style="flex: 1;" required><button type="button" onclick="this.parentElement.remove()" style="background: #ff4d4d; color: white; border: none; padding: 0 12px; border-radius: 4px; font-weight: bold; cursor: pointer;">X</button>`; container.appendChild(div); }
+        function addEditPriceField(rate = '', qty = '') { const container = document.getElementById('editPriceContainer'); const div = document.createElement('div'); div.className = 'edit-price-row'; div.style = "display: flex; gap: 5px; margin-bottom: 8px;"; div.innerHTML = `<input type="number" class="edit-price-val" placeholder="Price (₹)" value="${rate}" style="flex: 1;" required><input type="text" class="edit-price-label" placeholder="Qty (e.g. 1 Kg)" value="${qty}" style="flex: 1;" required><button type="button" onclick="this.parentElement.remove()" style="background: #ff4d4d; color: white; border: none; padding: 0 12px; border-radius: 4px; font-weight: bold; cursor: pointer;">X</button>`; container.appendChild(div); }
         let html5QrcodeScanner = null;
-        function toggleAdminBarcodeScanner() {
-            const region = document.getElementById('adminScannerRegion');
-            if (region.style.display === 'block') {
-                region.style.display = 'none';
-                if(html5QrcodeScanner) {
-                    html5QrcodeScanner.stop().then(() => { html5QrcodeScanner.clear(); }).catch(e => console.log(e));
-                }
-            } else {
-                region.style.display = 'block';
-                html5QrcodeScanner = new Html5Qrcode("adminBarcodeReader");
-                html5QrcodeScanner.start(
-                    { facingMode: "environment" }, 
-                    { fps: 20, qrbox: { width: 250, height: 100 } },
-                    (decodedText) => {
-                        document.getElementById('prodBarcode').value = decodedText;
-                        toggleAdminBarcodeScanner();
-                    },
-                    (errorMessage) => { }
-                ).catch(err => console.log("Camera Error", err));
-            }
-        }
+        function toggleAdminBarcodeScanner() { const region = document.getElementById('adminScannerRegion'); if (region.style.display === 'block') { region.style.display = 'none'; if(html5QrcodeScanner) { html5QrcodeScanner.stop().then(() => { html5QrcodeScanner.clear(); }).catch(e => console.log(e)); } } else { region.style.display = 'block'; html5QrcodeScanner = new Html5Qrcode("adminBarcodeReader"); html5QrcodeScanner.start({ facingMode: "environment" }, { fps: 20, qrbox: { width: 250, height: 100 } }, (decodedText) => { document.getElementById('prodBarcode').value = decodedText; toggleAdminBarcodeScanner(); }, (errorMessage) => { }).catch(err => console.log("Camera Error", err)); } }
     </script>
     <script src="script.js"></script>
 </body>
