@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings — Sahu Hotel</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<style>
+:root { --bg:#FDFBF7; --card:#FFF; --text:#2C3E50; --muted:#7B8B99; --light:#95A5A6; --border:#EFEAE0; --green:#4A7C59; --green-l:#E8F0E9; --orange:#E67E22; --red:#E74C3C; --yellow:#F39C12; }
+body.dark { --bg:#1A202C; --card:#2D3748; --text:#F7FAFC; --muted:#A0AEC0; --light:#718096; --border:#4A5568; --green-l:#2D4A36; }
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; -webkit-tap-highlight-color:transparent; }
+body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:40px; }
+
+.top-bar { background:var(--card); padding:14px 18px; display:flex; align-items:center; gap:12px; box-shadow:0 2px 10px rgba(0,0,0,0.05); position:sticky; top:0; z-index:100; }
+.back-btn { width:38px; height:38px; border-radius:10px; background:var(--bg); border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:18px; color:var(--text); text-decoration:none; }
+.top-bar h1 { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--text); }
+
+.container { max-width:600px; margin:0 auto; padding:16px; }
+
+.user-card { background:var(--card); border-radius:18px; padding:20px; margin-bottom:16px; border:1.5px solid var(--border); text-align:center; }
+.user-card .avatar { width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg,#4A7C59,#E67E22); margin:0 auto 12px; display:flex; align-items:center; justify-content:center; color:#FFF; font-size:26px; font-weight:700; overflow:hidden; }
+.user-card .avatar img { width:100%; height:100%; object-fit:cover; }
+.user-card h3 { font-size:17px; font-weight:700; color:var(--text); margin-bottom:3px; }
+.user-card p { font-size:12px; color:var(--light); margin-bottom:14px; word-break:break-all; }
+.login-btn { width:100%; padding:12px; background:#FFF; color:#2C3E50; border:1.5px solid var(--border); border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; font-family:'Poppins',sans-serif; }
+.login-btn svg { width:18px; height:18px; }
+.logout-btn { width:100%; padding:12px; background:#FFEBEE; color:var(--red); border:1.5px solid #FFCDD2; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif; }
+
+.section { background:var(--card); border-radius:18px; padding:6px; margin-bottom:16px; border:1.5px solid var(--border); overflow:hidden; }
+.section-title { font-size:11px; font-weight:700; color:var(--orange); letter-spacing:1.5px; text-transform:uppercase; padding:12px 14px 4px; }
+
+.item { display:flex; align-items:center; gap:12px; padding:14px; border-bottom:1px solid var(--border); cursor:pointer; }
+.item:last-child { border-bottom:none; }
+.item .ico { width:38px; height:38px; border-radius:11px; background:var(--green-l); display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
+.item .info { flex:1; min-width:0; }
+.item .info h4 { font-size:14px; font-weight:600; color:var(--text); margin-bottom:2px; }
+.item .info p { font-size:11px; color:var(--light); line-height:1.3; }
+.item .arrow { color:var(--light); font-size:18px; }
+.item .value { font-size:12px; color:var(--green); font-weight:700; }
+
+.switch { position:relative; width:46px; height:26px; flex-shrink:0; }
+.switch input { opacity:0; width:0; height:0; }
+.slider-sw { position:absolute; cursor:pointer; inset:0; background:#D9D2C5; border-radius:26px; transition:0.3s; }
+.slider-sw:before { content:''; position:absolute; height:20px; width:20px; left:3px; bottom:3px; background:#FFF; border-radius:50%; transition:0.3s; box-shadow:0 2px 4px rgba(0,0,0,0.2); }
+.switch input:checked + .slider-sw { background:var(--green); }
+.switch input:checked + .slider-sw:before { transform:translateX(20px); }
+
+/* SUB-PAGE */
+.sub-page { display:none; }
+.sub-page.show { display:block; }
+.sub-header { padding:16px 4px 8px; }
+.sub-title { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.sub-desc { font-size:12px; color:var(--light); margin-bottom:16px; }
+
+.notif-item { background:var(--card); border:1.5px solid var(--border); border-radius:12px; padding:12px; margin-bottom:8px; display:flex; gap:12px; }
+.notif-icon { width:36px; height:36px; border-radius:10px; background:var(--green-l); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+.notif-content { flex:1; min-width:0; }
+.notif-content h5 { font-size:13px; font-weight:700; color:var(--text); margin-bottom:2px; }
+.notif-content p { font-size:11px; color:var(--muted); line-height:1.4; }
+.notif-content .time { font-size:10px; color:var(--light); margin-top:4px; }
+
+.theme-options { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+.theme-opt { padding:16px; border-radius:14px; border:2px solid var(--border); background:var(--card); cursor:pointer; text-align:center; transition:0.2s; }
+.theme-opt.active { border-color:var(--green); box-shadow:0 0 0 3px rgba(74,124,89,0.15); }
+.theme-opt .preview { width:70px; height:46px; border-radius:8px; margin:0 auto 8px; border:1px solid var(--border); }
+.theme-opt .preview.light { background:linear-gradient(135deg,#FDFBF7,#FFF); }
+.theme-opt .preview.dark { background:linear-gradient(135deg,#1A202C,#2D3748); }
+.theme-opt h6 { font-size:12px; font-weight:700; color:var(--text); }
+.theme-opt p { font-size:10px; color:var(--light); margin-top:2px; }
+
+.lang-opt { padding:14px 16px; border-radius:12px; border:2px solid var(--border); background:var(--card); cursor:pointer; margin-bottom:8px; display:flex; align-items:center; gap:12px; }
+.lang-opt.active { border-color:var(--green); }
+.lang-opt .flag { font-size:22px; }
+.lang-opt h6 { font-size:13px; font-weight:700; color:var(--text); }
+.lang-opt p { font-size:11px; color:var(--light); }
+.lang-opt .check { margin-left:auto; color:var(--green); font-weight:700; font-size:16px; display:none; }
+.lang-opt.active .check { display:block; }
+
+.about-box { background:var(--card); border:1.5px solid var(--border); border-radius:16px; padding:24px; text-align:center; }
+.about-box .logo { width:70px; height:70px; border-radius:18px; background:linear-gradient(135deg,#4A7C59,#E67E22); margin:0 auto 12px; display:flex; align-items:center; justify-content:center; color:#FFF; font-size:28px; font-weight:800; }
+.about-box h3 { font-family:'Playfair Display',serif; font-size:22px; color:var(--text); margin-bottom:4px; }
+.about-box .ver { font-size:12px; color:var(--light); margin-bottom:14px; }
+.about-box p { font-size:13px; color:var(--muted); line-height:1.6; }
+
+.toast-container { position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:9999; display:flex; flex-direction:column; gap:8px; pointer-events:none; }
+.toast { background:var(--card); border-left:4px solid var(--yellow); padding:12px 16px; border-radius:12px; box-shadow:0 10px 40px rgba(0,0,0,0.15); min-width:260px; pointer-events:auto; }
+.toast-title { font-size:13px; font-weight:700; color:var(--text); }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+    <a href="index.html" class="back-btn">←</a>
+    <h1>Settings</h1>
+</div>
+
+<div class="container">
+
+    <!-- ============ MAIN ============ -->
+    <div id="mainPage">
+
+        <!-- USER CARD -->
+        <div class="user-card" id="userCard">
+            <div class="avatar" id="uAvatar">?</div>
+            <h3 id="uName">Mehmaan</h3>
+            <p id="uEmail">Login karein</p>
+            <button class="login-btn" id="loginBtn" onclick="loginWithGoogle()" style="display:none;">
+                <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                Google se Login karein
+            </button>
+            <button class="logout-btn" id="logoutBtn" onclick="logoutUser()" style="display:none;">Logout</button>
+        </div>
+
+        <!-- NOTIFICATIONS SECTION -->
+        <div class="section">
+            <div class="section-title">Notifications</div>
+            <div class="item" onclick="openSub('notifPage')">
+                <div class="ico">🔔</div>
+                <div class="info"><h4>Notification Settings</h4><p>Sound, vibration, alerts</p></div>
+                <span class="arrow">›</span>
+            </div>
+            <div class="item" onclick="openSub('historyPage')">
+                <div class="ico">📜</div>
+                <div class="info"><h4>Notification History</h4><p>Pichli saari notifications</p></div>
+                <span class="arrow">›</span>
+            </div>
+            <div class="item" onclick="testNotification()">
+                <div class="ico">🧪</div>
+                <div class="info"><h4>Test Notification</h4><p>Check karo notification chal rahi hai</p></div>
+                <span class="arrow">›</span>
+            </div>
+        </div>
+
+        <!-- APPEARANCE SECTION -->
+        <div class="section">
+            <div class="section-title">Appearance</div>
+            <div class="item" onclick="openSub('themePage')">
+                <div class="ico">🎨</div>
+                <div class="info"><h4>Theme</h4><p>Light ya Dark mode</p></div>
+                <span class="value" id="themeVal">Light</span>
+            </div>
+            <div class="item" onclick="openSub('langPage')">
+                <div class="ico">🌐</div>
+                <div class="info"><h4>Language</h4><p>Hindi / English</p></div>
+                <span class="value" id="langVal">हिन्दी</span>
+            </div>
+        </div>
+
+        <!-- DATA SECTION -->
+        <div class="section">
+            <div class="section-title">Data & Privacy</div>
+            <div class="item" onclick="clearHistory()">
+                <div class="ico">🗑️</div>
+                <div class="info"><h4>Clear History</h4><p>Saari notification history mitado</p></div>
+                <span class="arrow">›</span>
+            </div>
+            <div class="item" onclick="clearAllData()">
+                <div class="ico">⚠️</div>
+                <div class="info"><h4>Reset App Data</h4><p>Saari local settings mitado</p></div>
+                <span class="arrow">›</span>
+            </div>
+        </div>
+
+        <!-- ABOUT SECTION -->
+        <div class="section">
+            <div class="section-title">About</div>
+            <div class="item" onclick="openSub('aboutPage')">
+                <div class="ico">ℹ️</div>
+                <div class="info"><h4>About App</h4><p>Version aur information</p></div>
+                <span class="arrow">›</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============ NOTIFICATION SUB-PAGE ============ -->
+    <div class="sub-page" id="notifPage">
+        <div class="sub-header">
+            <button class="back-btn" onclick="closeSub()" style="margin-bottom:12px;">←</button>
+            <h2 class="sub-title">🔔 Notification Settings</h2>
+            <p class="sub-desc">Apni pasand se set karein</p>
+        </div>
+
+        <div class="section">
+            <div class="item">
+                <div class="ico">🔔</div>
+                <div class="info"><h4>Master Notifications</h4><p>Poori notification ON/OFF</p></div>
+                <label class="switch"><input type="checkbox" id="setNotif" onchange="setS('notif',this.checked)"><span class="slider-sw"></span></label>
+            </div>
+            <div class="item">
+                <div class="ico">🔊</div>
+                <div class="info"><h4>Sound</h4><p>Notification ke saath beep</p></div>
+                <label class="switch"><input type="checkbox" id="setSound" onchange="setS('sound',this.checked)"><span class="slider-sw"></span></label>
+            </div>
+            <div class="item">
+                <div class="ico">📳</div>
+                <div class="info"><h4>Vibration</h4><p>Phone vibrate ho</p></div>
+                <label class="switch"><input type="checkbox" id="setVib" onchange="setS('vibrate',this.checked)"><span class="slider-sw"></span></label>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Kaunsi Cheez Notify Kare</div>
+            <div class="item">
+                <div class="ico">🆕</div>
+                <div class="info"><h4>Naye Claims</h4><p>Customer claim karne par</p></div>
+                <label class="switch"><input type="checkbox" id="setNewClaim" onchange="setS('newClaim',this.checked)"><span class="slider-sw"></span></label>
+            </div>
+            <div class="item">
+                <div class="ico">✅</div>
+                <div class="info"><h4>Approve/Reject Updates</h4><p>Status change hone par</p></div>
+                <label class="switch"><input type="checkbox" id="setStatus" onchange="setS('status',this.checked)"><span class="slider-sw"></span></label>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ HISTORY SUB-PAGE ============ -->
+    <div class="sub-page" id="historyPage">
+        <div class="sub-header">
+            <button class="back-btn" onclick="closeSub()" style="margin-bottom:12px;">←</button>
+            <h2 class="sub-title">📜 Notification History</h2>
+            <p class="sub-desc">Pichli saari notifications</p>
+        </div>
+        <div id="historyList"></div>
+    </div>
+
+    <!-- ============ THEME SUB-PAGE ============ -->
+    <div class="sub-page" id="themePage">
+        <div class="sub-header">
+            <button class="back-btn" onclick="closeSub()" style="margin-bottom:12px;">←</button>
+            <h2 class="sub-title">🎨 Theme</h2>
+            <p class="sub-desc">Apni pasand ka look chunein</p>
+        </div>
+
+        <div class="theme-options">
+            <div class="theme-opt" id="tLight" onclick="setTheme('light')">
+                <div class="preview light"></div>
+                <h6>☀️ Light</h6>
+                <p>Din ke liye</p>
+            </div>
+            <div class="theme-opt" id="tDark" onclick="setTheme('dark')">
+                <div class="preview dark"></div>
+                <h6>🌙 Dark</h6>
+                <p>Raat ke liye</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="item">
+                <div class="ico">🌗</div>
+                <div class="info"><h4>Auto Switch</h4><p>Subah light, raat dark</p></div>
+                <label class="switch"><input type="checkbox" id="setAutoTheme" onchange="setS('autoTheme',this.checked)"><span class="slider-sw"></span></label>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ LANGUAGE SUB-PAGE ============ -->
+    <div class="sub-page" id="langPage">
+        <div class="sub-header">
+            <button class="back-btn" onclick="closeSub()" style="margin-bottom:12px;">←</button>
+            <h2 class="sub-title">🌐 Language</h2>
+            <p class="sub-desc">Apni bhasha chunein</p>
+        </div>
+
+        <div class="lang-opt" id="langHi" onclick="setLang('hi')">
+            <span class="flag">🇮🇳</span>
+            <div><h6>हिन्दी</h6><p>Hindi</p></div>
+            <span class="check">✓</span>
+        </div>
+        <div class="lang-opt" id="langEn" onclick="setLang('en')">
+            <span class="flag">🇬🇧</span>
+            <div><h6>English</h6><p>English</p></div>
+            <span class="check">✓</span>
+        </div>
+    </div>
+
+    <!-- ============ ABOUT SUB-PAGE ============ -->
+    <div class="sub-page" id="aboutPage">
+        <div class="sub-header">
+            <button class="back-btn" onclick="closeSub()" style="margin-bottom:12px;">←</button>
+        </div>
+        <div class="about-box">
+            <div class="logo">सा</div>
+            <h3>Sahu Hotel</h3>
+            <p class="ver">Version 2.0 · 2026</p>
+            <p>Kirana & General Evam Hotel<br>Neharia Road, Jhurre<br>Chhindwara (M.P.)<br><br>📞 76972 67258</p>
+            <p style="margin-top:16px;font-size:11px;color:var(--light);">Banaya gaya pyaar se ❤️</p>
+        </div>
+    </div>
+
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyAr9wY7_SbxrHjOYlvZwmuzwp-QIXGaq-k",
+    authDomain: "sahu-hotel-22ad4.firebaseapp.com",
+    projectId: "sahu-hotel-22ad4",
+    storageBucket: "sahu-hotel-22ad4.firebasestorage.app",
+    messagingSenderId: "289705794339",
+    appId: "1:289705794339:web:77d89c9a259428add08a96"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const ADMIN_EMAIL = "tarendrasahu652@gmail.com";
+
+let userSettings = JSON.parse(localStorage.getItem('sahuSettings') || '{"notif":true,"sound":true,"vibrate":true,"newClaim":true,"status":true,"theme":"light","language":"hi","autoTheme":false}');
+let notifHistory = JSON.parse(localStorage.getItem('sahuNotifHistory') || '[]');
+
+function saveSettings() { localStorage.setItem('sahuSettings', JSON.stringify(userSettings)); }
+function saveNotifHistory() { if (notifHistory.length > 100) notifHistory = notifHistory.slice(0, 100); localStorage.setItem('sahuNotifHistory', JSON.stringify(notifHistory)); }
+
+function applyTheme() {
+    if (userSettings.theme === 'dark') document.body.classList.add('dark');
+    else document.body.classList.remove('dark');
+    document.getElementById('themeVal').innerText = userSettings.theme === 'dark' ? 'Dark' : 'Light';
+    document.getElementById('tLight').classList.toggle('active', userSettings.theme === 'light');
+    document.getElementById('tDark').classList.toggle('active', userSettings.theme === 'dark');
+}
+
+function loadUI() {
+    document.getElementById('setNotif').checked = userSettings.notif;
+    document.getElementById('setSound').checked = userSettings.sound;
+    document.getElementById('setVib').checked = userSettings.vibrate;
+    document.getElementById('setNewClaim').checked = userSettings.newClaim;
+    document.getElementById('setStatus').checked = userSettings.status;
+    document.getElementById('setAutoTheme').checked = userSettings.autoTheme;
+    document.getElementById('langHi').classList.toggle('active', userSettings.language === 'hi');
+    document.getElementById('langEn').classList.toggle('active', userSettings.language === 'en');
+    document.getElementById('langVal').innerText = userSettings.language === 'hi' ? 'हिन्दी' : 'English';
+    applyTheme();
+    loadUser();
+}
+
+function loadUser() {
+    const s = localStorage.getItem('sahuUser');
+    const av = document.getElementById('uAvatar');
+    const nm = document.getElementById('uName');
+    const em = document.getElementById('uEmail');
+    const lb = document.getElementById('loginBtn');
+    const lo = document.getElementById('logoutBtn');
+    
+    if (s) {
+        try {
+            const u = JSON.parse(s);
+            if (u.photo) av.innerHTML = `<img src="${u.photo}">`;
+            else av.innerText = (u.name || 'U').charAt(0).toUpperCase();
+            nm.innerText = u.name || 'User';
+            em.innerText = u.email || '';
+            lb.style.display = 'none';
+            lo.style.display = 'block';
+        } catch(e) { resetUser(); }
+    } else { resetUser(); }
+}
+
+function resetUser() {
+    document.getElementById('uAvatar').innerText = '?';
+    document.getElementById('uName').innerText = 'Mehmaan';
+    document.getElementById('uEmail').innerText = 'Login karein';
+    document.getElementById('loginBtn').style.display = 'flex';
+    document.getElementById('logoutBtn').style.display = 'none';
+}
+
+function loginWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).then((result) => {
+        const user = result.user;
+        const email = (user.email || '').toLowerCase().trim();
+        const name = user.displayName || 'User';
+        const photo = user.photoURL || '';
+        localStorage.setItem('sahuUser', JSON.stringify({ name, email, photo }));
+        localStorage.setItem('currentUser', name);
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('userRole', email === ADMIN_EMAIL ? 'admin' : 'customer');
+        loadUser();
+        toast('✅ Login ho gaya');
+    }).catch(err => alert('Login fail: ' + err.message));
+}
+
+function logoutUser() {
+    if (!confirm('Logout karna hai?')) return;
+    auth.signOut().catch(() => {});
+    localStorage.removeItem('sahuUser');
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userRole');
+    loadUser();
+    toast('👋 Logout ho gaya');
+}
+
+function setS(key, val) {
+    userSettings[key] = val;
+    saveSettings();
+    if (key === 'notif' && val && Notification.permission !== 'granted') Notification.requestPermission();
+    if (key === 'theme') applyTheme();
+    toast('✅ Setting save');
+}
+
+function setTheme(t) { userSettings.theme = t; saveSettings(); applyTheme(); toast(t === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode'); }
+function setLang(l) { userSettings.language = l; saveSettings(); document.getElementById('langHi').classList.toggle('active', l === 'hi'); document.getElementById('langEn').classList.toggle('active', l === 'en'); document.getElementById('langVal').innerText = l === 'hi' ? 'हिन्दी' : 'English'; toast(l === 'hi' ? '🌐 हिन्दी' : '🌐 English'); }
+
+function openSub(id) {
+    document.getElementById('mainPage').style.display = 'none';
+    document.querySelectorAll('.sub-page').forEach(p => p.classList.remove('show'));
+    document.getElementById(id).classList.add('show');
+    window.scrollTo(0, 0);
+    if (id === 'historyPage') renderHistory();
+}
+
+function closeSub() {
+    document.querySelectorAll('.sub-page').forEach(p => p.classList.remove('show'));
+    document.getElementById('mainPage').style.display = 'block';
+    window.scrollTo(0, 0);
+}
+
+function renderHistory() {
+    const c = document.getElementById('historyList');
+    if (notifHistory.length === 0) { c.innerHTML = '<div style="text-align:center;padding:40px;color:var(--light);font-size:13px;">📭 Abhi koi notification nahi</div>'; return; }
+    let h = '';
+    notifHistory.forEach(n => {
+        let icon = '🔔';
+        if (n.type === 'claim') icon = '🎁';
+        else if (n.type === 'approved') icon = '✅';
+        else if (n.type === 'rejected') icon = '❌';
+        else if (n.type === 'claimed') icon = '💸';
+        h += `<div class="notif-item"><div class="notif-icon">${icon}</div><div class="notif-content"><h5>${n.title}</h5><p>${n.body}</p><div class="time">${n.time}</div></div></div>`;
+    });
+    c.innerHTML = h;
+}
+
+function testNotification() {
+    if (Notification.permission !== 'granted') { Notification.requestPermission().then(() => testNotification()); return; }
+    new Notification('🧪 Test Notification', { body: 'Sahu Hotel — sab sahi chal raha hai!' });
+    notifHistory.unshift({ title: '🧪 Test', body: 'Test notification', type: 'test', time: new Date().toLocaleString('en-IN') });
+    saveNotifHistory();
+    toast('🧪 Test bheja');
+}
+
+function clearHistory() {
+    if (!confirm('Saari history mitado?')) return;
+    notifHistory = [];
+    saveNotifHistory();
+    toast('🗑️ History mita di');
+    if (document.getElementById('historyPage').classList.contains('show')) renderHistory();
+}
+
+function clearAllData() {
+    if (!confirm('⚠️ Saari settings, history aur login mitado?\n\nYe undo nahi hoga!')) return;
+    localStorage.removeItem('sahuSettings');
+    localStorage.removeItem('sahuNotifHistory');
+    localStorage.removeItem('sahuUser');
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userRole');
+    toast('✅ Reset ho gaya');
+    setTimeout(() => location.reload(), 1000);
+}
+
+function toast(msg) {
+    const c = document.getElementById('toastContainer');
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.innerHTML = `<div class="toast-title">${msg}</div>`;
+    c.appendChild(t);
+    setTimeout(() => t.remove(), 2500);
+}
+
+loadUI();
+</script>
+</body>
+</html>
