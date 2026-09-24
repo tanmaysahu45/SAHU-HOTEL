@@ -18,6 +18,7 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
 .back-btn { width:38px; height:38px; border-radius:10px; background:var(--bg); border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:18px; color:var(--text); text-decoration:none; flex-shrink:0; }
 .top-bar h1 { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--text); }
 .top-bar .sub { font-size:10px; color:var(--light); margin-top:1px; }
+.top-bar .settings-btn { margin-left:auto; width:38px; height:38px; border-radius:10px; background:var(--bg); border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:18px; color:var(--text); text-decoration:none; }
 
 .container { max-width:600px; margin:0 auto; padding:16px; }
 
@@ -40,16 +41,11 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
 .user-info h5 { font-size:15px; font-weight:700; color:var(--text); margin-bottom:2px; }
 .user-info p { font-size:11px; color:var(--light); word-break:break-all; }
 
-.logout-btn { background:var(--card); color:var(--red); border:1.5px solid var(--red); padding:8px 14px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; flex-shrink:0; }
-
 .points-box { background:linear-gradient(135deg,#4A7C59,#7BA888); padding:24px 20px; border-radius:18px; text-align:center; margin-bottom:14px; color:#FFF; }
 .points-box .label { font-size:11px; opacity:0.9; letter-spacing:1.5px; font-weight:600; }
 .points-box .value { font-family:'Playfair Display',serif; font-size:52px; font-weight:700; line-height:1; margin:8px 0; }
 .points-box .sub { font-size:12px; opacity:0.95; }
 .points-box .sub b { color:var(--yellow); }
-
-.claim-btn { width:100%; padding:13px; background:var(--yellow); color:#1A252F; border:none; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; margin-top:14px; font-family:'Poppins',sans-serif; }
-.claim-btn:disabled { opacity:0.5; cursor:not-allowed; }
 
 .form-card { background:var(--card); border-radius:18px; padding:20px; border:1.5px solid var(--border); margin-bottom:14px; }
 .form-card h3 { font-family:'Playfair Display',serif; font-size:18px; color:var(--text); margin-bottom:4px; }
@@ -110,8 +106,6 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
 .status-badge.rejected { background:#FFEBEE; color:var(--red); }
 .status-badge.claimed { background:#F4ECF7; color:var(--purple); }
 
-.points-preview { background:var(--orange-l); color:var(--orange); padding:8px 12px; border-radius:10px; font-size:12px; font-weight:600; margin-bottom:10px; display:inline-block; }
-
 .admin-actions { display:flex; gap:8px; }
 .admin-btn { flex:1; padding:12px; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif; }
 .btn-approve { background:var(--green); color:#FFF; }
@@ -134,17 +128,6 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
 .empty-msg { text-align:center; padding:50px 20px; color:var(--light); font-size:13px; }
 .empty-msg .icon { font-size:48px; margin-bottom:12px; opacity:0.5; }
 
-.modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center; padding:20px; }
-.modal.show { display:flex; }
-.modal-box { background:var(--card); border-radius:20px; padding:24px; max-width:340px; width:100%; }
-.modal-box h3 { font-family:'Playfair Display',serif; font-size:22px; color:var(--text); margin-bottom:8px; }
-.modal-box p { font-size:13px; color:var(--muted); margin-bottom:16px; line-height:1.5; }
-.modal-input { width:100%; padding:12px; border:1.5px solid var(--border); border-radius:12px; font-size:14px; background:var(--bg); color:var(--text); outline:none; margin-bottom:12px; font-family:'Poppins',sans-serif; }
-.modal-btns { display:flex; gap:8px; }
-.modal-btns button { flex:1; padding:12px; border-radius:12px; font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif; font-size:13px; }
-.btn-cancel { background:var(--bg); color:var(--text); border:1.5px solid var(--border); }
-.btn-confirm { background:var(--green); color:#FFF; border:none; }
-
 .photo-view { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center; padding:20px; }
 .photo-view.show { display:flex; }
 .photo-view img { max-width:100%; max-height:85vh; border-radius:12px; }
@@ -163,11 +146,11 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
         <h1 id="pageTitle">Rewards</h1>
         <div class="sub" id="pageSub">Sahu Hotel</div>
     </div>
+    <a href="settings.html" class="settings-btn" title="Settings">⚙️</a>
 </div>
 
 <div class="container">
 
-    <!-- LOGIN -->
     <div class="login-prompt" id="loginPrompt">
         <div class="lock">🔐</div>
         <h4>Login zaroori hai</h4>
@@ -178,7 +161,6 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
         </button>
     </div>
 
-    <!-- CUSTOMER -->
     <div id="customerView" style="display:none;">
         <div class="dark-box">
             <div class="tag">Sahu Rewards</div>
@@ -192,7 +174,6 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
                 <h5 id="cName">Customer</h5>
                 <p id="cEmail">email</p>
             </div>
-            <button class="logout-btn" onclick="logoutUser()">Logout</button>
         </div>
 
         <div class="points-box">
@@ -230,12 +211,11 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
         </div>
     </div>
 
-    <!-- ADMIN -->
     <div id="adminView" style="display:none;">
         <div class="dark-box">
             <div class="tag">Admin Reports</div>
             <h2>Claims, Points,<br>sab yahan.</h2>
-            <p>Pending, approved, claimed aur customers — sab kuch ek jagah.</p>
+            <p>Pending, approved, claimed aur customers — sab ek jagah.</p>
         </div>
 
         <div class="user-bar">
@@ -244,7 +224,6 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
                 <h5 id="aName">Admin</h5>
                 <p id="aEmail">email</p>
             </div>
-            <button class="logout-btn" onclick="logoutUser()">Logout</button>
         </div>
 
         <div class="stats-grid">
@@ -341,32 +320,29 @@ function vibratePhone() { if (userSettings.vibrate && navigator.vibrate) navigat
 
 function loginWithGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
     auth.signInWithPopup(provider).then((result) => {
         const user = result.user;
         const email = (user.email || '').toLowerCase().trim();
         const name = user.displayName || 'User';
         const photo = user.photoURL || '';
-        localStorage.setItem('sahuUser', JSON.stringify({ name, email, photo }));
+        const role = (email === ADMIN_EMAIL) ? 'admin' : 'customer';
+        const accountObj = { name, email, photo, role };
+
+        localStorage.setItem('sahuUser', JSON.stringify(accountObj));
         localStorage.setItem('currentUser', name);
         localStorage.setItem('userEmail', email);
-        currentUser = { name, email, photo };
-        currentRole = (email === ADMIN_EMAIL) ? 'admin' : 'customer';
-        localStorage.setItem('userRole', currentRole);
+        localStorage.setItem('userRole', role);
+
+        let accounts = JSON.parse(localStorage.getItem('sahuAccounts') || '[]');
+        accounts = accounts.filter(a => a.email !== email);
+        accounts.unshift(accountObj);
+        localStorage.setItem('sahuAccounts', JSON.stringify(accounts));
+
+        currentUser = accountObj;
+        currentRole = role;
         updateUI();
     }).catch(err => alert('Login nahi hua: ' + err.message));
-}
-
-function logoutUser() {
-    if (!confirm('Logout karna hai?')) return;
-    auth.signOut().catch(() => {});
-    if (notifRef) { notifRef.off(); notifRef = null; }
-    if (customerRef) { customerRef.off(); customerRef = null; }
-    localStorage.removeItem('sahuUser');
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('userRole');
-    currentUser = null; currentRole = 'guest';
-    updateUI();
 }
 
 function updateUI() {

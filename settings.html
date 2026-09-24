@@ -14,19 +14,10 @@ body.dark { --bg:#1A202C; --card:#2D3748; --text:#F7FAFC; --muted:#A0AEC0; --lig
 body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:40px; }
 
 .top-bar { background:var(--card); padding:14px 18px; display:flex; align-items:center; gap:12px; box-shadow:0 2px 10px rgba(0,0,0,0.05); position:sticky; top:0; z-index:100; }
-.back-btn { width:38px; height:38px; border-radius:10px; background:var(--bg); border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:18px; color:var(--text); text-decoration:none; }
+.back-btn { width:38px; height:38px; border-radius:10px; background:var(--bg); border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:18px; color:var(--text); text-decoration:none; flex-shrink:0; }
 .top-bar h1 { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--text); }
 
 .container { max-width:600px; margin:0 auto; padding:16px; }
-
-.user-card { background:var(--card); border-radius:18px; padding:20px; margin-bottom:16px; border:1.5px solid var(--border); text-align:center; }
-.user-card .avatar { width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg,#4A7C59,#E67E22); margin:0 auto 12px; display:flex; align-items:center; justify-content:center; color:#FFF; font-size:26px; font-weight:700; overflow:hidden; }
-.user-card .avatar img { width:100%; height:100%; object-fit:cover; }
-.user-card h3 { font-size:17px; font-weight:700; color:var(--text); margin-bottom:3px; }
-.user-card p { font-size:12px; color:var(--light); margin-bottom:14px; word-break:break-all; }
-.login-btn { width:100%; padding:12px; background:#FFF; color:#2C3E50; border:1.5px solid var(--border); border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; font-family:'Poppins',sans-serif; }
-.login-btn svg { width:18px; height:18px; }
-.logout-btn { width:100%; padding:12px; background:#FFEBEE; color:var(--red); border:1.5px solid #FFCDD2; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif; }
 
 .section { background:var(--card); border-radius:18px; padding:6px; margin-bottom:16px; border:1.5px solid var(--border); overflow:hidden; }
 .section-title { font-size:11px; font-weight:700; color:var(--orange); letter-spacing:1.5px; text-transform:uppercase; padding:12px 14px 4px; }
@@ -40,6 +31,44 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
 .item .arrow { color:var(--light); font-size:18px; }
 .item .value { font-size:12px; color:var(--green); font-weight:700; }
 
+/* ACCOUNT CARD */
+.account-card { background:var(--card); border-radius:18px; padding:14px; margin-bottom:12px; border:1.5px solid var(--border); }
+.account-current { display:flex; align-items:center; gap:12px; padding-bottom:14px; border-bottom:1px solid var(--border); margin-bottom:14px; }
+.account-current .av { width:56px; height:56px; border-radius:50%; background:linear-gradient(135deg,#4A7C59,#E67E22); display:flex; align-items:center; justify-content:center; color:#FFF; font-size:22px; font-weight:700; overflow:hidden; flex-shrink:0; }
+.account-current .av img { width:100%; height:100%; object-fit:cover; }
+.account-current .info { flex:1; min-width:0; }
+.account-current .info .label { font-size:10px; color:var(--light); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px; }
+.account-current .info h4 { font-size:16px; font-weight:700; color:var(--text); margin-bottom:2px; }
+.account-current .info p { font-size:11px; color:var(--light); word-break:break-all; }
+.account-current .role-badge { font-size:10px; padding:3px 8px; border-radius:8px; font-weight:700; }
+.account-current .role-badge.admin { background:#FFF3CD; color:#856404; }
+.account-current .role-badge.customer { background:var(--green-l); color:var(--green); }
+
+.account-list-title { font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; padding:0 4px; }
+.account-item { display:flex; align-items:center; gap:12px; padding:10px; border-radius:12px; background:var(--bg); margin-bottom:8px; cursor:pointer; border:1.5px solid transparent; }
+.account-item.active { border-color:var(--green); }
+.account-item .av-small { width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg,#4A7C59,#E67E22); display:flex; align-items:center; justify-content:center; color:#FFF; font-weight:700; font-size:16px; overflow:hidden; flex-shrink:0; }
+.account-item .av-small img { width:100%; height:100%; object-fit:cover; }
+.account-item .info { flex:1; min-width:0; }
+.account-item .info h5 { font-size:13px; font-weight:700; color:var(--text); }
+.account-item .info p { font-size:10px; color:var(--light); word-break:break-all; }
+.account-item .check { color:var(--green); font-size:18px; font-weight:700; }
+.account-item .remove-btn { color:var(--red); background:none; border:none; font-size:16px; cursor:pointer; padding:4px 8px; }
+
+.add-account-btn { width:100%; padding:13px; background:var(--bg); color:var(--text); border:1.5px dashed var(--border); border-radius:12px; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; font-family:'Poppins',sans-serif; }
+.add-account-btn:hover { border-color:var(--green); color:var(--green); }
+
+.no-account-box { text-align:center; padding:24px 16px; }
+.no-account-box .icon { font-size:42px; margin-bottom:10px; opacity:0.6; }
+.no-account-box h4 { font-size:15px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.no-account-box p { font-size:12px; color:var(--light); margin-bottom:16px; }
+
+.login-btn { width:100%; padding:13px; background:var(--green); color:#FFF; border:none; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; font-family:'Poppins',sans-serif; }
+.login-btn svg { width:18px; height:18px; }
+
+.logout-btn { width:100%; padding:12px; background:#FFEBEE; color:var(--red); border:1.5px solid #FFCDD2; border-radius:12px; font-size:13px; font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif; margin-top:10px; }
+
+/* SWITCH */
 .switch { position:relative; width:46px; height:26px; flex-shrink:0; }
 .switch input { opacity:0; width:0; height:0; }
 .slider-sw { position:absolute; cursor:pointer; inset:0; background:#D9D2C5; border-radius:26px; transition:0.3s; }
@@ -47,7 +76,6 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
 .switch input:checked + .slider-sw { background:var(--green); }
 .switch input:checked + .slider-sw:before { transform:translateX(20px); }
 
-/* SUB-PAGE */
 .sub-page { display:none; }
 .sub-page.show { display:block; }
 .sub-header { padding:16px 4px 8px; }
@@ -62,7 +90,7 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
 .notif-content .time { font-size:10px; color:var(--light); margin-top:4px; }
 
 .theme-options { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
-.theme-opt { padding:16px; border-radius:14px; border:2px solid var(--border); background:var(--card); cursor:pointer; text-align:center; transition:0.2s; }
+.theme-opt { padding:16px; border-radius:14px; border:2px solid var(--border); background:var(--card); cursor:pointer; text-align:center; }
 .theme-opt.active { border-color:var(--green); box-shadow:0 0 0 3px rgba(74,124,89,0.15); }
 .theme-opt .preview { width:70px; height:46px; border-radius:8px; margin:0 auto 8px; border:1px solid var(--border); }
 .theme-opt .preview.light { background:linear-gradient(135deg,#FDFBF7,#FFF); }
@@ -98,19 +126,12 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
 
 <div class="container">
 
-    <!-- ============ MAIN ============ -->
     <div id="mainPage">
 
-        <!-- USER CARD -->
-        <div class="user-card" id="userCard">
-            <div class="avatar" id="uAvatar">?</div>
-            <h3 id="uName">Mehmaan</h3>
-            <p id="uEmail">Login karein</p>
-            <button class="login-btn" id="loginBtn" onclick="loginWithGoogle()" style="display:none;">
-                <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-                Google se Login karein
-            </button>
-            <button class="logout-btn" id="logoutBtn" onclick="logoutUser()" style="display:none;">Logout</button>
+        <!-- ACCOUNT SECTION -->
+        <div class="section" style="padding:14px;">
+            <div class="section-title" style="padding:0 0 10px;">Account</div>
+            <div id="accountBox"></div>
         </div>
 
         <!-- NOTIFICATIONS SECTION -->
@@ -133,7 +154,7 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
             </div>
         </div>
 
-        <!-- APPEARANCE SECTION -->
+        <!-- APPEARANCE -->
         <div class="section">
             <div class="section-title">Appearance</div>
             <div class="item" onclick="openSub('themePage')">
@@ -148,7 +169,7 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
             </div>
         </div>
 
-        <!-- DATA SECTION -->
+        <!-- DATA -->
         <div class="section">
             <div class="section-title">Data & Privacy</div>
             <div class="item" onclick="clearHistory()">
@@ -163,7 +184,7 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
             </div>
         </div>
 
-        <!-- ABOUT SECTION -->
+        <!-- ABOUT -->
         <div class="section">
             <div class="section-title">About</div>
             <div class="item" onclick="openSub('aboutPage')">
@@ -175,14 +196,13 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
 
     </div>
 
-    <!-- ============ NOTIFICATION SUB-PAGE ============ -->
+    <!-- NOTIFICATION SETTINGS -->
     <div class="sub-page" id="notifPage">
         <div class="sub-header">
             <button class="back-btn" onclick="closeSub()" style="margin-bottom:12px;">←</button>
             <h2 class="sub-title">🔔 Notification Settings</h2>
             <p class="sub-desc">Apni pasand se set karein</p>
         </div>
-
         <div class="section">
             <div class="item">
                 <div class="ico">🔔</div>
@@ -199,10 +219,6 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
                 <div class="info"><h4>Vibration</h4><p>Phone vibrate ho</p></div>
                 <label class="switch"><input type="checkbox" id="setVib" onchange="setS('vibrate',this.checked)"><span class="slider-sw"></span></label>
             </div>
-        </div>
-
-        <div class="section">
-            <div class="section-title">Kaunsi Cheez Notify Kare</div>
             <div class="item">
                 <div class="ico">🆕</div>
                 <div class="info"><h4>Naye Claims</h4><p>Customer claim karne par</p></div>
@@ -210,13 +226,13 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
             </div>
             <div class="item">
                 <div class="ico">✅</div>
-                <div class="info"><h4>Approve/Reject Updates</h4><p>Status change hone par</p></div>
+                <div class="info"><h4>Approve/Reject</h4><p>Status change hone par</p></div>
                 <label class="switch"><input type="checkbox" id="setStatus" onchange="setS('status',this.checked)"><span class="slider-sw"></span></label>
             </div>
         </div>
     </div>
 
-    <!-- ============ HISTORY SUB-PAGE ============ -->
+    <!-- HISTORY -->
     <div class="sub-page" id="historyPage">
         <div class="sub-header">
             <button class="back-btn" onclick="closeSub()" style="margin-bottom:12px;">←</button>
@@ -226,14 +242,13 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
         <div id="historyList"></div>
     </div>
 
-    <!-- ============ THEME SUB-PAGE ============ -->
+    <!-- THEME -->
     <div class="sub-page" id="themePage">
         <div class="sub-header">
             <button class="back-btn" onclick="closeSub()" style="margin-bottom:12px;">←</button>
             <h2 class="sub-title">🎨 Theme</h2>
             <p class="sub-desc">Apni pasand ka look chunein</p>
         </div>
-
         <div class="theme-options">
             <div class="theme-opt" id="tLight" onclick="setTheme('light')">
                 <div class="preview light"></div>
@@ -246,24 +261,15 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
                 <p>Raat ke liye</p>
             </div>
         </div>
-
-        <div class="section">
-            <div class="item">
-                <div class="ico">🌗</div>
-                <div class="info"><h4>Auto Switch</h4><p>Subah light, raat dark</p></div>
-                <label class="switch"><input type="checkbox" id="setAutoTheme" onchange="setS('autoTheme',this.checked)"><span class="slider-sw"></span></label>
-            </div>
-        </div>
     </div>
 
-    <!-- ============ LANGUAGE SUB-PAGE ============ -->
+    <!-- LANGUAGE -->
     <div class="sub-page" id="langPage">
         <div class="sub-header">
             <button class="back-btn" onclick="closeSub()" style="margin-bottom:12px;">←</button>
             <h2 class="sub-title">🌐 Language</h2>
             <p class="sub-desc">Apni bhasha chunein</p>
         </div>
-
         <div class="lang-opt" id="langHi" onclick="setLang('hi')">
             <span class="flag">🇮🇳</span>
             <div><h6>हिन्दी</h6><p>Hindi</p></div>
@@ -276,7 +282,7 @@ body { background:var(--bg); color:var(--text); transition:0.3s; padding-bottom:
         </div>
     </div>
 
-    <!-- ============ ABOUT SUB-PAGE ============ -->
+    <!-- ABOUT -->
     <div class="sub-page" id="aboutPage">
         <div class="sub-header">
             <button class="back-btn" onclick="closeSub()" style="margin-bottom:12px;">←</button>
@@ -307,11 +313,27 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const ADMIN_EMAIL = "tarendrasahu652@gmail.com";
 
-let userSettings = JSON.parse(localStorage.getItem('sahuSettings') || '{"notif":true,"sound":true,"vibrate":true,"newClaim":true,"status":true,"theme":"light","language":"hi","autoTheme":false}');
+let userSettings = JSON.parse(localStorage.getItem('sahuSettings') || '{"notif":true,"sound":true,"vibrate":true,"newClaim":true,"status":true,"theme":"light","language":"hi"}');
 let notifHistory = JSON.parse(localStorage.getItem('sahuNotifHistory') || '[]');
+let accounts = JSON.parse(localStorage.getItem('sahuAccounts') || '[]');
 
 function saveSettings() { localStorage.setItem('sahuSettings', JSON.stringify(userSettings)); }
 function saveNotifHistory() { if (notifHistory.length > 100) notifHistory = notifHistory.slice(0, 100); localStorage.setItem('sahuNotifHistory', JSON.stringify(notifHistory)); }
+function saveAccounts() { localStorage.setItem('sahuAccounts', JSON.stringify(accounts)); }
+function getCurrentUser() { try { return JSON.parse(localStorage.getItem('sahuUser') || 'null'); } catch(e) { return null; } }
+function setCurrentUser(u) {
+    if (u) {
+        localStorage.setItem('sahuUser', JSON.stringify(u));
+        localStorage.setItem('currentUser', u.name);
+        localStorage.setItem('userEmail', u.email);
+        localStorage.setItem('userRole', u.role || 'customer');
+    } else {
+        localStorage.removeItem('sahuUser');
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('userRole');
+    }
+}
 
 function applyTheme() {
     if (userSettings.theme === 'dark') document.body.classList.add('dark');
@@ -327,75 +349,134 @@ function loadUI() {
     document.getElementById('setVib').checked = userSettings.vibrate;
     document.getElementById('setNewClaim').checked = userSettings.newClaim;
     document.getElementById('setStatus').checked = userSettings.status;
-    document.getElementById('setAutoTheme').checked = userSettings.autoTheme;
     document.getElementById('langHi').classList.toggle('active', userSettings.language === 'hi');
     document.getElementById('langEn').classList.toggle('active', userSettings.language === 'en');
     document.getElementById('langVal').innerText = userSettings.language === 'hi' ? 'हिन्दी' : 'English';
     applyTheme();
-    loadUser();
+    renderAccounts();
 }
 
-function loadUser() {
-    const s = localStorage.getItem('sahuUser');
-    const av = document.getElementById('uAvatar');
-    const nm = document.getElementById('uName');
-    const em = document.getElementById('uEmail');
-    const lb = document.getElementById('loginBtn');
-    const lo = document.getElementById('logoutBtn');
-    
-    if (s) {
-        try {
-            const u = JSON.parse(s);
-            if (u.photo) av.innerHTML = `<img src="${u.photo}">`;
-            else av.innerText = (u.name || 'U').charAt(0).toUpperCase();
-            nm.innerText = u.name || 'User';
-            em.innerText = u.email || '';
-            lb.style.display = 'none';
-            lo.style.display = 'block';
-        } catch(e) { resetUser(); }
-    } else { resetUser(); }
+// ============ ACCOUNT MANAGEMENT ============
+function renderAccounts() {
+    const box = document.getElementById('accountBox');
+    const current = getCurrentUser();
+
+    let h = '';
+
+    if (current) {
+        // Current user
+        h += `<div class="account-current">`;
+        if (current.photo) h += `<div class="av"><img src="${current.photo}"></div>`;
+        else h += `<div class="av">${(current.name || 'U').charAt(0).toUpperCase()}</div>`;
+        h += `<div class="info">`;
+        h += `<div class="label">Current Account</div>`;
+        h += `<h4>${current.name || 'User'}</h4>`;
+        h += `<p>${current.email || ''}</p>`;
+        h += `</div>`;
+        const role = current.role === 'admin' ? 'admin' : 'customer';
+        h += `<div class="role-badge ${role}">${role === 'admin' ? '👑 Admin' : '👤 Customer'}</div>`;
+        h += `</div>`;
+    }
+
+    // Other accounts
+    const others = accounts.filter(a => !current || a.email !== current.email);
+    if (others.length > 0) {
+        h += `<div class="account-list-title">Switch Karne Ke Liye Accounts</div>`;
+        others.forEach((acc, idx) => {
+            h += `<div class="account-item" onclick="switchAccount('${esc(acc.email)}')">`;
+            if (acc.photo) h += `<div class="av-small"><img src="${acc.photo}"></div>`;
+            else h += `<div class="av-small">${(acc.name || 'U').charAt(0).toUpperCase()}</div>`;
+            h += `<div class="info"><h5>${acc.name || 'User'}</h5><p>${acc.email || ''}</p></div>`;
+            h += `<button class="remove-btn" onclick="event.stopPropagation(); removeAccount('${esc(acc.email)}')">✕</button>`;
+            h += `</div>`;
+        });
+    }
+
+    // Add account button
+    h += `<button class="add-account-btn" onclick="addNewAccount()">➕ ${current ? 'Naya Account Jodo' : 'Google se Login karein'}</button>`;
+
+    // Logout current
+    if (current) {
+        h += `<button class="logout-btn" onclick="logoutCurrent()">Logout from ${current.name || 'this account'}</button>`;
+    }
+
+    box.innerHTML = h;
 }
 
-function resetUser() {
-    document.getElementById('uAvatar').innerText = '?';
-    document.getElementById('uName').innerText = 'Mehmaan';
-    document.getElementById('uEmail').innerText = 'Login karein';
-    document.getElementById('loginBtn').style.display = 'flex';
-    document.getElementById('logoutBtn').style.display = 'none';
-}
+function esc(t) { return String(t).replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
 
-function loginWithGoogle() {
+function addNewAccount() {
     const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
     auth.signInWithPopup(provider).then((result) => {
         const user = result.user;
         const email = (user.email || '').toLowerCase().trim();
         const name = user.displayName || 'User';
         const photo = user.photoURL || '';
-        localStorage.setItem('sahuUser', JSON.stringify({ name, email, photo }));
-        localStorage.setItem('currentUser', name);
-        localStorage.setItem('userEmail', email);
-        localStorage.setItem('userRole', email === ADMIN_EMAIL ? 'admin' : 'customer');
-        loadUser();
-        toast('✅ Login ho gaya');
-    }).catch(err => alert('Login fail: ' + err.message));
+        const role = (email === ADMIN_EMAIL) ? 'admin' : 'customer';
+
+        const accountObj = { name, email, photo, role };
+
+        // Remove if already exists
+        accounts = accounts.filter(a => a.email !== email);
+        // Add to list
+        accounts.unshift(accountObj);
+        saveAccounts();
+        // Set as current
+        setCurrentUser(accountObj);
+
+        renderAccounts();
+        toast('✅ Account added: ' + name);
+    }).catch(err => {
+        if (err.code !== 'auth/popup-closed-by-user') alert('Login nahi hua: ' + err.message);
+    });
 }
 
-function logoutUser() {
-    if (!confirm('Logout karna hai?')) return;
-    auth.signOut().catch(() => {});
-    localStorage.removeItem('sahuUser');
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('userRole');
-    loadUser();
-    toast('👋 Logout ho gaya');
+function switchAccount(email) {
+    const acc = accounts.find(a => a.email === email);
+    if (!acc) { toast('Account nahi mila'); return; }
+    if (!confirm(`Switch to ${acc.name}?`)) return;
+    setCurrentUser(acc);
+    renderAccounts();
+    toast('🔄 Switch ho gaya: ' + acc.name);
 }
 
+function removeAccount(email) {
+    const acc = accounts.find(a => a.email === email);
+    if (!acc) return;
+    if (!confirm(`${acc.name} ka account hata dein?`)) return;
+    accounts = accounts.filter(a => a.email !== email);
+    saveAccounts();
+    renderAccounts();
+    toast('🗑️ Account hata diya');
+}
+
+function logoutCurrent() {
+    const current = getCurrentUser();
+    if (!current) return;
+    if (!confirm(`Logout from ${current.name}?`)) return;
+
+    // Remove from accounts list
+    accounts = accounts.filter(a => a.email !== current.email);
+    saveAccounts();
+
+    // If other accounts exist, switch to first
+    if (accounts.length > 0) {
+        setCurrentUser(accounts[0]);
+        toast('🔄 Switched to ' + accounts[0].name);
+    } else {
+        setCurrentUser(null);
+        auth.signOut().catch(() => {});
+        toast('👋 Logout ho gaya');
+    }
+    renderAccounts();
+}
+
+// ============ SETTINGS ============
 function setS(key, val) {
     userSettings[key] = val;
     saveSettings();
     if (key === 'notif' && val && Notification.permission !== 'granted') Notification.requestPermission();
-    if (key === 'theme') applyTheme();
     toast('✅ Setting save');
 }
 
@@ -448,10 +529,11 @@ function clearHistory() {
 }
 
 function clearAllData() {
-    if (!confirm('⚠️ Saari settings, history aur login mitado?\n\nYe undo nahi hoga!')) return;
+    if (!confirm('⚠️ Saari settings, history, accounts mitado?\n\nYe undo nahi hoga!')) return;
     localStorage.removeItem('sahuSettings');
     localStorage.removeItem('sahuNotifHistory');
     localStorage.removeItem('sahuUser');
+    localStorage.removeItem('sahuAccounts');
     localStorage.removeItem('currentUser');
     localStorage.removeItem('userEmail');
     localStorage.removeItem('userRole');

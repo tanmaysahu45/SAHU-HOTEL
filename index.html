@@ -46,7 +46,6 @@ body { background:var(--bg); color:var(--text); overflow-x:hidden; transition:0.
 .section { padding:60px 22px; }
 .section-tag { font-size:11px; font-weight:700; color:var(--orange); letter-spacing:2px; text-transform:uppercase; margin-bottom:12px; }
 .section h3 { font-family:'Playfair Display',serif; font-size:32px; font-weight:700; color:var(--text); line-height:1.15; margin-bottom:14px; }
-.section-desc { font-size:14px; color:var(--muted); line-height:1.7; max-width:560px; margin-bottom:40px; }
 
 .services { display:grid; grid-template-columns:1fr; gap:16px; }
 .service-card { background:var(--card); border-radius:20px; padding:26px 22px; border:1.5px solid var(--border); position:relative; overflow:hidden; }
@@ -57,7 +56,6 @@ body { background:var(--bg); color:var(--text); overflow-x:hidden; transition:0.
 .service-list { list-style:none; }
 .service-list li { font-size:13px; color:var(--muted); padding:6px 0; }
 
-/* REWARDS PROMO (chhota banner) */
 .rewards-promo { background:linear-gradient(160deg,#2C3E50,#1A252F); color:#FFF; padding:40px 22px; border-radius:24px; margin:30px 22px; text-align:center; }
 .rewards-promo h3 { font-family:'Playfair Display',serif; font-size:28px; font-weight:700; margin-bottom:10px; }
 .rewards-promo p { font-size:14px; color:#95A5A6; margin-bottom:22px; line-height:1.6; }
@@ -90,7 +88,7 @@ body { background:var(--bg); color:var(--text); overflow-x:hidden; transition:0.
 .user-card p { font-size:12px; color:var(--light); margin-bottom:14px; word-break:break-all; }
 .card-login-btn { width:100%; padding:11px; background:var(--green); color:#FFF; border:none; border-radius:12px; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; }
 .card-login-btn svg { width:18px; height:18px; }
-.card-logout-btn { width:100%; padding:11px; background:var(--bg); color:var(--red); border:1.5px solid var(--red); border-radius:12px; font-size:13px; font-weight:700; cursor:pointer; }
+.card-settings-btn { width:100%; padding:11px; background:var(--bg); color:var(--text); border:1.5px solid var(--border); border-radius:12px; font-size:13px; font-weight:600; cursor:pointer; margin-top:8px; display:flex; align-items:center; justify-content:center; gap:8px; }
 
 .drawer-nav { display:flex; flex-direction:column; gap:4px; margin-bottom:14px; }
 .drawer-link { padding:13px 14px; border-radius:12px; font-size:14px; font-weight:500; color:var(--text); text-decoration:none; display:flex; align-items:center; gap:12px; cursor:pointer; background:transparent; border:none; width:100%; text-align:left; font-family:'Poppins',sans-serif; }
@@ -165,7 +163,6 @@ body { background:var(--bg); color:var(--text); overflow-x:hidden; transition:0.
     </div>
 </section>
 
-<!-- REWARDS PROMO (chhota banner, poora section nahi) -->
 <section class="rewards-promo">
     <h3>🎁 Sahu Rewards</h3>
     <p>Har kharidari par points kamayein. ₹10 = 1 point.<br>Points dukaan par discount mein use karein.</p>
@@ -217,7 +214,9 @@ body { background:var(--bg); color:var(--text); overflow-x:hidden; transition:0.
                 <svg viewBox="0 0 48 48"><path fill="#FFF" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#FFF" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FFF" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#FFF" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
                 Google se Login
             </button>
-            <button class="card-logout-btn" id="drawerLogoutBtn" onclick="logoutUser()" style="display:none;">Logout</button>
+            <button class="card-settings-btn" id="drawerSettingsBtn" style="display:none;" onclick="location.href='settings.html'">
+                ⚙️ Account Settings
+            </button>
         </div>
 
         <nav class="drawer-nav">
@@ -258,35 +257,35 @@ function toggleDrawer() {
 
 function loginWithGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
     auth.signInWithPopup(provider).then((result) => {
         const user = result.user;
         const email = (user.email || '').toLowerCase().trim();
         const name = user.displayName || 'User';
         const photo = user.photoURL || '';
-        localStorage.setItem('sahuUser', JSON.stringify({ name, email, photo }));
+        const role = (email === ADMIN_EMAIL) ? 'admin' : 'customer';
+        const accountObj = { name, email, photo, role };
+
+        localStorage.setItem('sahuUser', JSON.stringify(accountObj));
         localStorage.setItem('currentUser', name);
         localStorage.setItem('userEmail', email);
-        currentUser = { name, email, photo };
-        currentRole = (email === ADMIN_EMAIL) ? 'admin' : 'customer';
-        localStorage.setItem('userRole', currentRole);
+        localStorage.setItem('userRole', role);
+
+        // Add to accounts list
+        let accounts = JSON.parse(localStorage.getItem('sahuAccounts') || '[]');
+        accounts = accounts.filter(a => a.email !== email);
+        accounts.unshift(accountObj);
+        localStorage.setItem('sahuAccounts', JSON.stringify(accounts));
+
+        currentUser = accountObj;
+        currentRole = role;
         updateUI();
     }).catch(err => alert('Login nahi hua: ' + err.message));
 }
 
-function logoutUser() {
-    if (!confirm('Logout karna hai?')) return;
-    auth.signOut().catch(() => {});
-    localStorage.removeItem('sahuUser');
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('userRole');
-    currentUser = null; currentRole = 'guest';
-    updateUI();
-}
-
 function updateUI() {
     const drawerLoginBtn = document.getElementById('drawerLoginBtn');
-    const drawerLogoutBtn = document.getElementById('drawerLogoutBtn');
+    const drawerSettingsBtn = document.getElementById('drawerSettingsBtn');
     const dAvatar = document.getElementById('dAvatar');
     const dName = document.getElementById('dName');
     const dSub = document.getElementById('dSub');
@@ -296,15 +295,15 @@ function updateUI() {
         dName.innerText = 'Mehmaan';
         dSub.innerText = 'Login karein rewards ke liye';
         drawerLoginBtn.style.display = 'flex';
-        drawerLogoutBtn.style.display = 'none';
+        drawerSettingsBtn.style.display = 'none';
         document.getElementById('navPoints').innerText = '0';
     } else {
         if (currentUser.photo) dAvatar.innerHTML = `<img src="${currentUser.photo}">`;
         else dAvatar.innerText = (currentUser.name || 'U').charAt(0).toUpperCase();
         dName.innerText = (currentRole === 'admin' ? '👑 ' : '') + currentUser.name;
-        dSub.innerText = currentRole === 'admin' ? 'Admin' : '🎁 Rewards Member';
+        dSub.innerText = currentRole === 'admin' ? 'Admin · Settings se switch' : '🎁 Rewards Member';
         drawerLoginBtn.style.display = 'none';
-        drawerLogoutBtn.style.display = 'block';
+        drawerSettingsBtn.style.display = 'flex';
         loadPoints();
     }
 }
